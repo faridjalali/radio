@@ -18,7 +18,7 @@
             font-family: "Segoe UI", "Segoe UI Semibold", Tahoma, sans-serif;
             margin: 0;
             padding: 0;
-            -webkit-tap-highlight-color: transparent; /* Clean touch for Opera/Chrome */
+            -webkit-tap-highlight-color: transparent;
         }
 
         header {
@@ -138,7 +138,6 @@
         .tile.active { outline: 4px solid white; outline-offset: -4px; }
         .tile.active .play-indicator { display: flex; }
 
-        /* Metro Colors */
         .c1 { background-color: #00A300; } .c2 { background-color: #2D89EF; } 
         .c3 { background-color: #9F00A7; } .c4 { background-color: #603CBA; } 
         .c5 { background-color: #DA532C; } .c6 { background-color: #B91D47; } 
@@ -269,7 +268,7 @@
                     title: station.name,
                     artist: "Radio Tile Player",
                     album: station.geo,
-                    artwork: [{ src: 'https://img.icons8.com/emoji/512/radio-emoji.png', sizes: '512x512', type: 'image/png' }]
+                    artwork: [{ src: 'https://img.icons8.com/emoji/512/drum-emoji.png', sizes: '512x512', type: 'image/png' }]
                 });
             }
             document.title = `${station.name} - Radio`;
@@ -277,18 +276,13 @@
 
         function playStation(id) {
             const station = defaultStations.find(s => s.id === id);
-            
-            // 1. Reset visual state
             document.querySelectorAll('.tile').forEach(t => t.classList.remove('active'));
             currentStationId = id;
             
-            // 2. THE STABILIZATION FIX: 
-            // Force Opera/Safari to dump the buffer before starting a new stream
             player.pause();
             player.removeAttribute('src'); 
             player.load(); 
             
-            // 3. Re-assign and play
             player.src = station.url;
             player.play();
             
