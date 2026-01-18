@@ -20,20 +20,10 @@
         }
 
         h1 {
-            font-weight: 200; /* Thin Zune-style weight */
+            font-weight: 200; 
             font-size: 3.5rem;
             margin-bottom: 40px;
-            display: flex;
-            align-items: baseline;
-            gap: 15px;
-            text-transform: lowercase; /* Classic Zune branding style */
-        }
-
-        #header-station {
-            font-size: 2.2rem;
-            color: var(--accent-color);
-            font-weight: 400;
-            text-transform: uppercase;
+            letter-spacing: -1px;
         }
 
         .grid {
@@ -47,8 +37,8 @@
         .tile {
             aspect-ratio: 1 / 1;
             display: flex;
-            align-items: flex-end;    /* Text to bottom */
-            justify-content: flex-start; /* Text to left */
+            align-items: flex-end;    
+            justify-content: flex-start; 
             padding: 12px;
             cursor: pointer;
             transition: filter 0.2s ease;
@@ -56,7 +46,6 @@
             overflow: hidden;
         }
 
-        /* Hover effect only changes brightness, not size */
         .tile:hover {
             filter: brightness(1.2);
         }
@@ -72,14 +61,13 @@
             pointer-events: none;
         }
 
-        /* Play Icon (Top Right) */
         .play-indicator {
             position: absolute;
             top: 10px;
             right: 10px;
-            width: 20px;
-            height: 20px;
-            display: none; /* Hidden by default */
+            width: 22px;
+            height: 22px;
+            display: none; 
         }
 
         .play-indicator svg {
@@ -112,7 +100,7 @@
 </head>
 <body>
 
-    <h1>radio <span id="header-station"></span></h1>
+    <h1>Radio</h1>
 
     <audio id="radio-player" autoplay style="display:none;"></audio>
 
@@ -175,14 +163,12 @@
 
         const grid = document.getElementById('station-grid');
         const player = document.getElementById('radio-player');
-        const headerStationText = document.getElementById('header-station');
 
         stations.forEach((station, index) => {
             const tile = document.createElement('div');
             const colorClass = `c${(index % 8) + 1}`;
             tile.className = `tile ${colorClass}`;
             
-            // Add Station Name and Play Icon SVG
             tile.innerHTML = `
                 <div class="play-indicator">
                     <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
@@ -191,10 +177,8 @@
             `;
             
             tile.onclick = () => {
-                // Visual cleanup of previous active tile
                 document.querySelectorAll('.tile').forEach(t => t.classList.remove('active'));
                 tile.classList.add('active');
-                
                 playStation(station);
             };
             
@@ -204,7 +188,6 @@
         function playStation(station) {
             player.src = station.url;
             player.play();
-            headerStationText.innerText = `- ${station.name}`;
         }
     </script>
 </body>
