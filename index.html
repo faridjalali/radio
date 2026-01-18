@@ -104,12 +104,8 @@
             .header-inner {
                 padding: 0 15px;
             }
-            h1 {
-                font-size: 2rem;
-            }
-            .tile-name {
-                font-size: 1.2rem;
-            }
+            h1 { font-size: 2rem; }
+            .tile-name { font-size: 1.2rem; }
         }
 
         .tile {
@@ -124,9 +120,7 @@
             overflow: hidden;
         }
 
-        .tile:hover {
-            filter: brightness(1.2);
-        }
+        .tile:hover { filter: brightness(1.2); }
 
         .geo-tag {
             position: absolute;
@@ -177,9 +171,7 @@
             outline-offset: -4px;
         }
 
-        .tile.active .play-indicator {
-            display: flex;
-        }
+        .tile.active .play-indicator { display: flex; }
 
         .c1 { background-color: #00A300; } .c2 { background-color: #2D89EF; } 
         .c3 { background-color: #9F00A7; } .c4 { background-color: #603CBA; } 
@@ -299,26 +291,18 @@
             });
         }
 
-        function handleTileClick(id) {
-            if (currentStationId === id && isActuallyPlaying) {
-                stopPlayback();
-            } else {
-                playStation(id);
-            }
-        }
-
         function updateMediaMetadata(station) {
             if ('mediaSession' in navigator) {
                 navigator.mediaSession.metadata = new MediaMetadata({
                     title: station.name,
-                    artist: "Radio Tile Player",
+                    artist: "Radio Tile",
                     album: station.geo,
                     artwork: [
-                        { src: 'https://img.icons8.com/ios-filled/500/ffffff/radio.png', sizes: '512x512', type: 'image/png' }
+                        { src: 'https://img.icons8.com/ios-filled/512/ffffff/radio-tower.png', sizes: '512x512', type: 'image/png' },
+                        { src: 'https://img.icons8.com/ios-filled/256/ffffff/radio-tower.png', sizes: '256x256', type: 'image/png' }
                     ]
                 });
             }
-            // Update browser tab title as well
             document.title = `${station.name} - Radio`;
         }
 
@@ -330,9 +314,9 @@
             if (activeTile) activeTile.classList.add('active');
             
             player.src = station.url;
-            player.play();
-            
-            updateMediaMetadata(station);
+            player.play().then(() => {
+                updateMediaMetadata(station);
+            }).catch(e => console.error("Playback failed:", e));
             
             isActuallyPlaying = true;
             playPauseBtn.disabled = false;
