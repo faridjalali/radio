@@ -4,6 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Radio Tile Player</title>
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <style>
         :root {
             --bg-color: #1a1a1a;
@@ -62,7 +64,6 @@
         .control-btn:disabled { border-color: var(--disabled-color); cursor: not-allowed; }
         .control-btn svg { fill: white; width: 18px; height: 18px; }
         .control-btn:disabled svg { fill: var(--disabled-color); }
-        .control-btn.active-sort { background-color: var(--accent-color); border-color: var(--accent-color); }
 
         .grid {
             display: grid;
@@ -290,6 +291,9 @@
                 });
 
                 navigator.mediaSession.setActionHandler('pause', () => stopPlayback());
+                
+                // Explicitly set the state to "playing" for iOS background persistence
+                navigator.mediaSession.playbackState = "playing";
             }
             document.title = `${station.name} - Radio`;
         }
@@ -297,11 +301,10 @@
         function playStation(id) {
             const station = defaultStations.find(s => s.id === id);
             
-            // UI Update
             document.querySelectorAll('.tile').forEach(t => t.classList.remove('active'));
             currentStationId = id;
             
-            // CLEAN RESET FOR OPERA
+            // RESET FOR CONSISTENCY
             player.pause();
             player.src = station.url;
             player.load(); 
@@ -319,9 +322,11 @@
 
         function stopPlayback() {
             player.pause();
-            // DO NOT clear source completely if backgrounding is failing in Opera
-            // Just pause and allow the media session to stay "alive"
+            // Background workaround: Leave the src assigned so the media session stays registered
             isActuallyPlaying = false;
+            if ('mediaSession' in navigator) {
+                navigator.mediaSession.playbackState = "paused";
+            }
             updatePlayPauseButton(false);
             document.querySelectorAll('.tile').forEach(t => t.classList.remove('active'));
             document.title = "Radio Tile Player";
