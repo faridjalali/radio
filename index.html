@@ -272,7 +272,7 @@
                     artwork: [{ src: 'image_0.png.jpg', sizes: '512x512', type: 'image/png' }]
                 });
 
-                // ENABLE NEXT/PREVIOUS ACTIONS IN MEDIA CENTER
+                // RE-STABILIZED ACTION HANDLERS
                 navigator.mediaSession.setActionHandler('previoustrack', () => {
                     const currentIndex = activePlaylist.findIndex(s => s.id === currentStationId);
                     const prevIndex = (currentIndex - 1 + activePlaylist.length) % activePlaylist.length;
@@ -296,14 +296,16 @@
 
         function playStation(id) {
             const station = defaultStations.find(s => s.id === id);
+            
+            // UI Update
             document.querySelectorAll('.tile').forEach(t => t.classList.remove('active'));
             currentStationId = id;
             
+            // CLEAN RESET FOR OPERA
             player.pause();
-            player.removeAttribute('src'); 
+            player.src = station.url;
             player.load(); 
             
-            player.src = station.url;
             player.play();
             
             const activeTile = document.querySelector(`.tile[data-id="${id}"]`);
@@ -317,7 +319,8 @@
 
         function stopPlayback() {
             player.pause();
-            player.src = "";
+            // DO NOT clear source completely if backgrounding is failing in Opera
+            // Just pause and allow the media session to stay "alive"
             isActuallyPlaying = false;
             updatePlayPauseButton(false);
             document.querySelectorAll('.tile').forEach(t => t.classList.remove('active'));
