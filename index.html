@@ -13,50 +13,56 @@
         body {
             background-color: var(--bg-color);
             color: var(--text-color);
-            font-family: "Segoe UI", Segoe, Tahoma, Geneva, Verdana, sans-serif;
+            font-family: "Segoe UI Semibold", "Segoe UI", Tahoma, sans-serif;
             margin: 0;
             padding: 20px;
+            padding-bottom: 120px; /* Space for the player */
         }
 
         h1 {
             font-weight: 300;
-            font-size: 3rem;
+            font-size: 3.5rem;
             margin-bottom: 30px;
             padding-left: 10px;
         }
 
         .grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
             gap: 15px;
-            max-width: 1200px;
+            max-width: 1400px;
             margin: 0 auto;
         }
 
         .tile {
             aspect-ratio: 1 / 1;
             display: flex;
-            align-items: flex-end;
-            padding: 15px;
+            align-items: center;    /* Centered vertically */
+            justify-content: center; /* Centered horizontally */
+            padding: 10px;
             cursor: pointer;
             transition: transform 0.1s ease, filter 0.2s ease;
             position: relative;
             overflow: hidden;
+            text-align: center;
         }
 
         .tile:hover {
-            transform: scale(1.02);
-            filter: brightness(1.1);
+            transform: scale(1.03);
+            filter: brightness(1.15);
         }
 
         .tile:active {
-            transform: scale(0.98);
+            transform: scale(0.97);
         }
 
         .tile-name {
-            font-size: 1.2rem;
-            font-weight: 600;
+            font-size: 2.2rem; /* Larger font for that Zune feel */
+            font-weight: 700;
             z-index: 2;
+            letter-spacing: -1px;
+            line-height: 0.9;
+            word-break: break-word;
         }
 
         /* Player Controls Styles */
@@ -67,10 +73,11 @@
             width: 100%;
             background: #222;
             padding: 20px;
-            display: none; /* Hidden until a station is picked */
-            border-top: 4px solid #0078d7;
+            display: none; 
+            border-top: 5px solid #0078d7;
             box-sizing: border-box;
             z-index: 100;
+            box-shadow: 0 -5px 20px rgba(0,0,0,0.5);
         }
 
         audio {
@@ -80,19 +87,20 @@
 
         .now-playing {
             margin-bottom: 10px;
-            font-size: 0.9rem;
-            color: #ccc;
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #eee;
         }
 
         /* Metro Colors */
-        .c1 { background-color: #00A300; } /* Green */
-        .c2 { background-color: #2D89EF; } /* Blue */
-        .c3 { background-color: #9F00A7; } /* Magenta */
-        .c4 { background-color: #603CBA; } /* Purple */
-        .c5 { background-color: #DA532C; } /* Orange */
-        .c6 { background-color: #B91D47; } /* Red */
-        .c7 { background-color: #00ABA9; } /* Teal */
-        .c8 { background-color: #7E3878; } /* Mauve */
+        .c1 { background-color: #00A300; } 
+        .c2 { background-color: #2D89EF; } 
+        .c3 { background-color: #9F00A7; } 
+        .c4 { background-color: #603CBA; } 
+        .c5 { background-color: #DA532C; } 
+        .c6 { background-color: #B91D47; } 
+        .c7 { background-color: #00ABA9; } 
+        .c8 { background-color: #7E3878; } 
 
     </style>
 </head>
@@ -100,8 +108,7 @@
 
     <h1>Radio</h1>
 
-    <div class="grid" id="station-grid">
-        </div>
+    <div class="grid" id="station-grid"></div>
 
     <div class="player-container" id="player-container">
         <div class="now-playing" id="now-playing">Select a station</div>
@@ -138,10 +145,10 @@
             { name: "WLUW", url: "https://ice26.securenetsystems.net/WLUW" },
             { name: "WNUR", url: "https://n16.rcs.revma.com/w4pmmfkdx4zuv" },
             { name: "WIIT", url: "https://icecast.iit.edu/WIITstream" },
-            { name: "WCBN", url: "https://floyd.wcbn.org:8443/wcbn-hd.mp3" },    
+            { name: "WCBN", url: "https://floyd.wcbn.org:8443/wcbn-hd.mp3" },     
             { name: "WUOG", url: "https://stream.wuog.org/stream" },   
             { name: "WRAS", url: "https://gpb.streamguys1.com/oom/gpb-radio-mp3-website" },   
-            { name: "KING", url: "https://classicalking.streamguys1.com/king-fm-aac-128k" },    
+            { name: "KING", url: "https://classicalking.streamguys1.com/king-fm-aac-128k" },     
             { name: "WUTK", url: "https://26223.live.streamtheworld.com/WUTKFM.mp3" },   
             { name: "KVCU", url: "https://kvcu.streamguys1.com/live" },   
             { name: "KCSU", url: "https://listen.kcsufm.com/stream" },   
@@ -172,7 +179,6 @@
 
         stations.forEach((station, index) => {
             const tile = document.createElement('div');
-            // Cycle through colors 1-8
             const colorClass = `c${(index % 8) + 1}`;
             tile.className = `tile ${colorClass}`;
             tile.innerHTML = `<div class="tile-name">${station.name}</div>`;
