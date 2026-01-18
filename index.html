@@ -20,7 +20,6 @@
             padding: 0;
         }
 
-        /* Full-width sticky bar */
         header {
             position: sticky;
             top: 0;
@@ -28,23 +27,22 @@
             background-color: var(--bg-color);
             box-shadow: 0 10px 30px rgba(0,0,0,0.5);
             border-bottom: 1px solid rgba(255,255,255,0.05);
-            padding: 25px 0; /* Vertical padding only */
+            padding: 20px 0;
         }
 
-        /* Contained header content to match grid width */
         .header-inner {
             max-width: 1600px;
             margin: 0 auto;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 0 30px; /* Matches grid padding for alignment */
+            padding: 0 30px;
             box-sizing: border-box;
         }
 
         h1 {
             font-weight: 200; 
-            font-size: 2.8rem;
+            font-size: 2.5rem;
             margin: 0;
             letter-spacing: -1px;
         }
@@ -58,8 +56,8 @@
             background: none;
             border: 1.5px solid rgba(255,255,255,0.2);
             border-radius: 50%;
-            width: 46px;
-            height: 46px;
+            width: 44px;
+            height: 44px;
             cursor: pointer;
             display: flex;
             align-items: center;
@@ -79,8 +77,8 @@
 
         .control-btn svg {
             fill: white;
-            width: 20px;
-            height: 20px;
+            width: 18px;
+            height: 18px;
         }
 
         .control-btn:disabled svg {
@@ -92,15 +90,33 @@
             border-color: var(--accent-color);
         }
 
-        /* Grid alignment logic */
         .grid {
             display: grid;
+            /* Default for larger screens */
             grid-template-columns: repeat(auto-fill, minmax(175px, 1fr));
             gap: 15px;
             max-width: 1600px;
             margin: 0 auto;
-            padding: 30px; /* Matches .header-inner padding */
+            padding: 30px;
             box-sizing: border-box;
+        }
+
+        /* Enforce 2 tiles per row on Mobile */
+        @media (max-width: 600px) {
+            .grid {
+                grid-template-columns: repeat(2, 1fr);
+                padding: 15px;
+                gap: 10px;
+            }
+            .header-inner {
+                padding: 0 15px;
+            }
+            h1 {
+                font-size: 2rem;
+            }
+            .tile-name {
+                font-size: 1.2rem;
+            }
         }
 
         .tile {
@@ -119,7 +135,6 @@
             filter: brightness(1.2);
         }
 
-        /* Aligned Geo-Tag (Corrected Vertical Axis) */
         .geo-tag {
             position: absolute;
             top: 15px;
@@ -133,7 +148,7 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            height: 1rem; /* Fixed height ensures text/emoji share a Y-axis */
+            height: 1rem;
         }
 
         .tile-name {
@@ -173,7 +188,6 @@
             display: flex;
         }
 
-        /* Metro Colors */
         .c1 { background-color: #00A300; } .c2 { background-color: #2D89EF; } 
         .c3 { background-color: #9F00A7; } .c4 { background-color: #603CBA; } 
         .c5 { background-color: #DA532C; } .c6 { background-color: #B91D47; } 
@@ -208,7 +222,7 @@
             { name: "FIPF", geo: "🇫🇷", type: "int", url: "https://stream.radiofrance.fr/fip/fip.m3u8" },   
             { name: "ECOF", geo: "🇩🇪", type: "int", url: "https://cast.egofm.de/egofm.mp3" },   
             { name: "FM4G", geo: "🇩🇪", type: "int", url: "https://orf-live.ors-shoutcast.at/fm4-q2a" },
-            { name: "STUD", geo: "🇸🇮", type: "int", url: "https://kruljo.radiostudent.si:8001/test.ogg" },
+            { name: "SLOV", geo: "🇸🇮", type: "int", url: "https://kruljo.radiostudent.si:8001/test.ogg" },
             { name: "NOVA", geo: "🇫🇷", type: "int", url: "https://novazz.ice.infomaniak.ch/novazz-128.mp3" },
             { name: "U92M", geo: "WV", type: "us", url: "https://stream.radiojar.com/56p3rt9eytzuv" },
             { name: "DEPA", geo: "IL", type: "us", url: "https://ice26.securenetsystems.net/RADIODEPAUL" },
@@ -227,9 +241,7 @@
             { name: "WXYC", geo: "NC", type: "us", url: "https://audio-mp3.ibiblio.org/wxyc.mp3" },
             { name: "KEXP", geo: "WA", type: "us", url: "https://kexp-mp3-128.streamguys1.com/kexp128.mp3" },
             { name: "WUOG", geo: "GA", type: "us", url: "https://stream.wuog.org/stream" },  
-            { name: "WASU", geo: "NC", type: "us", url: "https://prod-54-85-93-254.amperwave.net/wasu-wasuaac-hlsc1.m3u8" },
             { name: "KCRW", geo: "CA", type: "us", url: "https://streams.kcrw.com/kcrw_mp3" },
-            { name: "KCRW", geo: "CA", type: "us", url: "https://streams.kcrw.com/e24_mp3" },
             { name: "WFMU", geo: "NJ", type: "us", url: "https://stream0.wfmu.org/freeform-128k" },
             { name: "WWOZ", geo: "LA", type: "us", url: "https://wwoz-sc.streamguys1.com/wwoz-hi.mp3" },
             { name: "KKJZ", geo: "CA", type: "us", url: "https://streaming.live365.com/a49833" },
