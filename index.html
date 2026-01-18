@@ -20,18 +20,26 @@
             padding: 0;
         }
 
-        /* Floating Header */
+        /* Full-width sticky bar */
         header {
             position: sticky;
             top: 0;
             z-index: 1000;
             background-color: var(--bg-color);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+            padding: 25px 0; /* Vertical padding only */
+        }
+
+        /* Contained header content to match grid width */
+        .header-inner {
+            max-width: 1600px;
+            margin: 0 auto;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 25px 30px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-            border-bottom: 1px solid rgba(255,255,255,0.05);
+            padding: 0 30px; /* Matches grid padding for alignment */
+            box-sizing: border-box;
         }
 
         h1 {
@@ -84,14 +92,15 @@
             border-color: var(--accent-color);
         }
 
-        /* Large Tiles Grid */
+        /* Grid alignment logic */
         .grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(175px, 1fr));
             gap: 15px;
             max-width: 1600px;
             margin: 0 auto;
-            padding: 30px;
+            padding: 30px; /* Matches .header-inner padding */
+            box-sizing: border-box;
         }
 
         .tile {
@@ -110,21 +119,21 @@
             filter: brightness(1.2);
         }
 
-        /* Aligned Geo-Tag Logic */
+        /* Aligned Geo-Tag (Corrected Vertical Axis) */
         .geo-tag {
             position: absolute;
-            top: 15px; /* Aligned to match the visual baseline of the play indicator */
+            top: 15px;
             right: 15px;
             z-index: 3;
             font-size: 1rem;
             font-weight: 700;
             opacity: 0.9;
             pointer-events: none;
-            line-height: 1; /* Forces text and emoji to share a baseline */
+            line-height: 1;
             display: flex;
             align-items: center;
             justify-content: center;
-            height: 1rem; /* Constrains the vertical axis */
+            height: 1rem; /* Fixed height ensures text/emoji share a Y-axis */
         }
 
         .tile-name {
@@ -175,17 +184,19 @@
 <body>
 
     <header>
-        <h1>Radio</h1>
-        <div class="controls">
-            <button id="sort-btn" class="control-btn" title="Sort by Location">
-                <svg viewBox="0 0 24 24"><path d="M3 18h6v-2H3v2zM3 6v2h18V6H3zm0 7h12v-2H3v2z"/></svg>
-            </button>
-            <button id="shuffle-btn" class="control-btn" title="Shuffle Station">
-                <svg viewBox="0 0 24 24"><path d="M10.59 9.17L5.41 4 4 5.41l5.17 5.17 1.42-1.41zM14.5 4l2.04 2.04L4 18.59 5.41 20 17.96 7.45 20 9.5V4h-5.5zm.59 11.17l-1.41 1.41 3.13 3.13L20 17.5V23h-5.5l2.05-2.05-3.13-3.13z"/></svg>
-            </button>
-            <button id="play-pause-btn" class="control-btn" title="Play/Stop" disabled>
-                <svg id="play-pause-icon" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
-            </button>
+        <div class="header-inner">
+            <h1>Radio</h1>
+            <div class="controls">
+                <button id="sort-btn" class="control-btn" title="Sort by Location">
+                    <svg viewBox="0 0 24 24"><path d="M3 18h6v-2H3v2zM3 6v2h18V6H3zm0 7h12v-2H3v2z"/></svg>
+                </button>
+                <button id="shuffle-btn" class="control-btn" title="Shuffle Station">
+                    <svg viewBox="0 0 24 24"><path d="M10.59 9.17L5.41 4 4 5.41l5.17 5.17 1.42-1.41zM14.5 4l2.04 2.04L4 18.59 5.41 20 17.96 7.45 20 9.5V4h-5.5zm.59 11.17l-1.41 1.41 3.13 3.13L20 17.5V23h-5.5l2.05-2.05-3.13-3.13z"/></svg>
+                </button>
+                <button id="play-pause-btn" class="control-btn" title="Play/Stop" disabled>
+                    <svg id="play-pause-icon" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+                </button>
+            </div>
         </div>
     </header>
 
@@ -197,7 +208,7 @@
             { name: "FIPF", geo: "🇫🇷", type: "int", url: "https://stream.radiofrance.fr/fip/fip.m3u8" },   
             { name: "ECOF", geo: "🇩🇪", type: "int", url: "https://cast.egofm.de/egofm.mp3" },   
             { name: "FM4G", geo: "🇩🇪", type: "int", url: "https://orf-live.ors-shoutcast.at/fm4-q2a" },
-            { name: "STUD", geo: "🇸🇮", type: "int", url: "https://kruljo.radiostudent.si:8001/test.ogg" },
+            { name: "SLOV", geo: "🇸🇮", type: "int", url: "https://kruljo.radiostudent.si:8001/test.ogg" },
             { name: "NOVA", geo: "🇫🇷", type: "int", url: "https://novazz.ice.infomaniak.ch/novazz-128.mp3" },
             { name: "U92M", geo: "WV", type: "us", url: "https://stream.radiojar.com/56p3rt9eytzuv" },
             { name: "DEPA", geo: "IL", type: "us", url: "https://ice26.securenetsystems.net/RADIODEPAUL" },
