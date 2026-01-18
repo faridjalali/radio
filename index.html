@@ -102,7 +102,7 @@
 
     <h1>Radio</h1>
 
-    <audio id="radio-player" autoplay style="display:none;"></audio>
+    <audio id="radio-player" style="display:none;"></audio>
 
     <div class="grid" id="station-grid"></div>
 
@@ -117,14 +117,14 @@
             { name: "DEPA", url: "https://ice26.securenetsystems.net/RADIODEPAUL" },
             { name: "KRVS", url: "https://29223.live.streamtheworld.com/KRVSFMAAC.aac" },
             { name: "WKNC", url: "https://das-edge12-live365-dal02.cdnstream.com/a30009" },
-            { name: "WRIU", url: "https://stream.wriu.org/wriu-fm" },
-            { name: "WCBN", url: "https://floyd.wcbn.org:8443/wcbn-hd.mp3" },
             { name: "KCSU", url: "https://listen.kcsufm.com/stream" },
             { name: "WERS", url: "https://18503.live.streamtheworld.com/WERSFMAAC.aac" },
             { name: "KAMP", url: "https://ice42.securenetsystems.net/KAMP" },
             { name: "WUTK", url: "https://26223.live.streamtheworld.com/WUTKFM.mp3" },
+            { name: "WCBN", url: "https://floyd.wcbn.org:8443/wcbn-hd.mp3" },
             { name: "WREK", url: "https://streaming.wrek.org/main/320kb.mp3" },
             { name: "WBRU", url: "https://stream.radio.co/s4d09e922b/listen" },
+            { name: "WRIU", url: "https://stream.wriu.org/wriu-fm" },
             { name: "KJHK", url: "https://listen.mixlr.com/86b854be3889dc43aed2f0eb6f2b814b" },
             { name: "WICB", url: "https://icecast.do.zufall.co/wicb_aac_high" },
             { name: "WXYC", url: "https://audio-mp3.ibiblio.org/wxyc.mp3" },
@@ -177,9 +177,21 @@
             `;
             
             tile.onclick = () => {
-                document.querySelectorAll('.tile').forEach(t => t.classList.remove('active'));
-                tile.classList.add('active');
-                playStation(station);
+                const isCurrentlyActive = tile.classList.contains('active');
+
+                if (isCurrentlyActive) {
+                    // Stop playback and remove visual indicators
+                    player.pause();
+                    player.src = ""; // Clear src to stop buffering in background
+                    tile.classList.remove('active');
+                } else {
+                    // Clean up any previously active tile
+                    document.querySelectorAll('.tile').forEach(t => t.classList.remove('active'));
+                    
+                    // Activate new tile and play
+                    tile.classList.add('active');
+                    playStation(station);
+                }
             };
             
             grid.appendChild(tile);
@@ -187,7 +199,9 @@
 
         function playStation(station) {
             player.src = station.url;
-            player.play();
+            player.play().catch(error => {
+                console.error("Playback failed:", error);
+            });
         }
     </script>
 </body>
