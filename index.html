@@ -12,6 +12,7 @@
             --text-color: #ffffff;
             --accent-color: #0078d7;
             --disabled-color: #444;
+            --fav-color: #ffca28;
         }
 
         body {
@@ -63,8 +64,8 @@
         .control-btn:hover:not(:disabled) { border-color: white; background-color: rgba(255,255,255,0.1); }
         .control-btn:disabled { border-color: var(--disabled-color); cursor: not-allowed; }
         .control-btn svg { fill: white; width: 18px; height: 18px; }
-        .control-btn:disabled svg { fill: var(--disabled-color); }
 
+        /* Grid */
         .grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(175px, 1fr));
@@ -79,14 +80,14 @@
             .grid { grid-template-columns: repeat(2, 1fr); padding: 15px; gap: 10px; }
             .header-inner { padding: 0 15px; }
             h1 { font-size: 2rem; }
-            .tile-name { font-size: 1.2rem; }
         }
 
+        /* Tile Styles */
         .tile {
             aspect-ratio: 1 / 1;
             display: flex;
-            align-items: flex-end;    
-            justify-content: flex-start; 
+            flex-direction: column;
+            justify-content: space-between;
             padding: 15px;
             cursor: pointer;
             transition: filter 0.2s ease;
@@ -96,20 +97,25 @@
 
         .tile:hover { filter: brightness(1.2); }
 
-        .geo-tag {
-            position: absolute;
-            top: 15px;
-            right: 15px;
+        .tile-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
             z-index: 3;
+        }
+
+        .fav-star {
+            font-size: 1.2rem;
+            color: rgba(255, 255, 255, 0.3);
+            transition: color 0.2s ease;
+        }
+
+        .tile.is-fav .fav-star { color: var(--fav-color); }
+
+        .geo-tag {
             font-size: 1rem;
             font-weight: 700;
             opacity: 0.9;
-            pointer-events: none;
-            line-height: 1;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            height: 1rem;
         }
 
         .tile-name {
@@ -118,27 +124,41 @@
             z-index: 2;
             letter-spacing: -0.5px;
             line-height: 1;
-            word-break: break-all;
             text-transform: uppercase;
             pointer-events: none;
         }
 
-        .play-indicator {
-            position: absolute;
-            top: 12px;
-            left: 12px;
-            width: 22px;
-            height: 22px;
-            display: none; 
-            align-items: center;
-            justify-content: center;
+        /* Equalizer Bars */
+        .eq-container {
+            display: none;
+            align-items: flex-end;
+            gap: 2px;
+            height: 20px;
+            width: 20px;
+            z-index: 3;
         }
 
-        .play-indicator svg { fill: white; width: 100%; height: 100%; }
+        .tile.active .eq-container { display: flex; }
+
+        .eq-bar {
+            background-color: white;
+            width: 3px;
+            height: 100%;
+            animation: eq 1s ease-in-out infinite;
+        }
+
+        .eq-bar:nth-child(2) { animation-delay: 0.2s; }
+        .eq-bar:nth-child(3) { animation-delay: 0.4s; }
+
+        @keyframes eq {
+            0% { height: 20%; }
+            50% { height: 100%; }
+            100% { height: 20%; }
+        }
 
         .tile.active { outline: 4px solid white; outline-offset: -4px; }
-        .tile.active .play-indicator { display: flex; }
 
+        /* Metro Colors */
         .c1 { background-color: #00A300; } .c2 { background-color: #2D89EF; } 
         .c3 { background-color: #9F00A7; } .c4 { background-color: #603CBA; } 
         .c5 { background-color: #DA532C; } .c6 { background-color: #B91D47; } 
@@ -235,25 +255,67 @@
         let currentStationId = null;
         let isActuallyPlaying = false;
         let isLocationSorted = false;
-        let activePlaylist = [...stations];
+        let favoriteIds = JSON.parse(localStorage.getItem('favStations') || '[]');
+        let activePlaylist = [];
 
-        function renderGrid(stationsToRender) {
+        function renderGrid() {
             grid.innerHTML = '';
-            stationsToRender.forEach((station) => {
+            
+            // Re-calculate playlist order: Favorites first, then the rest
+            const favs = stations.filter(s => favoriteIds.includes(s.id));
+            const nonFavs = stations.filter(s => !favoriteIds.includes(s.id));
+            
+            if (isLocationSorted) {
+                const sortLogic = (a, b) => {
+                    if (a.type === "int" && b.type === "us") return -1;
+                    if (a.type === "us" && b.type === "int") return 1;
+                    return a.geo.localeCompare(b.geo);
+                };
+                favs.sort(sortLogic);
+                nonFavs.sort(sortLogic);
+            }
+            
+            activePlaylist = [...favs, ...nonFavs];
+            
+            activePlaylist.forEach((station) => {
                 const tile = document.createElement('div');
                 tile.className = `tile c${(station.id % 8) + 1}`;
-                if (currentStationId === station.id && isActuallyPlaying) {
-                    tile.classList.add('active');
-                }
+                if (favoriteIds.includes(station.id)) tile.classList.add('is-fav');
+                if (currentStationId === station.id && isActuallyPlaying) tile.classList.add('active');
+                
                 tile.dataset.id = station.id;
                 tile.innerHTML = `
-                    <div class="geo-tag">${station.geo}</div>
-                    <div class="play-indicator"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div>
+                    <div class="tile-top">
+                        <div class="fav-star">★</div>
+                        <div class="geo-tag">${station.geo}</div>
+                    </div>
+                    <div class="eq-container">
+                        <div class="eq-bar"></div>
+                        <div class="eq-bar"></div>
+                        <div class="eq-bar"></div>
+                    </div>
                     <div class="tile-name">${station.name}</div>
                 `;
+                
+                // Handle Favoriting on star click
+                tile.querySelector('.fav-star').onclick = (e) => {
+                    e.stopPropagation();
+                    toggleFavorite(station.id);
+                };
+                
                 tile.onclick = () => handleTileClick(station.id);
                 grid.appendChild(tile);
             });
+        }
+
+        function toggleFavorite(id) {
+            if (favoriteIds.includes(id)) {
+                favoriteIds = favoriteIds.filter(fid => fid !== id);
+            } else {
+                favoriteIds.push(id);
+            }
+            localStorage.setItem('favStations', JSON.stringify(favoriteIds));
+            renderGrid();
         }
 
         function handleTileClick(id) {
@@ -261,6 +323,31 @@
                 stopPlayback();
             } else {
                 playStation(id);
+            }
+        }
+
+        function setupMediaHandlers() {
+            if ('mediaSession' in navigator) {
+                navigator.mediaSession.setActionHandler('previoustrack', () => {
+                    // Logic: If there are favorites, next/prev only cycles through favorites
+                    const list = favoriteIds.length > 0 ? activePlaylist.filter(s => favoriteIds.includes(s.id)) : activePlaylist;
+                    const currentIndex = list.findIndex(s => s.id === currentStationId);
+                    const prevIndex = (currentIndex - 1 + list.length) % list.length;
+                    playStation(list[prevIndex].id);
+                });
+
+                navigator.mediaSession.setActionHandler('nexttrack', () => {
+                    const list = favoriteIds.length > 0 ? activePlaylist.filter(s => favoriteIds.includes(s.id)) : activePlaylist;
+                    const currentIndex = list.findIndex(s => s.id === currentStationId);
+                    const nextIndex = (currentIndex + 1) % list.length;
+                    playStation(list[nextIndex].id);
+                });
+
+                navigator.mediaSession.setActionHandler('play', () => {
+                   if (currentStationId !== null) player.play();
+                });
+
+                navigator.mediaSession.setActionHandler('pause', () => stopPlayback());
             }
         }
 
@@ -278,42 +365,15 @@
             document.title = `${station.name} - Radio`;
         }
 
-        function setupMediaHandlers() {
-            if ('mediaSession' in navigator) {
-                navigator.mediaSession.setActionHandler('previoustrack', () => {
-                    const currentIndex = activePlaylist.findIndex(s => s.id === currentStationId);
-                    const prevIndex = (currentIndex - 1 + activePlaylist.length) % activePlaylist.length;
-                    playStation(activePlaylist[prevIndex].id);
-                });
-
-                navigator.mediaSession.setActionHandler('nexttrack', () => {
-                    const currentIndex = activePlaylist.findIndex(s => s.id === currentStationId);
-                    const nextIndex = (currentIndex + 1) % activePlaylist.length;
-                    playStation(activePlaylist[nextIndex].id);
-                });
-
-                navigator.mediaSession.setActionHandler('play', () => {
-                   if (currentStationId !== null) player.play();
-                });
-
-                navigator.mediaSession.setActionHandler('pause', () => stopPlayback());
-            }
-        }
-
         function playStation(id) {
             const station = stations.find(s => s.id === id);
             document.querySelectorAll('.tile').forEach(t => t.classList.remove('active'));
             currentStationId = id;
             
-            // CRITICAL FIX: Direct URL update without clearing source first
-            // Clearing the source can trigger iOS to suspend the PWA's process.
+            player.pause();
             player.src = station.url;
-            player.play().catch(e => {
-                console.log("Play failed, retrying...");
-                // Secondary retry if direct play fails
-                player.load();
-                player.play();
-            });
+            player.load(); 
+            player.play().catch(e => console.log("Playback error:", e));
             
             const activeTile = document.querySelector(`.tile[data-id="${id}"]`);
             if (activeTile) activeTile.classList.add('active');
@@ -341,16 +401,7 @@
 
         sortBtn.onclick = () => {
             isLocationSorted = !isLocationSorted;
-            if (isLocationSorted) {
-                activePlaylist = [...stations].sort((a, b) => {
-                    if (a.type === "int" && b.type === "us") return -1;
-                    if (a.type === "us" && b.type === "int") return 1;
-                    return a.geo.localeCompare(b.geo);
-                });
-            } else {
-                activePlaylist = [...stations];
-            }
-            renderGrid(activePlaylist);
+            renderGrid();
         };
 
         shuffleBtn.onclick = () => {
@@ -366,7 +417,7 @@
             }
         };
 
-        renderGrid(activePlaylist);
+        renderGrid();
         setupMediaHandlers();
     </script>
 </body>
