@@ -264,42 +264,40 @@
             }
         }
 
-        function setupMediaHandlers() {
-            if ('mediaSession' in navigator) {
-                navigator.mediaSession.setActionHandler('previoustrack', () => {
-                    if (currentStationId === null) return;
-                    const currentIndex = activePlaylist.findIndex(s => s.id === currentStationId);
-                    const prevIndex = (currentIndex - 1 + activePlaylist.length) % activePlaylist.length;
-                    playStation(activePlaylist[prevIndex].id);
-                });
-
-                navigator.mediaSession.setActionHandler('nexttrack', () => {
-                    if (currentStationId === null) return;
-                    const currentIndex = activePlaylist.findIndex(s => s.id === currentStationId);
-                    const nextIndex = (currentIndex + 1) % activePlaylist.length;
-                    playStation(activePlaylist[nextIndex].id);
-                });
-
-                navigator.mediaSession.setActionHandler('play', () => {
-                   if (currentStationId !== null) playStation(currentStationId);
-                });
-
-                navigator.mediaSession.setActionHandler('pause', () => stopPlayback());
-            }
-        }
-
         function updateMediaMetadata(station) {
             if ('mediaSession' in navigator) {
                 navigator.mediaSession.metadata = new MediaMetadata({
                     title: station.name,
                     artist: "Radio Tile Player",
                     album: station.geo,
-                    artwork: [{ src: 'image_0.png.jpg', sizes: '512x512', type: 'image/jpeg' }]
+                    artwork: [{ src: 'image_0.png.jpg', sizes: '512x512', type: 'image/png' }]
                 });
                 navigator.mediaSession.playbackState = "playing";
-                setupMediaHandlers(); // Refresh handlers with new metadata context
+                setupMediaHandlers(); 
             }
             document.title = `${station.name} - Radio`;
+        }
+
+        function setupMediaHandlers() {
+            if ('mediaSession' in navigator) {
+                navigator.mediaSession.setActionHandler('previoustrack', () => {
+                    const currentIndex = activePlaylist.findIndex(s => s.id === currentStationId);
+                    const prevIndex = (currentIndex - 1 + activePlaylist.length) % activePlaylist.length;
+                    playStation(activePlaylist[prevIndex].id);
+                });
+
+                navigator.mediaSession.setActionHandler('nexttrack', () => {
+                    const currentIndex = activePlaylist.findIndex(s => s.id === currentStationId);
+                    const nextIndex = (currentIndex + 1) % activePlaylist.length;
+                    playStation(activePlaylist[nextIndex].id);
+                });
+
+                navigator.mediaSession.setActionHandler('play', () => {
+                   if (currentStationId !== null) player.play();
+                });
+
+                navigator.mediaSession.setActionHandler('pause', () => stopPlayback());
+            }
         }
 
         function playStation(id) {
@@ -307,10 +305,15 @@
             document.querySelectorAll('.tile').forEach(t => t.classList.remove('active'));
             currentStationId = id;
             
-            player.pause();
+            // CRITICAL FIX: Direct URL update without clearing source first
+            // Clearing the source can trigger iOS to suspend the PWA's process.
             player.src = station.url;
-            player.load(); 
-            player.play().catch(e => console.log("Playback error:", e));
+            player.play().catch(e => {
+                console.log("Play failed, retrying...");
+                // Secondary retry if direct play fails
+                player.load();
+                player.play();
+            });
             
             const activeTile = document.querySelector(`.tile[data-id="${id}"]`);
             if (activeTile) activeTile.classList.add('active');
@@ -359,11 +362,10 @@
             if (isActuallyPlaying) {
                 stopPlayback();
             } else if (currentStationId !== null) {
-                playStation(currentStationId);
+                player.play();
             }
         };
 
-        // Initialize display and handlers
         renderGrid(activePlaylist);
         setupMediaHandlers();
     </script>
