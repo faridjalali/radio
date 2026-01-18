@@ -17,36 +17,41 @@
             color: var(--text-color);
             font-family: "Segoe UI", "Segoe UI Semibold", Tahoma, sans-serif;
             margin: 0;
-            padding: 30px;
+            padding: 0; /* Padding moved to header and grid for sticky logic */
         }
 
+        /* Sticky Header Logic */
         header {
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            background-color: var(--bg-color);
             display: flex;
             justify-content: space-between;
             align-items: center;
-            max-width: 1600px;
-            margin: 0 auto 40px auto;
-            padding: 0 10px;
+            padding: 30px 40px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            border-bottom: 1px solid rgba(255,255,255,0.05);
         }
 
         h1 {
             font-weight: 200; 
-            font-size: 3rem; /* Slightly smaller for tighter header */
+            font-size: 3rem;
             margin: 0;
             letter-spacing: -1px;
         }
 
         .controls {
             display: flex;
-            gap: 12px; /* Tighter gap for better grouping */
+            gap: 12px;
         }
 
         .control-btn {
             background: none;
             border: 1.5px solid rgba(255,255,255,0.2);
             border-radius: 50%;
-            width: 48px;  /* Scaled down from 60px */
-            height: 48px; /* Scaled down from 60px */
+            width: 48px;
+            height: 48px;
             cursor: pointer;
             display: flex;
             align-items: center;
@@ -66,7 +71,7 @@
 
         .control-btn svg {
             fill: white;
-            width: 22px; /* Scaled down from 28px */
+            width: 22px;
             height: 22px;
         }
 
@@ -74,7 +79,6 @@
             fill: var(--disabled-color);
         }
 
-        /* Sorting button active state */
         .control-btn.active-sort {
             background-color: var(--accent-color);
             border-color: var(--accent-color);
@@ -86,6 +90,7 @@
             gap: 12px;
             max-width: 1600px;
             margin: 0 auto;
+            padding: 40px; /* Grid padding */
         }
 
         .tile {
@@ -104,15 +109,27 @@
             filter: brightness(1.2);
         }
 
+        /* Square Flag & State Tags */
         .geo-tag {
             position: absolute;
             top: 10px;
             right: 10px;
+            z-index: 3;
+            pointer-events: none;
+        }
+
+        .flag-icon {
+            width: 20px;
+            height: 20px;
+            object-fit: cover; /* Forces square aspect */
+            display: block;
+            border: 1px solid rgba(255,255,255,0.2);
+        }
+
+        .state-tag {
             font-size: 0.9rem;
             font-weight: 700;
             opacity: 0.9;
-            pointer-events: none;
-            z-index: 3;
         }
 
         .tile-name {
@@ -164,19 +181,13 @@
         <h1>Radio</h1>
         <div class="controls">
             <button id="sort-btn" class="control-btn" title="Toggle Location Sort">
-                <svg viewBox="0 0 24 24">
-                    <path d="M3 18h6v-2H3v2zM3 6v2h18V6H3zm0 7h12v-2H3v2z"/>
-                </svg>
+                <svg viewBox="0 0 24 24"><path d="M3 18h6v-2H3v2zM3 6v2h18V6H3zm0 7h12v-2H3v2z"/></svg>
             </button>
             <button id="shuffle-btn" class="control-btn" title="Shuffle Station">
-                <svg viewBox="0 0 24 24">
-                    <path d="M10.59 9.17L5.41 4 4 5.41l5.17 5.17 1.42-1.41zM14.5 4l2.04 2.04L4 18.59 5.41 20 17.96 7.45 20 9.5V4h-5.5zm.59 11.17l-1.41 1.41 3.13 3.13L20 17.5V23h-5.5l2.05-2.05-3.13-3.13z"/>
-                </svg>
+                <svg viewBox="0 0 24 24"><path d="M10.59 9.17L5.41 4 4 5.41l5.17 5.17 1.42-1.41zM14.5 4l2.04 2.04L4 18.59 5.41 20 17.96 7.45 20 9.5V4h-5.5zm.59 11.17l-1.41 1.41 3.13 3.13L20 17.5V23h-5.5l2.05-2.05-3.13-3.13z"/></svg>
             </button>
             <button id="play-pause-btn" class="control-btn" title="Play/Stop" disabled>
-                <svg id="play-pause-icon" viewBox="0 0 24 24">
-                    <path d="M8 5v14l11-7z"/> 
-                </svg>
+                <svg id="play-pause-icon" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
             </button>
         </div>
     </header>
@@ -186,57 +197,57 @@
 
     <script>
         const defaultStations = [
-            { name: "FIPF", geo: "🇫🇷", url: "https://stream.radiofrance.fr/fip/fip.m3u8" },   
-            { name: "ECOF", geo: "🇩🇪", url: "https://cast.egofm.de/egofm.mp3" },   
-            { name: "FM4G", geo: "🇩🇪", url: "https://orf-live.ors-shoutcast.at/fm4-q2a" },
-            { name: "SLOV", geo: "🇸🇮", url: "https://kruljo.radiostudent.si:8001/test.ogg" },
-            { name: "NOVA", geo: "🇫🇷", url: "https://novazz.ice.infomaniak.ch/novazz-128.mp3" },
-            { name: "U92M", geo: "WV", url: "https://stream.radiojar.com/56p3rt9eytzuv" },
-            { name: "DEPA", geo: "IL", url: "https://ice26.securenetsystems.net/RADIODEPAUL" },
-            { name: "KRVS", geo: "LA", url: "https://29223.live.streamtheworld.com/KRVSFMAAC.aac" },
-            { name: "WKNC", geo: "NC", url: "https://das-edge12-live365-dal02.cdnstream.com/a30009" },
-            { name: "KCSU", geo: "CO", url: "https://listen.kcsufm.com/stream" },
-            { name: "WERS", geo: "MA", url: "https://18503.live.streamtheworld.com/WERSFMAAC.aac" },
-            { name: "KAMP", geo: "AZ", url: "https://ice42.securenetsystems.net/KAMP" },
-            { name: "WUTK", geo: "TN", url: "https://26223.live.streamtheworld.com/WUTKFM.mp3" },
-            { name: "WCBN", geo: "MI", url: "https://floyd.wcbn.org:8443/wcbn-hd.mp3" },
-            { name: "WREK", geo: "GA", url: "https://streaming.wrek.org/main/320kb.mp3" },
-            { name: "WBRU", geo: "RI", url: "https://stream.radio.co/s4d09e922b/listen" },
-            { name: "WRIU", geo: "RI", url: "https://stream.wriu.org/wriu-fm" },
-            { name: "KJHK", geo: "KS", url: "https://listen.mixlr.com/86b854be3889dc43aed2f0eb6f2b814b" },
-            { name: "WICB", geo: "NY", url: "https://icecast.do.zufall.co/wicb_aac_high" },
-            { name: "WXYC", geo: "NC", url: "https://audio-mp3.ibiblio.org/wxyc.mp3" },
-            { name: "KEXP", geo: "WA", url: "https://kexp-mp3-128.streamguys1.com/kexp128.mp3" },
-            { name: "WUOG", geo: "GA", url: "https://stream.wuog.org/stream" },  
-            { name: "KCRW", geo: "CA", url: "https://streams.kcrw.com/kcrw_mp3" },
-            { name: "WFMU", geo: "NJ", url: "https://stream0.wfmu.org/freeform-128k" },
-            { name: "WWOZ", geo: "LA", url: "https://wwoz-sc.streamguys1.com/wwoz-hi.mp3" },
-            { name: "KKJZ", geo: "CA", url: "https://streaming.live365.com/a49833" },
-            { name: "KNKX", geo: "WA", url: "https://knkx-live-a.edge.audiocdn.com/6285_256k" },
-            { name: "WPSU", geo: "PA", url: "https://wpsu-ice.streamguys1.com/wpsu2" },
-            { name: "KCSN", geo: "CA", url: "https://www.streamvortex.com:8444/s/12200/" },
-            { name: "WXPN", geo: "PA", url: "https://wxpn.xpn.org/xpnmp3hi" },
-            { name: "WKIT", geo: "ME", url: "https://ice6.securenetsystems.net/WKIT" },
-            { name: "WDBM", geo: "MI", url: "https://play.impact89fm.org:8000/impact89fm" },
-            { name: "WLUW", geo: "IL", url: "https://ice26.securenetsystems.net/WLUW" },
-            { name: "WNUR", geo: "IL", url: "https://n16.rcs.revma.com/w4pmmfkdx4zuv" },
-            { name: "WIIT", geo: "IL", url: "https://icecast.iit.edu/WIITstream" },
-            { name: "WRAS", geo: "GA", url: "https://gpb.streamguys1.com/oom/gpb-radio-mp3-website" },   
-            { name: "KING", geo: "WA", url: "https://classicalking.streamguys1.com/king-fm-aac-128k" },     
-            { name: "KVCU", geo: "CO", url: "https://kvcu.streamguys1.com/live" },   
-            { name: "WBOR", geo: "ME", url: "https://listen.wbor.org/" },   
-            { name: "WZND", geo: "IL", url: "https://14543.live.streamtheworld.com/WZNDFM.mp3" },
-            { name: "WASU", geo: "NC", url: "https://prod-54-85-93-254.amperwave.net/wasu-wasuaac-hlsc1.m3u8" },
-            { name: "KXLU", geo: "CA", url: "https://kxlu.streamguys1.com/kxlu-hi" },
-            { name: "WXRT", geo: "IL", url: "https://prod-3-83-123-147.amperwave.net/audacy-wxrtfmaac-hlsc.m3u8" }, 
-            { name: "WTJU", geo: "VA", url: "https://streams.wtju.net/wtju-live.mp3" },
-            { name: "KVRX", geo: "TX", url: "https://streams.kut.org/5020_192.mp3" },
-            { name: "WUMF", geo: "ME", url: "http://wumfstreaming.umf.maine.edu:8000/wumf" },
-            { name: "WMEB", geo: "ME", url: "http://wmeb-stream.maine.edu:8000/wmeb" },
-            { name: "WQFS", geo: "NC", url: "http://wqfs.arcostream.com:7109/wqfs" },
+            // Int: Square flags via API. US: State text labels.
+            { name: "FIPF", geo: "fr", type: "int", url: "https://stream.radiofrance.fr/fip/fip.m3u8" },   
+            { name: "ECOF", geo: "de", type: "int", url: "https://cast.egofm.de/egofm.mp3" },   
+            { name: "FM4G", geo: "de", type: "int", url: "https://orf-live.ors-shoutcast.at/fm4-q2a" },
+            { name: "SLOV", geo: "si", type: "int", url: "https://kruljo.radiostudent.si:8001/test.ogg" },
+            { name: "NOVA", geo: "fr", type: "int", url: "https://novazz.ice.infomaniak.ch/novazz-128.mp3" },
+            { name: "U92M", geo: "WV", type: "us", url: "https://stream.radiojar.com/56p3rt9eytzuv" },
+            { name: "DEPA", geo: "IL", type: "us", url: "https://ice26.securenetsystems.net/RADIODEPAUL" },
+            { name: "KRVS", geo: "LA", type: "us", url: "https://29223.live.streamtheworld.com/KRVSFMAAC.aac" },
+            { name: "WKNC", geo: "NC", type: "us", url: "https://das-edge12-live365-dal02.cdnstream.com/a30009" },
+            { name: "KCSU", geo: "CO", type: "us", url: "https://listen.kcsufm.com/stream" },
+            { name: "WERS", geo: "MA", type: "us", url: "https://18503.live.streamtheworld.com/WERSFMAAC.aac" },
+            { name: "KAMP", geo: "AZ", type: "us", url: "https://ice42.securenetsystems.net/KAMP" },
+            { name: "WUTK", geo: "TN", type: "us", url: "https://26223.live.streamtheworld.com/WUTKFM.mp3" },
+            { name: "WCBN", geo: "MI", type: "us", url: "https://floyd.wcbn.org:8443/wcbn-hd.mp3" },
+            { name: "WREK", geo: "GA", type: "us", url: "https://streaming.wrek.org/main/320kb.mp3" },
+            { name: "WBRU", geo: "RI", type: "us", url: "https://stream.radio.co/s4d09e922b/listen" },
+            { name: "WRIU", geo: "RI", type: "us", url: "https://stream.wriu.org/wriu-fm" },
+            { name: "KJHK", geo: "KS", type: "us", url: "https://listen.mixlr.com/86b854be3889dc43aed2f0eb6f2b814b" },
+            { name: "WICB", geo: "NY", type: "us", url: "https://icecast.do.zufall.co/wicb_aac_high" },
+            { name: "WXYC", geo: "NC", type: "us", url: "https://audio-mp3.ibiblio.org/wxyc.mp3" },
+            { name: "KEXP", geo: "WA", type: "us", url: "https://kexp-mp3-128.streamguys1.com/kexp128.mp3" },
+            { name: "WUOG", geo: "GA", type: "us", url: "https://stream.wuog.org/stream" },  
+            { name: "KCRW", geo: "CA", type: "us", url: "https://streams.kcrw.com/kcrw_mp3" },
+            { name: "WFMU", geo: "NJ", type: "us", url: "https://stream0.wfmu.org/freeform-128k" },
+            { name: "WWOZ", geo: "LA", type: "us", url: "https://wwoz-sc.streamguys1.com/wwoz-hi.mp3" },
+            { name: "KKJZ", geo: "CA", type: "us", url: "https://streaming.live365.com/a49833" },
+            { name: "KNKX", geo: "WA", type: "us", url: "https://knkx-live-a.edge.audiocdn.com/6285_256k" },
+            { name: "WPSU", geo: "PA", type: "us", url: "https://wpsu-ice.streamguys1.com/wpsu2" },
+            { name: "KCSN", geo: "CA", type: "us", url: "https://www.streamvortex.com:8444/s/12200/" },
+            { name: "WXPN", geo: "PA", type: "us", url: "https://wxpn.xpn.org/xpnmp3hi" },
+            { name: "WKIT", geo: "ME", type: "us", url: "https://ice6.securenetsystems.net/WKIT" },
+            { name: "WDBM", geo: "MI", type: "us", url: "https://play.impact89fm.org:8000/impact89fm" },
+            { name: "WLUW", geo: "IL", type: "us", url: "https://ice26.securenetsystems.net/WLUW" },
+            { name: "WNUR", geo: "IL", type: "us", url: "https://n16.rcs.revma.com/w4pmmfkdx4zuv" },
+            { name: "WIIT", geo: "IL", type: "us", url: "https://icecast.iit.edu/WIITstream" },
+            { name: "WRAS", geo: "GA", type: "us", url: "https://gpb.streamguys1.com/oom/gpb-radio-mp3-website" },   
+            { name: "KING", geo: "WA", type: "us", url: "https://classicalking.streamguys1.com/king-fm-aac-128k" },     
+            { name: "KVCU", geo: "CO", type: "us", url: "https://kvcu.streamguys1.com/live" },   
+            { name: "WBOR", geo: "ME", type: "us", url: "https://listen.wbor.org/" },   
+            { name: "WZND", geo: "IL", type: "us", url: "https://14543.live.streamtheworld.com/WZNDFM.mp3" },
+            { name: "WASU", geo: "NC", type: "us", url: "https://prod-54-85-93-254.amperwave.net/wasu-wasuaac-hlsc1.m3u8" },
+            { name: "KXLU", geo: "CA", type: "us", url: "https://kxlu.streamguys1.com/kxlu-hi" },
+            { name: "WXRT", geo: "IL", type: "us", url: "https://prod-3-83-123-147.amperwave.net/audacy-wxrtfmaac-hlsc.m3u8" }, 
+            { name: "WTJU", geo: "VA", type: "us", url: "https://streams.wtju.net/wtju-live.mp3" },
+            { name: "KVRX", geo: "TX", type: "us", url: "https://streams.kut.org/5020_192.mp3" },
+            { name: "WUMF", geo: "ME", type: "us", url: "http://wumfstreaming.umf.maine.edu:8000/wumf" },
+            { name: "WMEB", geo: "ME", type: "us", url: "http://wmeb-stream.maine.edu:8000/wmeb" },
+            { name: "WQFS", geo: "NC", type: "us", url: "http://wqfs.arcostream.com:7109/wqfs" },
         ];
 
-        // Add original ID for index tracking
         defaultStations.forEach((s, i) => s.id = i);
 
         const grid = document.getElementById('station-grid');
@@ -262,8 +273,14 @@
                     tile.classList.add('active');
                 }
                 tile.dataset.id = station.id;
+
+                // Square flag API for Int, Text for US
+                const geoLabel = station.type === "int" 
+                    ? `<img class="flag-icon" src="https://flagcdn.com/w40/${station.geo}.png" alt="${station.geo}">`
+                    : `<div class="state-tag">${station.geo}</div>`;
+
                 tile.innerHTML = `
-                    <div class="geo-tag">${station.geo}</div>
+                    <div class="geo-tag">${geoLabel}</div>
                     <div class="play-indicator">
                         <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
                     </div>
@@ -285,14 +302,11 @@
         function playStation(id) {
             currentStationId = id;
             const station = defaultStations.find(s => s.id === id);
-
             document.querySelectorAll('.tile').forEach(t => t.classList.remove('active'));
             const activeTile = document.querySelector(`.tile[data-id="${id}"]`);
             if (activeTile) activeTile.classList.add('active');
-
             player.src = station.url;
             player.play();
-            
             isActuallyPlaying = true;
             playPauseBtn.disabled = false;
             updatePlayPauseButton(true);
@@ -310,19 +324,13 @@
             playPauseIcon.innerHTML = `<path d="${playing ? stopPath : playPath}"/>`;
         }
 
-        // Logic for Location Sort
         sortBtn.onclick = () => {
             isLocationSorted = !isLocationSorted;
             sortBtn.classList.toggle('active-sort');
-
             if (isLocationSorted) {
                 const sorted = [...defaultStations].sort((a, b) => {
-                    const isAInt = a.geo.length > 2;
-                    const isBInt = b.geo.length > 2;
-                    // Sort International first, then US
-                    if (isAInt && !isBInt) return -1;
-                    if (!isAInt && isBInt) return 1;
-                    // Then alphabetical within groups
+                    if (a.type === "int" && b.type === "us") return -1;
+                    if (a.type === "us" && b.type === "int") return 1;
                     return a.geo.localeCompare(b.geo);
                 });
                 renderGrid(sorted);
@@ -344,7 +352,6 @@
             }
         };
 
-        // Initial Load
         renderGrid(defaultStations);
     </script>
 </body>
