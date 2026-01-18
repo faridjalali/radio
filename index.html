@@ -85,14 +85,8 @@
             fill: var(--disabled-color);
         }
 
-        .control-btn.active-sort {
-            background-color: var(--accent-color);
-            border-color: var(--accent-color);
-        }
-
         .grid {
             display: grid;
-            /* Default for larger screens */
             grid-template-columns: repeat(auto-fill, minmax(175px, 1fr));
             gap: 15px;
             max-width: 1600px;
@@ -101,7 +95,6 @@
             box-sizing: border-box;
         }
 
-        /* Enforce 2 tiles per row on Mobile */
         @media (max-width: 600px) {
             .grid {
                 grid-template-columns: repeat(2, 1fr);
@@ -314,14 +307,33 @@
             }
         }
 
+        function updateMediaMetadata(station) {
+            if ('mediaSession' in navigator) {
+                navigator.mediaSession.metadata = new MediaMetadata({
+                    title: station.name,
+                    artist: "Radio Tile Player",
+                    album: station.geo,
+                    artwork: [
+                        { src: 'https://img.icons8.com/ios-filled/500/ffffff/radio.png', sizes: '512x512', type: 'image/png' }
+                    ]
+                });
+            }
+            // Update browser tab title as well
+            document.title = `${station.name} - Radio`;
+        }
+
         function playStation(id) {
             currentStationId = id;
             const station = defaultStations.find(s => s.id === id);
             document.querySelectorAll('.tile').forEach(t => t.classList.remove('active'));
             const activeTile = document.querySelector(`.tile[data-id="${id}"]`);
             if (activeTile) activeTile.classList.add('active');
+            
             player.src = station.url;
             player.play();
+            
+            updateMediaMetadata(station);
+            
             isActuallyPlaying = true;
             playPauseBtn.disabled = false;
             updatePlayPauseButton(true);
@@ -333,6 +345,7 @@
             isActuallyPlaying = false;
             updatePlayPauseButton(false);
             document.querySelectorAll('.tile').forEach(t => t.classList.remove('active'));
+            document.title = "Radio Tile Player";
         }
 
         function updatePlayPauseButton(playing) {
