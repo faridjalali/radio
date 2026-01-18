@@ -9,6 +9,7 @@
             --bg-color: #1a1a1a;
             --text-color: #ffffff;
             --accent-color: #0078d7;
+            --disabled-color: #444;
         }
 
         body {
@@ -30,18 +31,22 @@
 
         h1 {
             font-weight: 200; 
-            font-size: 3.5rem;
+            font-size: 3rem; /* Slightly smaller for tighter header */
             margin: 0;
             letter-spacing: -1px;
         }
 
-        /* Top Right Control Button */
-        #control-btn {
+        .controls {
+            display: flex;
+            gap: 12px; /* Tighter gap for better grouping */
+        }
+
+        .control-btn {
             background: none;
-            border: 2px solid rgba(255,255,255,0.2);
+            border: 1.5px solid rgba(255,255,255,0.2);
             border-radius: 50%;
-            width: 60px;
-            height: 60px;
+            width: 48px;  /* Scaled down from 60px */
+            height: 48px; /* Scaled down from 60px */
             cursor: pointer;
             display: flex;
             align-items: center;
@@ -49,15 +54,30 @@
             transition: all 0.2s ease;
         }
 
-        #control-btn:hover {
+        .control-btn:hover:not(:disabled) {
             border-color: white;
             background-color: rgba(255,255,255,0.1);
         }
 
-        #control-btn svg {
+        .control-btn:disabled {
+            border-color: var(--disabled-color);
+            cursor: not-allowed;
+        }
+
+        .control-btn svg {
             fill: white;
-            width: 30px;
-            height: 30px;
+            width: 22px; /* Scaled down from 28px */
+            height: 22px;
+        }
+
+        .control-btn:disabled svg {
+            fill: var(--disabled-color);
+        }
+
+        /* Sorting button active state */
+        .control-btn.active-sort {
+            background-color: var(--accent-color);
+            border-color: var(--accent-color);
         }
 
         .grid {
@@ -84,6 +104,17 @@
             filter: brightness(1.2);
         }
 
+        .geo-tag {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            font-size: 0.9rem;
+            font-weight: 700;
+            opacity: 0.9;
+            pointer-events: none;
+            z-index: 3;
+        }
+
         .tile-name {
             font-size: 1.4rem; 
             font-weight: 600;
@@ -98,9 +129,9 @@
         .play-indicator {
             position: absolute;
             top: 10px;
-            right: 10px;
-            width: 22px;
-            height: 22px;
+            left: 10px;
+            width: 20px;
+            height: 20px;
             display: none; 
         }
 
@@ -120,14 +151,10 @@
         }
 
         /* Metro Colors */
-        .c1 { background-color: #00A300; } 
-        .c2 { background-color: #2D89EF; } 
-        .c3 { background-color: #9F00A7; } 
-        .c4 { background-color: #603CBA; } 
-        .c5 { background-color: #DA532C; } 
-        .c6 { background-color: #B91D47; } 
-        .c7 { background-color: #00ABA9; } 
-        .c8 { background-color: #7E3878; } 
+        .c1 { background-color: #00A300; } .c2 { background-color: #2D89EF; } 
+        .c3 { background-color: #9F00A7; } .c4 { background-color: #603CBA; } 
+        .c5 { background-color: #DA532C; } .c6 { background-color: #B91D47; } 
+        .c7 { background-color: #00ABA9; } .c8 { background-color: #7E3878; } 
 
     </style>
 </head>
@@ -135,145 +162,190 @@
 
     <header>
         <h1>Radio</h1>
-        <button id="control-btn" title="Random Station">
-            <svg id="btn-icon" viewBox="0 0 24 24">
-                <path d="M10.59 9.17L5.41 4 4 5.41l5.17 5.17 1.42-1.41zM14.5 4l2.04 2.04L4 18.59 5.41 20 17.96 7.45 20 9.5V4h-5.5zm.59 11.17l-1.41 1.41 3.13 3.13L20 17.5V23h-5.5l2.05-2.05-3.13-3.13z"/>
-            </svg>
-        </button>
+        <div class="controls">
+            <button id="sort-btn" class="control-btn" title="Toggle Location Sort">
+                <svg viewBox="0 0 24 24">
+                    <path d="M3 18h6v-2H3v2zM3 6v2h18V6H3zm0 7h12v-2H3v2z"/>
+                </svg>
+            </button>
+            <button id="shuffle-btn" class="control-btn" title="Shuffle Station">
+                <svg viewBox="0 0 24 24">
+                    <path d="M10.59 9.17L5.41 4 4 5.41l5.17 5.17 1.42-1.41zM14.5 4l2.04 2.04L4 18.59 5.41 20 17.96 7.45 20 9.5V4h-5.5zm.59 11.17l-1.41 1.41 3.13 3.13L20 17.5V23h-5.5l2.05-2.05-3.13-3.13z"/>
+                </svg>
+            </button>
+            <button id="play-pause-btn" class="control-btn" title="Play/Stop" disabled>
+                <svg id="play-pause-icon" viewBox="0 0 24 24">
+                    <path d="M8 5v14l11-7z"/> 
+                </svg>
+            </button>
+        </div>
     </header>
 
     <audio id="radio-player" style="display:none;"></audio>
-
     <div class="grid" id="station-grid"></div>
 
     <script>
-        const stations = [
-            { name: "FIPF", url: "https://stream.radiofrance.fr/fip/fip.m3u8" },   
-            { name: "ECOF", url: "https://cast.egofm.de/egofm.mp3" },   
-            { name: "FM4G", url: "https://orf-live.ors-shoutcast.at/fm4-q2a" },
-            { name: "SLOV", url: "https://kruljo.radiostudent.si:8001/test.ogg" },
-            { name: "NOVA", url: "https://novazz.ice.infomaniak.ch/novazz-128.mp3" },
-            { name: "U92M", url: "https://stream.radiojar.com/56p3rt9eytzuv" },
-            { name: "DEPA", url: "https://ice26.securenetsystems.net/RADIODEPAUL" },
-            { name: "KRVS", url: "https://29223.live.streamtheworld.com/KRVSFMAAC.aac" },
-            { name: "WKNC", url: "https://das-edge12-live365-dal02.cdnstream.com/a30009" },
-            { name: "KCSU", url: "https://listen.kcsufm.com/stream" },
-            { name: "WERS", url: "https://18503.live.streamtheworld.com/WERSFMAAC.aac" },
-            { name: "KAMP", url: "https://ice42.securenetsystems.net/KAMP" },
-            { name: "WUTK", url: "https://26223.live.streamtheworld.com/WUTKFM.mp3" },
-            { name: "WCBN", url: "https://floyd.wcbn.org:8443/wcbn-hd.mp3" },
-            { name: "WREK", url: "https://streaming.wrek.org/main/320kb.mp3" },
-            { name: "WBRU", url: "https://stream.radio.co/s4d09e922b/listen" },
-            { name: "WRIU", url: "https://stream.wriu.org/wriu-fm" },
-            { name: "KJHK", url: "https://listen.mixlr.com/86b854be3889dc43aed2f0eb6f2b814b" },
-            { name: "WICB", url: "https://icecast.do.zufall.co/wicb_aac_high" },
-            { name: "WXYC", url: "https://audio-mp3.ibiblio.org/wxyc.mp3" },
-            { name: "KEXP", url: "https://kexp-mp3-128.streamguys1.com/kexp128.mp3" },
-            { name: "WUOG", url: "https://stream.wuog.org/stream" },  
-            { name: "KCRW", url: "https://streams.kcrw.com/kcrw_mp3" },
-            { name: "KCRW", url: "https://streams.kcrw.com/e24_mp3" },
-            { name: "WFMU", url: "https://stream0.wfmu.org/freeform-128k" },
-            { name: "WWOZ", url: "https://wwoz-sc.streamguys1.com/wwoz-hi.mp3" },
-            { name: "KKJZ", url: "https://streaming.live365.com/a49833" },
-            { name: "KKJZ", url: "https://streaming.live365.com/a45189_2" },
-            { name: "KNKX", url: "https://knkx-live-a.edge.audiocdn.com/6285_256k" },
-            { name: "WPSU", url: "https://wpsu-ice.streamguys1.com/wpsu2" },
-            { name: "WPSU", url: "https://wpsu-ice.streamguys1.com/wpsu3" },
-            { name: "KCSN", url: "https://www.streamvortex.com:8444/s/12200/" },
-            { name: "WXPN", url: "https://wxpn.xpn.org/xpnmp3hi" },
-            { name: "WKIT", url: "https://ice6.securenetsystems.net/WKIT" },
-            { name: "WDBM", url: "https://play.impact89fm.org:8000/impact89fm" },
-            { name: "WLUW", url: "https://ice26.securenetsystems.net/WLUW" },
-            { name: "WNUR", url: "https://n16.rcs.revma.com/w4pmmfkdx4zuv" },
-            { name: "WIIT", url: "https://icecast.iit.edu/WIITstream" },
-            { name: "WRAS", url: "https://gpb.streamguys1.com/oom/gpb-radio-mp3-website" },   
-            { name: "KING", url: "https://classicalking.streamguys1.com/king-fm-aac-128k" },     
-            { name: "KVCU", url: "https://kvcu.streamguys1.com/live" },   
-            { name: "WBOR", url: "https://listen.wbor.org/" },   
-            { name: "WZND", url: "https://14543.live.streamtheworld.com/WZNDFM.mp3" },
-            { name: "WASU", url: "https://prod-54-85-93-254.amperwave.net/wasu-wasuaac-hlsc1.m3u8" },
-            { name: "KXLU", url: "https://kxlu.streamguys1.com/kxlu-hi" },
-            { name: "WXRT", url: "https://prod-3-83-123-147.amperwave.net/audacy-wxrtfmaac-hlsc.m3u8" }, 
-            { name: "WTJU", url: "https://streams.wtju.net/wtju-live.mp3" },
-            { name: "KVRX", url: "https://streams.kut.org/5020_192.mp3" },
-            { name: "WUMF", url: "http://wumfstreaming.umf.maine.edu:8000/wumf" },
-            { name: "WMEB", url: "http://wmeb-stream.maine.edu:8000/wmeb" },
-            { name: "WQFS", url: "http://wqfs.arcostream.com:7109/wqfs" },
+        const defaultStations = [
+            { name: "FIPF", geo: "🇫🇷", url: "https://stream.radiofrance.fr/fip/fip.m3u8" },   
+            { name: "ECOF", geo: "🇩🇪", url: "https://cast.egofm.de/egofm.mp3" },   
+            { name: "FM4G", geo: "🇩🇪", url: "https://orf-live.ors-shoutcast.at/fm4-q2a" },
+            { name: "SLOV", geo: "🇸🇮", url: "https://kruljo.radiostudent.si:8001/test.ogg" },
+            { name: "NOVA", geo: "🇫🇷", url: "https://novazz.ice.infomaniak.ch/novazz-128.mp3" },
+            { name: "U92M", geo: "WV", url: "https://stream.radiojar.com/56p3rt9eytzuv" },
+            { name: "DEPA", geo: "IL", url: "https://ice26.securenetsystems.net/RADIODEPAUL" },
+            { name: "KRVS", geo: "LA", url: "https://29223.live.streamtheworld.com/KRVSFMAAC.aac" },
+            { name: "WKNC", geo: "NC", url: "https://das-edge12-live365-dal02.cdnstream.com/a30009" },
+            { name: "KCSU", geo: "CO", url: "https://listen.kcsufm.com/stream" },
+            { name: "WERS", geo: "MA", url: "https://18503.live.streamtheworld.com/WERSFMAAC.aac" },
+            { name: "KAMP", geo: "AZ", url: "https://ice42.securenetsystems.net/KAMP" },
+            { name: "WUTK", geo: "TN", url: "https://26223.live.streamtheworld.com/WUTKFM.mp3" },
+            { name: "WCBN", geo: "MI", url: "https://floyd.wcbn.org:8443/wcbn-hd.mp3" },
+            { name: "WREK", geo: "GA", url: "https://streaming.wrek.org/main/320kb.mp3" },
+            { name: "WBRU", geo: "RI", url: "https://stream.radio.co/s4d09e922b/listen" },
+            { name: "WRIU", geo: "RI", url: "https://stream.wriu.org/wriu-fm" },
+            { name: "KJHK", geo: "KS", url: "https://listen.mixlr.com/86b854be3889dc43aed2f0eb6f2b814b" },
+            { name: "WICB", geo: "NY", url: "https://icecast.do.zufall.co/wicb_aac_high" },
+            { name: "WXYC", geo: "NC", url: "https://audio-mp3.ibiblio.org/wxyc.mp3" },
+            { name: "KEXP", geo: "WA", url: "https://kexp-mp3-128.streamguys1.com/kexp128.mp3" },
+            { name: "WUOG", geo: "GA", url: "https://stream.wuog.org/stream" },  
+            { name: "KCRW", geo: "CA", url: "https://streams.kcrw.com/kcrw_mp3" },
+            { name: "WFMU", geo: "NJ", url: "https://stream0.wfmu.org/freeform-128k" },
+            { name: "WWOZ", geo: "LA", url: "https://wwoz-sc.streamguys1.com/wwoz-hi.mp3" },
+            { name: "KKJZ", geo: "CA", url: "https://streaming.live365.com/a49833" },
+            { name: "KNKX", geo: "WA", url: "https://knkx-live-a.edge.audiocdn.com/6285_256k" },
+            { name: "WPSU", geo: "PA", url: "https://wpsu-ice.streamguys1.com/wpsu2" },
+            { name: "KCSN", geo: "CA", url: "https://www.streamvortex.com:8444/s/12200/" },
+            { name: "WXPN", geo: "PA", url: "https://wxpn.xpn.org/xpnmp3hi" },
+            { name: "WKIT", geo: "ME", url: "https://ice6.securenetsystems.net/WKIT" },
+            { name: "WDBM", geo: "MI", url: "https://play.impact89fm.org:8000/impact89fm" },
+            { name: "WLUW", geo: "IL", url: "https://ice26.securenetsystems.net/WLUW" },
+            { name: "WNUR", geo: "IL", url: "https://n16.rcs.revma.com/w4pmmfkdx4zuv" },
+            { name: "WIIT", geo: "IL", url: "https://icecast.iit.edu/WIITstream" },
+            { name: "WRAS", geo: "GA", url: "https://gpb.streamguys1.com/oom/gpb-radio-mp3-website" },   
+            { name: "KING", geo: "WA", url: "https://classicalking.streamguys1.com/king-fm-aac-128k" },     
+            { name: "KVCU", geo: "CO", url: "https://kvcu.streamguys1.com/live" },   
+            { name: "WBOR", geo: "ME", url: "https://listen.wbor.org/" },   
+            { name: "WZND", geo: "IL", url: "https://14543.live.streamtheworld.com/WZNDFM.mp3" },
+            { name: "WASU", geo: "NC", url: "https://prod-54-85-93-254.amperwave.net/wasu-wasuaac-hlsc1.m3u8" },
+            { name: "KXLU", geo: "CA", url: "https://kxlu.streamguys1.com/kxlu-hi" },
+            { name: "WXRT", geo: "IL", url: "https://prod-3-83-123-147.amperwave.net/audacy-wxrtfmaac-hlsc.m3u8" }, 
+            { name: "WTJU", geo: "VA", url: "https://streams.wtju.net/wtju-live.mp3" },
+            { name: "KVRX", geo: "TX", url: "https://streams.kut.org/5020_192.mp3" },
+            { name: "WUMF", geo: "ME", url: "http://wumfstreaming.umf.maine.edu:8000/wumf" },
+            { name: "WMEB", geo: "ME", url: "http://wmeb-stream.maine.edu:8000/wmeb" },
+            { name: "WQFS", geo: "NC", url: "http://wqfs.arcostream.com:7109/wqfs" },
         ];
+
+        // Add original ID for index tracking
+        defaultStations.forEach((s, i) => s.id = i);
 
         const grid = document.getElementById('station-grid');
         const player = document.getElementById('radio-player');
-        const controlBtn = document.getElementById('control-btn');
-        const btnIcon = document.getElementById('btn-icon');
+        const sortBtn = document.getElementById('sort-btn');
+        const shuffleBtn = document.getElementById('shuffle-btn');
+        const playPauseBtn = document.getElementById('play-pause-btn');
+        const playPauseIcon = document.getElementById('play-pause-icon');
 
-        const shufflePath = "M10.59 9.17L5.41 4 4 5.41l5.17 5.17 1.42-1.41zM14.5 4l2.04 2.04L4 18.59 5.41 20 17.96 7.45 20 9.5V4h-5.5zm.59 11.17l-1.41 1.41 3.13 3.13L20 17.5V23h-5.5l2.05-2.05-3.13-3.13z";
+        const playPath = "M8 5v14l11-7z";
         const stopPath = "M6 6h12v12H6z";
 
-        let isPlaying = false;
+        let currentStationId = null;
+        let isActuallyPlaying = false;
+        let isLocationSorted = false;
 
-        // Populate Grid
-        stations.forEach((station, index) => {
-            const tile = document.createElement('div');
-            const colorClass = `c${(index % 8) + 1}`;
-            tile.className = `tile ${colorClass}`;
-            tile.dataset.index = index;
-            
-            tile.innerHTML = `
-                <div class="play-indicator">
-                    <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
-                </div>
-                <div class="tile-name">${station.name}</div>
-            `;
-            
-            tile.onclick = () => {
-                if (tile.classList.contains('active')) {
-                    stopAll();
-                } else {
-                    playStation(index);
+        function renderGrid(stationsToRender) {
+            grid.innerHTML = '';
+            stationsToRender.forEach((station) => {
+                const tile = document.createElement('div');
+                tile.className = `tile c${(station.id % 8) + 1}`;
+                if (currentStationId === station.id && isActuallyPlaying) {
+                    tile.classList.add('active');
                 }
-            };
-            
-            grid.appendChild(tile);
-        });
+                tile.dataset.id = station.id;
+                tile.innerHTML = `
+                    <div class="geo-tag">${station.geo}</div>
+                    <div class="play-indicator">
+                        <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+                    </div>
+                    <div class="tile-name">${station.name}</div>
+                `;
+                tile.onclick = () => handleTileClick(station.id);
+                grid.appendChild(tile);
+            });
+        }
 
-        function playStation(index) {
-            const station = stations[index];
-            
-            // UI Cleanup
+        function handleTileClick(id) {
+            if (currentStationId === id && isActuallyPlaying) {
+                stopPlayback();
+            } else {
+                playStation(id);
+            }
+        }
+
+        function playStation(id) {
+            currentStationId = id;
+            const station = defaultStations.find(s => s.id === id);
+
             document.querySelectorAll('.tile').forEach(t => t.classList.remove('active'));
-            const activeTile = document.querySelector(`.tile[data-index="${index}"]`);
+            const activeTile = document.querySelector(`.tile[data-id="${id}"]`);
             if (activeTile) activeTile.classList.add('active');
 
-            // Audio Logic
             player.src = station.url;
             player.play();
             
-            // Button Logic
-            isPlaying = true;
-            btnIcon.innerHTML = `<path d="${stopPath}"/>`;
-            controlBtn.title = "Stop Stream";
+            isActuallyPlaying = true;
+            playPauseBtn.disabled = false;
+            updatePlayPauseButton(true);
         }
 
-        function stopAll() {
+        function stopPlayback() {
             player.pause();
             player.src = "";
+            isActuallyPlaying = false;
+            updatePlayPauseButton(false);
             document.querySelectorAll('.tile').forEach(t => t.classList.remove('active'));
-            
-            // Reset Button
-            isPlaying = false;
-            btnIcon.innerHTML = `<path d="${shufflePath}"/>`;
-            controlBtn.title = "Random Station";
         }
 
-        // Random / Stop Button Click
-        controlBtn.onclick = () => {
-            if (isPlaying) {
-                stopAll();
+        function updatePlayPauseButton(playing) {
+            playPauseIcon.innerHTML = `<path d="${playing ? stopPath : playPath}"/>`;
+        }
+
+        // Logic for Location Sort
+        sortBtn.onclick = () => {
+            isLocationSorted = !isLocationSorted;
+            sortBtn.classList.toggle('active-sort');
+
+            if (isLocationSorted) {
+                const sorted = [...defaultStations].sort((a, b) => {
+                    const isAInt = a.geo.length > 2;
+                    const isBInt = b.geo.length > 2;
+                    // Sort International first, then US
+                    if (isAInt && !isBInt) return -1;
+                    if (!isAInt && isBInt) return 1;
+                    // Then alphabetical within groups
+                    return a.geo.localeCompare(b.geo);
+                });
+                renderGrid(sorted);
             } else {
-                const randomIndex = Math.floor(Math.random() * stations.length);
-                playStation(randomIndex);
+                renderGrid(defaultStations);
             }
         };
+
+        shuffleBtn.onclick = () => {
+            const randomIndex = Math.floor(Math.random() * defaultStations.length);
+            playStation(defaultStations[randomIndex].id);
+        };
+
+        playPauseBtn.onclick = () => {
+            if (isActuallyPlaying) {
+                stopPlayback();
+            } else if (currentStationId !== null) {
+                playStation(currentStationId);
+            }
+        };
+
+        // Initial Load
+        renderGrid(defaultStations);
     </script>
 </body>
 </html>
