@@ -234,6 +234,7 @@
         let currentStationId = null;
         let isActuallyPlaying = false;
         let isLocationSorted = false;
+        let activePlaylist = [...defaultStations];
 
         function renderGrid(stationsToRender) {
             grid.innerHTML = '';
@@ -268,9 +269,27 @@
                     title: station.name,
                     artist: "Radio Tile Player",
                     album: station.geo,
-                    // Updated to use local image_0.png
-                    artwork: [{ src: './image_0.png.jpg', sizes: '512x512', type: 'image/png' }]
+                    artwork: [{ src: 'image_0.png.jpg', sizes: '512x512', type: 'image/png' }]
                 });
+
+                // ENABLE NEXT/PREVIOUS ACTIONS IN MEDIA CENTER
+                navigator.mediaSession.setActionHandler('previoustrack', () => {
+                    const currentIndex = activePlaylist.findIndex(s => s.id === currentStationId);
+                    const prevIndex = (currentIndex - 1 + activePlaylist.length) % activePlaylist.length;
+                    playStation(activePlaylist[prevIndex].id);
+                });
+
+                navigator.mediaSession.setActionHandler('nexttrack', () => {
+                    const currentIndex = activePlaylist.findIndex(s => s.id === currentStationId);
+                    const nextIndex = (currentIndex + 1) % activePlaylist.length;
+                    playStation(activePlaylist[nextIndex].id);
+                });
+
+                navigator.mediaSession.setActionHandler('play', () => {
+                   if (currentStationId !== null) playStation(currentStationId);
+                });
+
+                navigator.mediaSession.setActionHandler('pause', () => stopPlayback());
             }
             document.title = `${station.name} - Radio`;
         }
@@ -313,15 +332,15 @@
             isLocationSorted = !isLocationSorted;
             sortBtn.classList.toggle('active-sort');
             if (isLocationSorted) {
-                const sorted = [...defaultStations].sort((a, b) => {
+                activePlaylist = [...defaultStations].sort((a, b) => {
                     if (a.type === "int" && b.type === "us") return -1;
                     if (a.type === "us" && b.type === "int") return 1;
                     return a.geo.localeCompare(b.geo);
                 });
-                renderGrid(sorted);
             } else {
-                renderGrid(defaultStations);
+                activePlaylist = [...defaultStations];
             }
+            renderGrid(activePlaylist);
         };
 
         shuffleBtn.onclick = () => {
@@ -337,7 +356,7 @@
             }
         };
 
-        renderGrid(defaultStations);
+        renderGrid(activePlaylist);
     </script>
 </body>
 </html>
