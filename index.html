@@ -264,25 +264,27 @@
             }
         }
 
-        // Setup persistent handlers
-        if ('mediaSession' in navigator) {
-            navigator.mediaSession.setActionHandler('previoustrack', () => {
-                const currentIndex = activePlaylist.findIndex(s => s.id === currentStationId);
-                const prevIndex = (currentIndex - 1 + activePlaylist.length) % activePlaylist.length;
-                playStation(activePlaylist[prevIndex].id);
-            });
+        // The Force-Rebind function ensures iOS "Standalone" mode doesn't drop handlers
+        function setupMediaHandlers() {
+            if ('mediaSession' in navigator) {
+                navigator.mediaSession.setActionHandler('previoustrack', () => {
+                    const currentIndex = activePlaylist.findIndex(s => s.id === currentStationId);
+                    const prevIndex = (currentIndex - 1 + activePlaylist.length) % activePlaylist.length;
+                    playStation(activePlaylist[prevIndex].id);
+                });
 
-            navigator.mediaSession.setActionHandler('nexttrack', () => {
-                const currentIndex = activePlaylist.findIndex(s => s.id === currentStationId);
-                const nextIndex = (currentIndex + 1) % activePlaylist.length;
-                playStation(activePlaylist[nextIndex].id);
-            });
+                navigator.mediaSession.setActionHandler('nexttrack', () => {
+                    const currentIndex = activePlaylist.findIndex(s => s.id === currentStationId);
+                    const nextIndex = (currentIndex + 1) % activePlaylist.length;
+                    playStation(activePlaylist[nextIndex].id);
+                });
 
-            navigator.mediaSession.setActionHandler('play', () => {
-               if (currentStationId !== null) playStation(currentStationId);
-            });
+                navigator.mediaSession.setActionHandler('play', () => {
+                   if (currentStationId !== null) playStation(currentStationId);
+                });
 
-            navigator.mediaSession.setActionHandler('pause', () => stopPlayback());
+                navigator.mediaSession.setActionHandler('pause', () => stopPlayback());
+            }
         }
 
         function updateMediaMetadata(station) {
@@ -294,6 +296,9 @@
                     artwork: [{ src: 'image_0.png.jpg', sizes: '512x512', type: 'image/png' }]
                 });
                 navigator.mediaSession.playbackState = "playing";
+                
+                // Re-bind handlers every time metadata is updated
+                setupMediaHandlers();
             }
             document.title = `${station.name} - Radio`;
         }
@@ -306,7 +311,7 @@
             player.pause();
             player.src = station.url;
             player.load(); 
-            player.play();
+            player.play().catch(e => console.log("Playback error:", e));
             
             const activeTile = document.querySelector(`.tile[data-id="${id}"]`);
             if (activeTile) activeTile.classList.add('active');
@@ -325,41 +330,3 @@
             }
             updatePlayPauseButton(false);
             document.querySelectorAll('.tile').forEach(t => t.classList.remove('active'));
-            document.title = "Radio Tile Player";
-        }
-
-        function updatePlayPauseButton(playing) {
-            playPauseIcon.innerHTML = `<path d="${playing ? stopPath : playPath}"/>`;
-        }
-
-        sortBtn.onclick = () => {
-            isLocationSorted = !isLocationSorted;
-            if (isLocationSorted) {
-                activePlaylist = [...stations].sort((a, b) => {
-                    if (a.type === "int" && b.type === "us") return -1;
-                    if (a.type === "us" && b.type === "int") return 1;
-                    return a.geo.localeCompare(b.geo);
-                });
-            } else {
-                activePlaylist = [...stations];
-            }
-            renderGrid(activePlaylist);
-        };
-
-        shuffleBtn.onclick = () => {
-            const randomIndex = Math.floor(Math.random() * stations.length);
-            playStation(stations[randomIndex].id);
-        };
-
-        playPauseBtn.onclick = () => {
-            if (isActuallyPlaying) {
-                stopPlayback();
-            } else if (currentStationId !== null) {
-                playStation(currentStationId);
-            }
-        };
-
-        renderGrid(activePlaylist);
-    </script>
-</body>
-</html>
