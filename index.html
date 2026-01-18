@@ -101,9 +101,7 @@
                 padding: 15px;
                 gap: 10px;
             }
-            .header-inner {
-                padding: 0 15px;
-            }
+            .header-inner { padding: 0 15px; }
             h1 { font-size: 2rem; }
             .tile-name { font-size: 1.2rem; }
         }
@@ -251,7 +249,7 @@
             { name: "KVRX", geo: "TX", type: "us", url: "https://streams.kut.org/5020_192.mp3" },
             { name: "WUMF", geo: "ME", type: "us", url: "http://wumfstreaming.umf.maine.edu:8000/wumf" },
             { name: "WMEB", geo: "ME", type: "us", url: "http://wmeb-stream.maine.edu:8000/wmeb" },
-            { name: "WQFS", geo: "NC", type: "us", url: "http://wqfs.arcostream.com:7109/wqfs" },
+            { name: "WQFS", geo: "NC", type: "http://wqfs.arcostream.com:7109/wqfs" },
         ];
 
         defaultStations.forEach((s, i) => s.id = i);
@@ -291,15 +289,22 @@
             });
         }
 
+        function handleTileClick(id) {
+            if (currentStationId === id && isActuallyPlaying) {
+                stopPlayback();
+            } else {
+                playStation(id);
+            }
+        }
+
         function updateMediaMetadata(station) {
             if ('mediaSession' in navigator) {
                 navigator.mediaSession.metadata = new MediaMetadata({
                     title: station.name,
-                    artist: "Radio Tile",
+                    artist: "Radio Tile Player",
                     album: station.geo,
                     artwork: [
-                        { src: 'https://img.icons8.com/ios-filled/512/ffffff/radio-tower.png', sizes: '512x512', type: 'image/png' },
-                        { src: 'https://img.icons8.com/ios-filled/256/ffffff/radio-tower.png', sizes: '256x256', type: 'image/png' }
+                        { src: 'https://img.icons8.com/emoji/512/radio-emoji.png', sizes: '512x512', type: 'image/png' }
                     ]
                 });
             }
@@ -309,14 +314,18 @@
         function playStation(id) {
             currentStationId = id;
             const station = defaultStations.find(s => s.id === id);
+            
+            // UI Update
             document.querySelectorAll('.tile').forEach(t => t.classList.remove('active'));
             const activeTile = document.querySelector(`.tile[data-id="${id}"]`);
             if (activeTile) activeTile.classList.add('active');
             
+            // Immediate Playback
             player.src = station.url;
-            player.play().then(() => {
-                updateMediaMetadata(station);
-            }).catch(e => console.error("Playback failed:", e));
+            player.play();
+            
+            // Sync Metadata separately to avoid blocking playback
+            updateMediaMetadata(station);
             
             isActuallyPlaying = true;
             playPauseBtn.disabled = false;
