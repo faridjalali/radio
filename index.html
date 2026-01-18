@@ -84,10 +84,9 @@
             border-color: var(--accent-color);
         }
 
-        /* Adjusted Grid for Larger Tiles */
+        /* Large Tiles Grid */
         .grid {
             display: grid;
-            /* Increased min-width from 150px to 175px for larger tiles */
             grid-template-columns: repeat(auto-fill, minmax(175px, 1fr));
             gap: 15px;
             max-width: 1600px;
@@ -111,15 +110,21 @@
             filter: brightness(1.2);
         }
 
+        /* Aligned Geo-Tag Logic */
         .geo-tag {
             position: absolute;
-            top: 12px;
-            right: 12px;
+            top: 15px; /* Aligned to match the visual baseline of the play indicator */
+            right: 15px;
             z-index: 3;
             font-size: 1rem;
             font-weight: 700;
             opacity: 0.9;
             pointer-events: none;
+            line-height: 1; /* Forces text and emoji to share a baseline */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 1rem; /* Constrains the vertical axis */
         }
 
         .tile-name {
@@ -140,6 +145,8 @@
             width: 22px;
             height: 22px;
             display: none; 
+            align-items: center;
+            justify-content: center;
         }
 
         .play-indicator svg {
@@ -154,7 +161,7 @@
         }
 
         .tile.active .play-indicator {
-            display: block;
+            display: flex;
         }
 
         /* Metro Colors */
@@ -170,7 +177,7 @@
     <header>
         <h1>Radio</h1>
         <div class="controls">
-            <button id="sort-btn" class="control-btn" title="Toggle Location Sort">
+            <button id="sort-btn" class="control-btn" title="Sort by Location">
                 <svg viewBox="0 0 24 24"><path d="M3 18h6v-2H3v2zM3 6v2h18V6H3zm0 7h12v-2H3v2z"/></svg>
             </button>
             <button id="shuffle-btn" class="control-btn" title="Shuffle Station">
@@ -190,7 +197,7 @@
             { name: "FIPF", geo: "🇫🇷", type: "int", url: "https://stream.radiofrance.fr/fip/fip.m3u8" },   
             { name: "ECOF", geo: "🇩🇪", type: "int", url: "https://cast.egofm.de/egofm.mp3" },   
             { name: "FM4G", geo: "🇩🇪", type: "int", url: "https://orf-live.ors-shoutcast.at/fm4-q2a" },
-            { name: "SLOV", geo: "🇸🇮", type: "int", url: "https://kruljo.radiostudent.si:8001/test.ogg" },
+            { name: "STUD", geo: "🇸🇮", type: "int", url: "https://kruljo.radiostudent.si:8001/test.ogg" },
             { name: "NOVA", geo: "🇫🇷", type: "int", url: "https://novazz.ice.infomaniak.ch/novazz-128.mp3" },
             { name: "U92M", geo: "WV", type: "us", url: "https://stream.radiojar.com/56p3rt9eytzuv" },
             { name: "DEPA", geo: "IL", type: "us", url: "https://ice26.securenetsystems.net/RADIODEPAUL" },
@@ -262,7 +269,6 @@
                     tile.classList.add('active');
                 }
                 tile.dataset.id = station.id;
-
                 tile.innerHTML = `
                     <div class="geo-tag">${station.geo}</div>
                     <div class="play-indicator">
