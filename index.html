@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Radio Tile Player</title>
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -169,7 +169,7 @@
     <div class="grid" id="station-grid"></div>
 
     <script>
-        const defaultStations = [
+        const stations = [
             { name: "FIPF", geo: "🇫🇷", type: "int", url: "https://stream.radiofrance.fr/fip/fip.m3u8" },   
             { name: "ECOF", geo: "🇩🇪", type: "int", url: "https://cast.egofm.de/egofm.mp3" },   
             { name: "FM4G", geo: "🇩🇪", type: "int", url: "https://orf-live.ors-shoutcast.at/fm4-q2a" },
@@ -220,7 +220,7 @@
             { name: "WQFS", geo: "NC", type: "us", url: "http://wqfs.arcostream.com:7109/wqfs" },
         ];
 
-        defaultStations.forEach((s, i) => s.id = i);
+        stations.forEach((s, i) => s.id = i);
 
         const grid = document.getElementById('station-grid');
         const player = document.getElementById('radio-player');
@@ -235,7 +235,7 @@
         let currentStationId = null;
         let isActuallyPlaying = false;
         let isLocationSorted = false;
-        let activePlaylist = [...defaultStations];
+        let activePlaylist = [...stations];
 
         function renderGrid(stationsToRender) {
             grid.innerHTML = '';
@@ -264,6 +264,27 @@
             }
         }
 
+        // Setup handlers ONCE and keep them persistent
+        if ('mediaSession' in navigator) {
+            navigator.mediaSession.setActionHandler('previoustrack', () => {
+                const currentIndex = activePlaylist.findIndex(s => s.id === currentStationId);
+                const prevIndex = (currentIndex - 1 + activePlaylist.length) % activePlaylist.length;
+                playStation(activePlaylist[prevIndex].id);
+            });
+
+            navigator.mediaSession.setActionHandler('nexttrack', () => {
+                const currentIndex = activePlaylist.findIndex(s => s.id === currentStationId);
+                const nextIndex = (currentIndex + 1) % activePlaylist.length;
+                playStation(activePlaylist[nextIndex].id);
+            });
+
+            navigator.mediaSession.setActionHandler('play', () => {
+               if (currentStationId !== null) playStation(currentStationId);
+            });
+
+            navigator.mediaSession.setActionHandler('pause', () => stopPlayback());
+        }
+
         function updateMediaMetadata(station) {
             if ('mediaSession' in navigator) {
                 navigator.mediaSession.metadata = new MediaMetadata({
@@ -272,43 +293,19 @@
                     album: station.geo,
                     artwork: [{ src: 'image_0.png.jpg', sizes: '512x512', type: 'image/png' }]
                 });
-
-                // RE-STABILIZED ACTION HANDLERS
-                navigator.mediaSession.setActionHandler('previoustrack', () => {
-                    const currentIndex = activePlaylist.findIndex(s => s.id === currentStationId);
-                    const prevIndex = (currentIndex - 1 + activePlaylist.length) % activePlaylist.length;
-                    playStation(activePlaylist[prevIndex].id);
-                });
-
-                navigator.mediaSession.setActionHandler('nexttrack', () => {
-                    const currentIndex = activePlaylist.findIndex(s => s.id === currentStationId);
-                    const nextIndex = (currentIndex + 1) % activePlaylist.length;
-                    playStation(activePlaylist[nextIndex].id);
-                });
-
-                navigator.mediaSession.setActionHandler('play', () => {
-                   if (currentStationId !== null) playStation(currentStationId);
-                });
-
-                navigator.mediaSession.setActionHandler('pause', () => stopPlayback());
-                
-                // Explicitly set the state to "playing" for iOS background persistence
                 navigator.mediaSession.playbackState = "playing";
             }
             document.title = `${station.name} - Radio`;
         }
 
         function playStation(id) {
-            const station = defaultStations.find(s => s.id === id);
-            
+            const station = stations.find(s => s.id === id);
             document.querySelectorAll('.tile').forEach(t => t.classList.remove('active'));
             currentStationId = id;
             
-            // RESET FOR CONSISTENCY
             player.pause();
             player.src = station.url;
             player.load(); 
-            
             player.play();
             
             const activeTile = document.querySelector(`.tile[data-id="${id}"]`);
@@ -322,7 +319,6 @@
 
         function stopPlayback() {
             player.pause();
-            // Background workaround: Leave the src assigned so the media session stays registered
             isActuallyPlaying = false;
             if ('mediaSession' in navigator) {
                 navigator.mediaSession.playbackState = "paused";
@@ -338,22 +334,21 @@
 
         sortBtn.onclick = () => {
             isLocationSorted = !isLocationSorted;
-            sortBtn.classList.toggle('active-sort');
             if (isLocationSorted) {
-                activePlaylist = [...defaultStations].sort((a, b) => {
+                activePlaylist = [...stations].sort((a, b) => {
                     if (a.type === "int" && b.type === "us") return -1;
                     if (a.type === "us" && b.type === "int") return 1;
                     return a.geo.localeCompare(b.geo);
                 });
             } else {
-                activePlaylist = [...defaultStations];
+                activePlaylist = [...stations];
             }
             renderGrid(activePlaylist);
         };
 
         shuffleBtn.onclick = () => {
-            const randomIndex = Math.floor(Math.random() * defaultStations.length);
-            playStation(defaultStations[randomIndex].id);
+            const randomIndex = Math.floor(Math.random() * stations.length);
+            playStation(stations[randomIndex].id);
         };
 
         playPauseBtn.onclick = () => {
