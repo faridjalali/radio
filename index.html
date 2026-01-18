@@ -8,6 +8,7 @@
         :root {
             --bg-color: #1a1a1a;
             --text-color: #ffffff;
+            --accent-color: #0078d7;
         }
 
         body {
@@ -24,11 +25,20 @@
             font-size: 2.8rem;
             margin-bottom: 25px;
             padding-left: 10px;
+            display: flex;
+            align-items: baseline;
+            gap: 15px;
+        }
+
+        #header-station {
+            font-size: 2rem;
+            color: var(--accent-color);
+            font-weight: 600;
+            text-transform: uppercase;
         }
 
         .grid {
             display: grid;
-            /* Shrunk minmax from 200px to 140px for smaller tiles */
             grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
             gap: 12px;
             max-width: 1400px;
@@ -59,7 +69,6 @@
         }
 
         .tile-name {
-            /* Adjusted font size to fit the smaller tile footprint */
             font-size: 1.6rem; 
             font-weight: 700;
             z-index: 2;
@@ -78,7 +87,7 @@
             background: #222;
             padding: 15px 25px;
             display: none; 
-            border-top: 4px solid #0078d7;
+            border-top: 4px solid var(--accent-color);
             box-sizing: border-box;
             z-index: 100;
             box-shadow: 0 -5px 25px rgba(0,0,0,0.6);
@@ -94,7 +103,7 @@
             margin-bottom: 8px;
             font-size: 1rem;
             font-weight: 600;
-            color: #0078d7; /* Highlight the station name in the player */
+            color: var(--accent-color);
             text-transform: uppercase;
         }
 
@@ -112,7 +121,7 @@
 </head>
 <body>
 
-    <h1>Radio</h1>
+    <h1>Radio <span id="header-station"></span></h1>
 
     <div class="grid" id="station-grid"></div>
 
@@ -182,6 +191,7 @@
         const player = document.getElementById('radio-player');
         const playerContainer = document.getElementById('player-container');
         const nowPlayingText = document.getElementById('now-playing');
+        const headerStationText = document.getElementById('header-station');
 
         stations.forEach((station, index) => {
             const tile = document.createElement('div');
@@ -200,6 +210,7 @@
             player.src = station.url;
             player.play();
             nowPlayingText.innerText = `NOW PLAYING: ${station.name}`;
+            headerStationText.innerText = `- ${station.name}`;
             playerContainer.style.display = 'block';
         }
     </script>
