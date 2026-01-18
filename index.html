@@ -14,97 +14,88 @@
         body {
             background-color: var(--bg-color);
             color: var(--text-color);
-            font-family: "Segoe UI Semibold", "Segoe UI", Tahoma, sans-serif;
+            font-family: "Segoe UI", "Segoe UI Semibold", Tahoma, sans-serif;
             margin: 0;
-            padding: 20px;
-            padding-bottom: 140px; /* Extra space for the player bar */
+            padding: 30px;
         }
 
         h1 {
-            font-weight: 300;
-            font-size: 2.8rem;
-            margin-bottom: 25px;
-            padding-left: 10px;
+            font-weight: 200; /* Thin Zune-style weight */
+            font-size: 3.5rem;
+            margin-bottom: 40px;
             display: flex;
             align-items: baseline;
             gap: 15px;
+            text-transform: lowercase; /* Classic Zune branding style */
         }
 
         #header-station {
-            font-size: 2rem;
+            font-size: 2.2rem;
             color: var(--accent-color);
-            font-weight: 600;
+            font-weight: 400;
             text-transform: uppercase;
         }
 
         .grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
             gap: 12px;
-            max-width: 1400px;
+            max-width: 1600px;
             margin: 0 auto;
         }
 
         .tile {
             aspect-ratio: 1 / 1;
             display: flex;
-            align-items: center;    
-            justify-content: center; 
-            padding: 8px;
+            align-items: flex-end;    /* Text to bottom */
+            justify-content: flex-start; /* Text to left */
+            padding: 12px;
             cursor: pointer;
-            transition: transform 0.1s ease, filter 0.2s ease;
+            transition: filter 0.2s ease;
             position: relative;
             overflow: hidden;
-            text-align: center;
         }
 
+        /* Hover effect only changes brightness, not size */
         .tile:hover {
-            transform: scale(1.04);
             filter: brightness(1.2);
-            z-index: 10;
-        }
-
-        .tile:active {
-            transform: scale(0.95);
         }
 
         .tile-name {
-            font-size: 1.6rem; 
-            font-weight: 700;
-            z-index: 2;
-            letter-spacing: -1px;
-            line-height: 0.95;
-            word-break: break-word;
-            text-transform: uppercase;
-        }
-
-        /* Player Controls Styles */
-        .player-container {
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            width: 100%;
-            background: #222;
-            padding: 15px 25px;
-            display: none; 
-            border-top: 4px solid var(--accent-color);
-            box-sizing: border-box;
-            z-index: 100;
-            box-shadow: 0 -5px 25px rgba(0,0,0,0.6);
-        }
-
-        audio {
-            width: 100%;
-            filter: invert(100%);
-            height: 40px;
-        }
-
-        .now-playing {
-            margin-bottom: 8px;
-            font-size: 1rem;
+            font-size: 1.4rem; 
             font-weight: 600;
-            color: var(--accent-color);
+            z-index: 2;
+            letter-spacing: -0.5px;
+            line-height: 1;
+            word-break: break-all;
             text-transform: uppercase;
+            pointer-events: none;
+        }
+
+        /* Play Icon (Top Right) */
+        .play-indicator {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            width: 20px;
+            height: 20px;
+            display: none; /* Hidden by default */
+        }
+
+        .play-indicator svg {
+            fill: white;
+            width: 100%;
+            height: 100%;
+        }
+
+        /* Active State Visuals */
+        .tile.active {
+            outline: 3px solid white;
+            outline-offset: -3px;
+        }
+
+        .tile.active .play-indicator {
+            display: block;
         }
 
         /* Metro Colors */
@@ -121,16 +112,11 @@
 </head>
 <body>
 
-    <h1>Radio <span id="header-station"></span></h1>
+    <h1>radio <span id="header-station"></span></h1>
+
+    <audio id="radio-player" autoplay style="display:none;"></audio>
 
     <div class="grid" id="station-grid"></div>
-
-    <div class="player-container" id="player-container">
-        <div class="now-playing" id="now-playing">Select a station</div>
-        <audio id="radio-player" controls autoplay>
-            Your browser does not support the audio element.
-        </audio>
-    </div>
 
     <script>
         const stations = [
@@ -189,17 +175,26 @@
 
         const grid = document.getElementById('station-grid');
         const player = document.getElementById('radio-player');
-        const playerContainer = document.getElementById('player-container');
-        const nowPlayingText = document.getElementById('now-playing');
         const headerStationText = document.getElementById('header-station');
 
         stations.forEach((station, index) => {
             const tile = document.createElement('div');
             const colorClass = `c${(index % 8) + 1}`;
             tile.className = `tile ${colorClass}`;
-            tile.innerHTML = `<div class="tile-name">${station.name}</div>`;
+            
+            // Add Station Name and Play Icon SVG
+            tile.innerHTML = `
+                <div class="play-indicator">
+                    <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+                </div>
+                <div class="tile-name">${station.name}</div>
+            `;
             
             tile.onclick = () => {
+                // Visual cleanup of previous active tile
+                document.querySelectorAll('.tile').forEach(t => t.classList.remove('active'));
+                tile.classList.add('active');
+                
                 playStation(station);
             };
             
@@ -209,9 +204,7 @@
         function playStation(station) {
             player.src = station.url;
             player.play();
-            nowPlayingText.innerText = `NOW PLAYING: ${station.name}`;
             headerStationText.innerText = `- ${station.name}`;
-            playerContainer.style.display = 'block';
         }
     </script>
 </body>
