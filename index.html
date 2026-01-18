@@ -264,7 +264,7 @@
             }
         }
 
-        // Setup handlers ONCE and keep them persistent
+        // Setup persistent handlers
         if ('mediaSession' in navigator) {
             navigator.mediaSession.setActionHandler('previoustrack', () => {
                 const currentIndex = activePlaylist.findIndex(s => s.id === currentStationId);
