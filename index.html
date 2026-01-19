@@ -53,14 +53,7 @@
             box-sizing: border-box;
         }
 
-        h1 { 
-            font-weight: 200; 
-            font-size: 2.2rem; 
-            margin: 0; 
-            letter-spacing: -1px; 
-            cursor: pointer;
-            user-select: none;
-        }
+        h1 { font-weight: 200; font-size: 2.2rem; margin: 0; letter-spacing: -1px; cursor: pointer; user-select: none; }
 
         .controls { display: flex; gap: 10px; }
 
@@ -83,10 +76,7 @@
 
         #scroll-container {
             position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
+            top: 0; left: 0; right: 0; bottom: 0;
             overflow-y: auto;
             -webkit-overflow-scrolling: touch;
             padding-top: calc(85px + env(safe-area-inset-top)); 
@@ -130,6 +120,8 @@
         }
 
         .tile:hover { filter: brightness(1.2); transform: scale(1.02); }
+        
+        /* Only apply white border if the station is ACTUALLY playing */
         .tile.active { outline: 4px solid white; outline-offset: -4px; }
 
         .fav-star {
@@ -157,15 +149,21 @@
             z-index: 3;
         }
 
-        .tile.active .eq-container { display: flex; }
+        /* Show equalizer for both active and ready states */
+        .tile.active .eq-container, .tile.ready .eq-container { display: flex; }
 
         .eq-bar {
             background-color: white;
             width: 3px;
             height: 100%;
-            animation: eq 1s ease-in-out infinite;
             border-radius: 1px;
         }
+
+        /* Animate only when active (playing) */
+        .tile.active .eq-bar { animation: eq 1s ease-in-out infinite; }
+
+        /* Ready state (re-opened) has static bars */
+        .tile.ready .eq-bar { height: 70%; }
 
         .eq-bar:nth-child(2) { animation-delay: 0.2s; }
         .eq-bar:nth-child(3) { animation-delay: 0.4s; }
@@ -301,6 +299,7 @@
         const playPauseBtn = document.getElementById('play-pause-btn');
         const playPauseIcon = document.getElementById('play-pause-icon');
         const appTitle = document.getElementById('app-title');
+        const scrollContainer = document.getElementById('scroll-container');
 
         const playPath = "M8 5v14l11-7z";
         const stopPath = "M6 6h12v12H6z";
@@ -324,10 +323,21 @@
         function renderGrid() {
             grid.innerHTML = '';
             
-            // Re-order logic: Pinned Last Station -> Favorites -> Others
-            let favs = stations.filter(s => favoriteIds.includes(s.id));
-            let nonFavs = stations.filter(s => !favoriteIds.includes(s.id));
-            
+            // Re-order logic
+            let anchorStation = null;
+            let others = [...stations];
+
+            // 1. Separate the Anchor (Current or Last)
+            if (currentStationId !== null) {
+                const index = others.findIndex(s => s.id === currentStationId);
+                if (index > -1) [anchorStation] = others.splice(index, 1);
+            }
+
+            // 2. Separate remaining favorites and non-favorites
+            let favs = others.filter(s => favoriteIds.includes(s.id));
+            let nonFavs = others.filter(s => !favoriteIds.includes(s.id));
+
+            // Apply location sorting to favorites and non-favorites if enabled
             if (isLocationSorted) {
                 const sortLogic = (a, b) => {
                     if (a.type === "int" && b.type === "us") return -1;
@@ -338,22 +348,19 @@
                 nonFavs.sort(sortLogic);
             }
 
-            activePlaylist = [...favs, ...nonFavs];
-
-            // NEW: If there's a last-played station, move it to the absolute front (index 0)
-            if (currentStationId !== null) {
-                const lastStationIndex = activePlaylist.findIndex(s => s.id === currentStationId);
-                if (lastStationIndex > -1) {
-                    const [lastStation] = activePlaylist.splice(lastStationIndex, 1);
-                    activePlaylist.unshift(lastStation);
-                }
-            }
+            // 3. Assemble: Anchor -> All Favorites -> All Others
+            activePlaylist = anchorStation ? [anchorStation, ...favs, ...nonFavs] : [...favs, ...nonFavs];
 
             activePlaylist.forEach((station) => {
                 const tile = document.createElement('div');
                 tile.className = `tile c${(station.id % 8) + 1}`;
                 if (favoriteIds.includes(station.id)) tile.classList.add('is-fav');
-                if (currentStationId === station.id) tile.classList.add(isActuallyPlaying ? 'active' : 'last-played');
+                
+                // First tile logic
+                if (currentStationId === station.id) {
+                    tile.classList.add(isActuallyPlaying ? 'active' : 'ready');
+                    if (!isActuallyPlaying) playPauseBtn.disabled = false;
+                }
                 
                 tile.dataset.id = station.id;
 
@@ -433,6 +440,7 @@
                 playPauseBtn.disabled = false;
                 updatePlayPauseButton(true);
                 renderGrid();
+                scrollContainer.scrollTo({top: 0, behavior: 'smooth'});
                 updateMediaMetadata(station);
             }).catch(e => { player.load(); player.play(); });
         }
@@ -472,7 +480,6 @@
         renderGrid();
         setupMediaHandlers();
 
-        // Extra guard for Safari bounce
         document.addEventListener('touchmove', function (e) {
             if (e.target.closest('#scroll-container')) return;
             e.preventDefault();
