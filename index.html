@@ -173,7 +173,6 @@
             align-items: flex-start;
         }
 
-        /* WAITING SPINNER */
         .spinner {
             display: none;
             width: 18px;
@@ -355,7 +354,7 @@
         const stopPath = "M6 6h12v12H6z";
 
         let currentStationId = parseInt(localStorage.getItem('lastStationId')) || null;
-        let bufferingStationId = null; // Track which station is loading
+        let bufferingStationId = null; 
         let isActuallyPlaying = false;
         let isLocationSorted = false;
         let favoriteIds = JSON.parse(localStorage.getItem('favStations') || '[]');
@@ -365,7 +364,10 @@
         let sleepTimerTimeout = null;
         let sleepTickInterval = null;
 
+        function haptic(pattern) { if (navigator.vibrate) navigator.vibrate(pattern); }
+
         appTitle.onclick = () => {
+            haptic(10);
             let clickCount = parseInt(appTitle.dataset.clicks || 0) + 1;
             appTitle.dataset.clicks = clickCount;
             if (clickCount >= 2) window.location.reload(true);
@@ -383,8 +385,7 @@
                     if (a.type === "us" && b.type === "int") return 1;
                     return a.geo.localeCompare(b.geo);
                 };
-                favs.sort(sortLogic);
-                others.sort(sortLogic);
+                favs.sort(sortLogic); others.sort(sortLogic);
             }
 
             logicalMasterList = [...favs, ...others];
@@ -402,15 +403,11 @@
                 const tile = document.createElement('div');
                 tile.className = `tile c${(station.id % 8) + 1}`;
                 if (favoriteIds.includes(station.id)) tile.classList.add('is-fav');
-                
-                // Buffering takes precedence for visual state
-                if (bufferingStationId === station.id) {
-                    tile.classList.add('buffering');
-                } else if (currentStationId === station.id) {
+                if (bufferingStationId === station.id) tile.classList.add('buffering');
+                else if (currentStationId === station.id) {
                     tile.classList.add(isActuallyPlaying ? 'active' : 'ready');
                     if (!isActuallyPlaying) playPauseBtn.disabled = false;
                 }
-                
                 tile.dataset.id = station.id;
 
                 const flagMatch = station.geo.match(/[\u{1F1E6}-\u{1F1FF}]{2}/u);
@@ -432,13 +429,14 @@
                         <span class="geo-flag">${flagEmoji}</span>
                     </div>
                 `;
-                tile.querySelector('.fav-star').onclick = (e) => { e.stopPropagation(); toggleFavorite(station.id); };
-                tile.onclick = () => handleTileClick(station.id);
+                tile.querySelector('.fav-star').onclick = (e) => { e.stopPropagation(); haptic([10, 30, 10]); toggleFavorite(station.id); };
+                tile.onclick = () => { haptic(10); handleTileClick(station.id); };
                 grid.appendChild(tile);
             });
         }
 
         timerBtn.onclick = () => {
+            haptic([10, 30, 10]);
             if (currentTimerDuration === 0) startSleepTimer(30);
             else if (currentTimerDuration === 30) startSleepTimer(15);
             else clearSleepTimer();
@@ -447,18 +445,13 @@
         function startSleepTimer(minutes) {
             if (sleepTimerTimeout) clearTimeout(sleepTimerTimeout);
             if (sleepTickInterval) clearInterval(sleepTickInterval);
-            timerBtn.classList.remove('active');
-            void timerBtn.offsetWidth;
-            timerBtn.classList.add('active');
+            timerBtn.classList.remove('active'); void timerBtn.offsetWidth; timerBtn.classList.add('active');
             currentTimerDuration = minutes;
-            timerIcon.style.display = 'none';
-            timerDisplay.style.display = 'block';
-            timerDisplay.innerText = currentTimerDuration;
+            timerIcon.style.display = 'none'; timerDisplay.style.display = 'block'; timerDisplay.innerText = currentTimerDuration;
             let remaining = minutes;
             sleepTickInterval = setInterval(() => {
                 remaining--;
-                if (remaining <= 0) { stopPlayback(); clearSleepTimer(); } 
-                else { timerDisplay.innerText = remaining; }
+                if (remaining <= 0) { stopPlayback(); clearSleepTimer(); } else timerDisplay.innerText = remaining;
             }, 60000);
             sleepTimerTimeout = setTimeout(() => { stopPlayback(); clearSleepTimer(); }, minutes * 60000);
         }
@@ -471,15 +464,14 @@
         }
 
         function toggleFavorite(id) {
-            if (favoriteIds.includes(id)) { favoriteIds = favoriteIds.filter(fid => fid !== id); } 
-            else { favoriteIds.push(id); }
-            localStorage.setItem('favStations', JSON.stringify(favoriteIds));
-            renderGrid();
+            if (favoriteIds.includes(id)) favoriteIds = favoriteIds.filter(fid => fid !== id);
+            else favoriteIds.push(id);
+            localStorage.setItem('favStations', JSON.stringify(favoriteIds)); renderGrid();
         }
 
         function handleTileClick(id) {
-            if (currentStationId === id && isActuallyPlaying) { stopPlayback(); } 
-            else { playStation(id); }
+            if (currentStationId === id && isActuallyPlaying) stopPlayback();
+            else playStation(id);
         }
 
         function setupMediaHandlers() {
@@ -492,6 +484,7 @@
         }
 
         function navigateStation(direction) {
+            haptic(10);
             const currentIndex = logicalMasterList.findIndex(s => s.id === currentStationId);
             const nextIndex = (currentIndex + direction + logicalMasterList.length) % logicalMasterList.length;
             playStation(logicalMasterList[nextIndex].id);
@@ -503,81 +496,49 @@
                     title: station.name, artist: "Radio", album: station.geo,
                     artwork: [{ src: 'image_0.png.jpg', sizes: '512x512', type: 'image/png' }]
                 });
-                navigator.mediaSession.playbackState = "playing";
-                setupMediaHandlers(); 
+                navigator.mediaSession.playbackState = "playing"; setupMediaHandlers(); 
             }
             document.title = `${station.name} - Radio`;
         }
 
         function playStation(id) {
             const station = stations.find(s => s.id === id);
-            
-            // Set buffering state and re-render grid instantly
-            bufferingStationId = id;
-            isActuallyPlaying = false;
-            renderGrid();
-
+            bufferingStationId = id; isActuallyPlaying = false; renderGrid();
             player.src = station.url;
             player.play().then(() => {
-                // Clear buffering, set active state, and re-order grid
-                bufferingStationId = null;
-                currentStationId = id;
-                isActuallyPlaying = true;
-                localStorage.setItem('lastStationId', id);
-                
-                playPauseBtn.disabled = false;
-                updatePlayPauseButton(true);
-                renderGrid();
-                scrollContainer.scrollTo({top: 0, behavior: 'smooth'});
+                bufferingStationId = null; currentStationId = id; isActuallyPlaying = true;
+                localStorage.setItem('lastStationId', id); playPauseBtn.disabled = false;
+                updatePlayPauseButton(true); renderGrid(); scrollContainer.scrollTo({top: 0, behavior: 'smooth'});
                 updateMediaMetadata(station);
             }).catch(e => { player.load(); player.play(); });
         }
 
         function stopPlayback() {
-            player.pause();
-            isActuallyPlaying = false;
+            haptic(10); player.pause(); isActuallyPlaying = false;
             if ('mediaSession' in navigator) navigator.mediaSession.playbackState = "paused";
-            updatePlayPauseButton(false);
-            renderGrid();
-            document.title = "Radio";
+            updatePlayPauseButton(false); renderGrid(); document.title = "Radio";
         }
 
-        function updatePlayPauseButton(playing) {
-            playPauseIcon.innerHTML = `<path d="${playing ? stopPath : playPath}"/>`;
-        }
+        function updatePlayPauseButton(playing) { playPauseIcon.innerHTML = `<path d="${playing ? stopPath : playPath}"/>`; }
 
         let touchstartX = 0; let touchendX = 0;
         document.addEventListener('touchstart', e => { touchstartX = e.changedTouches[0].screenX; }, {passive: true});
         document.addEventListener('touchend', e => {
-            touchendX = e.changedTouches[0].screenX;
-            const diff = touchstartX - touchendX;
-            if (Math.abs(diff) > 100) {
-                if (diff > 0) navigateStation(1);
-                else navigateStation(-1);
-            }
+            touchendX = e.changedTouches[0].screenX; const diff = touchstartX - touchendX;
+            if (Math.abs(diff) > 100) { if (diff > 0) navigateStation(1); else navigateStation(-1); }
         }, {passive: true});
 
         sortBtn.onclick = () => { 
-            isLocationSorted = !isLocationSorted; 
-            if (isLocationSorted) sortBtn.classList.add('active');
-            else sortBtn.classList.remove('active');
+            haptic([10, 30, 10]); isLocationSorted = !isLocationSorted; 
+            if (isLocationSorted) sortBtn.classList.add('active'); else sortBtn.classList.remove('active');
             renderGrid(); 
         };
 
-        shuffleBtn.onclick = () => { const randomIndex = Math.floor(Math.random() * stations.length); playStation(stations[randomIndex].id); };
-        
-        playPauseBtn.onclick = () => { 
-            if (isActuallyPlaying) { stopPlayback(); } 
-            else if (currentStationId !== null) { playStation(currentStationId); }
-        };
+        shuffleBtn.onclick = () => { haptic(10); const randomIndex = Math.floor(Math.random() * stations.length); playStation(stations[randomIndex].id); };
+        playPauseBtn.onclick = () => { if (isActuallyPlaying) stopPlayback(); else if (currentStationId !== null) { haptic(10); playStation(currentStationId); } };
 
-        renderGrid();
-        setupMediaHandlers();
-
-        document.addEventListener('touchmove', function (e) {
-            if (e.target.closest('#scroll-container')) return;
-            e.preventDefault();
-        }, { passive: false });
+        renderGrid(); setupMediaHandlers();
+        document.addEventListener('touchmove', function (e) { if (e.target.closest('#scroll-container')) return; e.preventDefault(); }, { passive: false });
     </script>
 </body>
 </html>
