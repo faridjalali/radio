@@ -135,10 +135,10 @@
 
         .tile.is-fav .fav-star { color: var(--fav-color); }
 
-        /* Icon Container (Top Right Corner) - Aligned with other corners */
+        /* Icon Container - Positioned a bit lower (22px) in y-axis */
         .status-container {
             position: absolute;
-            top: 15px;
+            top: 22px; 
             right: 15px;
             z-index: 3;
             display: flex;
@@ -146,7 +146,7 @@
             align-items: flex-start;
         }
 
-        /* TILE PLAY ICON - Larger and instant */
+        /* TILE PLAY ICON - Instant visibility */
         .tile-play-icon {
             width: 24px;
             height: 24px;
@@ -157,7 +157,7 @@
 
         .tile.ready .tile-play-icon { display: block; }
 
-        /* EQ CONTAINER - Instant appearance */
+        /* EQ CONTAINER - Instant visibility */
         .eq-container {
             display: none;
             align-items: flex-end;
