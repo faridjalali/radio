@@ -38,11 +38,8 @@
             backdrop-filter: blur(20px);
             -webkit-backdrop-filter: blur(20px);
             border-bottom: 1px solid rgba(255,255,255,0.05);
-            
-            /* INCREASED TOP PADDING: env + extra 15px for breathability */
             padding-top: calc(env(safe-area-inset-top) + 15px); 
-            padding-bottom: 20px;
-            
+            padding-bottom: 12px; /* Slightly reduced */
             touch-action: pan-y;
         }
 
@@ -82,8 +79,8 @@
             top: 0; left: 0; right: 0; bottom: 0;
             overflow-y: auto;
             -webkit-overflow-scrolling: touch;
-            /* ADAPTED PADDING: Matches the taller header */
-            padding-top: calc(115px + env(safe-area-inset-top)); 
+            /* SHRUNK PADDING: Reduced from 115px to 95px */
+            padding-top: calc(95px + env(safe-area-inset-top)); 
             padding-bottom: env(safe-area-inset-bottom);
             touch-action: pan-y;
         }
@@ -94,15 +91,16 @@
             gap: 15px;
             max-width: 1600px;
             margin: 0 auto;
-            padding: 20px 30px;
+            padding: 10px 30px 20px 30px; /* Reduced top grid padding */
             box-sizing: border-box;
         }
 
         @media (max-width: 600px) {
-            .grid { grid-template-columns: repeat(2, 1fr); padding: 15px; gap: 10px; }
+            .grid { grid-template-columns: repeat(2, 1fr); padding: 10px 15px 20px 15px; gap: 10px; }
             .header-inner { padding: 0 15px; }
             h1 { font-size: 1.8rem; }
-            #scroll-container { padding-top: calc(105px + env(safe-area-inset-top)); }
+            /* Mobile adjustment for shrunken gap */
+            #scroll-container { padding-top: calc(85px + env(safe-area-inset-top)); }
         }
 
         .tile {
@@ -159,13 +157,7 @@
             border-radius: 1px;
         }
 
-        /* Animated State */
-        .tile.active .eq-bar {
-            height: 100%;
-            animation: eq 1s ease-in-out infinite;
-        }
-
-        /* PROGRESSIVE READY STATE: Static bars with increasing heights */
+        .tile.active .eq-bar { height: 100%; animation: eq 1s ease-in-out infinite; }
         .tile.ready .eq-bar:nth-child(1) { height: 35%; }
         .tile.ready .eq-bar:nth-child(2) { height: 65%; }
         .tile.ready .eq-bar:nth-child(3) { height: 100%; }
@@ -318,7 +310,6 @@
         let touchstartX = 0;
         let touchendX = 0;
 
-        // Two-Tap Reload
         appTitle.onclick = () => {
             let clickCount = parseInt(appTitle.dataset.clicks || 0) + 1;
             appTitle.dataset.clicks = clickCount;
@@ -328,7 +319,6 @@
 
         function renderGrid() {
             grid.innerHTML = '';
-            
             let anchorStation = null;
             let others = [...stations];
 
@@ -356,12 +346,10 @@
                 const tile = document.createElement('div');
                 tile.className = `tile c${(station.id % 8) + 1}`;
                 if (favoriteIds.includes(station.id)) tile.classList.add('is-fav');
-                
                 if (currentStationId === station.id) {
                     tile.classList.add(isActuallyPlaying ? 'active' : 'ready');
                     if (!isActuallyPlaying) playPauseBtn.disabled = false;
                 }
-                
                 tile.dataset.id = station.id;
 
                 const flagMatch = station.geo.match(/[\u{1F1E6}-\u{1F1FF}]{2}/u);
@@ -433,7 +421,6 @@
             const station = stations.find(s => s.id === id);
             currentStationId = id;
             localStorage.setItem('lastStationId', id);
-
             player.src = station.url;
             player.play().then(() => {
                 isActuallyPlaying = true;
@@ -483,7 +470,6 @@
             if (e.target.closest('#scroll-container')) return;
             e.preventDefault();
         }, { passive: false });
-
     </script>
 </body>
 </html>
