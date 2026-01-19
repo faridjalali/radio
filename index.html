@@ -47,7 +47,14 @@
             box-sizing: border-box;
         }
 
-        h1 { font-weight: 200; font-size: 2.5rem; margin: 0; letter-spacing: -1px; }
+        h1 { 
+            font-weight: 200; 
+            font-size: 2.5rem; 
+            margin: 0; 
+            letter-spacing: -1px; 
+            cursor: pointer;
+            user-select: none;
+        }
 
         .controls { display: flex; gap: 10px; }
 
@@ -192,7 +199,7 @@
 
     <header>
         <div class="header-inner">
-            <h1>Radio</h1>
+            <h1 id="app-title">Radio</h1>
             <div class="controls">
                 <button id="sort-btn" class="control-btn" title="Sort by Location">
                     <svg viewBox="0 0 24 24"><path d="M3 18h6v-2H3v2zM3 6v2h18V6H3zm0 7h12v-2H3v2z"/></svg>
@@ -270,6 +277,7 @@
         const shuffleBtn = document.getElementById('shuffle-btn');
         const playPauseBtn = document.getElementById('play-pause-btn');
         const playPauseIcon = document.getElementById('play-pause-icon');
+        const appTitle = document.getElementById('app-title');
 
         const playPath = "M8 5v14l11-7z";
         const stopPath = "M6 6h12v12H6z";
@@ -282,6 +290,18 @@
 
         let touchstartX = 0;
         let touchendX = 0;
+
+        // Solution: Two-Tap Manual Reload Logic
+        let clickCount = 0;
+        appTitle.onclick = () => {
+            clickCount++;
+            if (clickCount >= 2) {
+                // Force a hard reload from the server
+                window.location.reload(true);
+            }
+            // Reset counter after 500ms to require a quick double-tap
+            setTimeout(() => clickCount = 0, 500); 
+        };
 
         function renderGrid(autoScroll = false) {
             grid.innerHTML = '';
