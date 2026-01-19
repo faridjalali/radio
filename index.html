@@ -13,7 +13,6 @@
             --accent-color: #0078d7;
             --disabled-color: #444;
             --fav-color: #ffca28;
-            --dynamic-bg: #000000;
         }
 
         body {
@@ -23,19 +22,8 @@
             margin: 0;
             padding: 0;
             -webkit-tap-highlight-color: transparent;
-            transition: background-color 1.2s ease;
             overflow-x: hidden;
             touch-action: pan-y;
-        }
-
-        body::before {
-            content: '';
-            position: fixed;
-            top: 0; left: 0; right: 0; bottom: 0;
-            background: radial-gradient(circle at center, var(--dynamic-bg) 0%, #000000 100%);
-            opacity: 0.4;
-            z-index: -1;
-            pointer-events: none;
         }
 
         header {
@@ -110,12 +98,6 @@
         .tile.active {
             outline: 4px solid white;
             outline-offset: -4px;
-            animation: breathe 3s infinite ease-in-out;
-        }
-
-        @keyframes breathe {
-            0%, 100% { box-shadow: 0 0 5px rgba(255,255,255,0.2); }
-            50% { box-shadow: 0 0 25px rgba(255,255,255,0.5); }
         }
 
         .fav-star {
@@ -323,7 +305,6 @@
                 
                 tile.dataset.id = station.id;
 
-                // Robust split: Emoji flags live in regional indicator range \u1F1E6-\u1F1FF
                 const flagMatch = station.geo.match(/[\uD83C][\uDDE6-\uDDFF][\uD83C][\uDDE6-\uDDFF]/);
                 const flagEmoji = flagMatch ? flagMatch[0] : "";
                 const stateText = station.geo.replace(flagEmoji, "").trim();
@@ -398,12 +379,6 @@
             currentStationId = id;
             localStorage.setItem('lastStationId', id);
 
-            const tileForColor = document.querySelector(`.tile[data-id="${id}"]`);
-            if (tileForColor) {
-                const tileStyle = getComputedStyle(tileForColor);
-                document.documentElement.style.setProperty('--dynamic-bg', tileStyle.backgroundColor);
-            }
-
             player.src = station.url;
             player.play().then(() => {
                 isActuallyPlaying = true;
@@ -417,7 +392,6 @@
         function stopPlayback() {
             player.pause();
             isActuallyPlaying = false;
-            document.documentElement.style.setProperty('--dynamic-bg', '#000000');
             if ('mediaSession' in navigator) navigator.mediaSession.playbackState = "paused";
             updatePlayPauseButton(false);
             renderGrid();
