@@ -109,11 +109,11 @@
             text-shadow: 0 0 10px rgba(255,202,40,0.4);
         }
 
-        /* Top Right Corner - Lowered to align bottom with Star bottom */
+        /* Top Right Corner - Moved to 22px Top */
         .eq-container {
             display: none;
             position: absolute;
-            top: 22px; /* Adjusted to visually align baselines */
+            top: 22px; 
             right: 15px;
             align-items: flex-end;
             gap: 1px;
@@ -153,20 +153,22 @@
             line-height: 1;
             text-transform: uppercase;
             pointer-events: none;
-            max-width: calc(100% - 60px);
+            max-width: calc(100% - 70px); /* Adjusted for larger geo tag */
         }
 
-        /* Bottom Right Corner */
+        /* Bottom Right Corner - Enlarged Geo Tag */
         .geo-tag {
             position: absolute;
             bottom: 15px;
             right: 15px;
-            font-size: 1.1rem;
+            font-size: 1.3rem; /* Slightly bigger */
             line-height: 1;
             font-weight: 400;
             opacity: 0.9;
             z-index: 2;
             text-align: right;
+            display: flex;
+            align-items: center;
         }
 
         .tile.active { outline: 4px solid white; outline-offset: -4px; }
