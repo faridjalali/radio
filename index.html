@@ -135,19 +135,45 @@
 
         .tile.is-fav .fav-star { color: var(--fav-color); }
 
-        .eq-container {
-            display: none;
+        /* Icon Container (Top Right Corner) */
+        .status-container {
             position: absolute;
             top: 22px; 
             right: 15px;
+            width: 20px;
+            height: 12px;
+            z-index: 3;
+            display: flex;
+            justify-content: flex-end;
+            align-items: flex-end;
+        }
+
+        /* Purely visual play icon for the "Ready" Anchor tile */
+        .tile-play-icon {
+            position: absolute;
+            width: 12px;
+            height: 12px;
+            fill: white;
+            opacity: 0;
+            transition: opacity 0.4s ease;
+            pointer-events: none;
+        }
+
+        .tile.ready .tile-play-icon { opacity: 1; }
+
+        /* Mexican Wave Equalizer Container */
+        .eq-container {
+            display: flex;
             align-items: flex-end;
             gap: 1.5px;
             height: 10px;
             width: 18px;
-            z-index: 3;
+            opacity: 0;
+            transition: opacity 0.4s ease;
+            pointer-events: none;
         }
 
-        .tile.active .eq-container, .tile.ready .eq-container { display: flex; }
+        .tile.active .eq-container { opacity: 1; }
 
         .eq-bar {
             background-color: white;
@@ -156,21 +182,15 @@
             height: 30%;
         }
 
-        /* ACTIVE: Rolling Wave Animation */
         .tile.active .eq-bar {
             animation: rollingWave 0.8s ease-in-out infinite;
         }
 
+        /* Sequential delays for the "Mexican Soccer Wave" motion */
         .tile.active .eq-bar:nth-child(1) { animation-delay: 0.0s; }
         .tile.active .eq-bar:nth-child(2) { animation-delay: 0.1s; }
         .tile.active .eq-bar:nth-child(3) { animation-delay: 0.2s; }
         .tile.active .eq-bar:nth-child(4) { animation-delay: 0.3s; }
-
-        /* READY: Static Progressive Heights (4 Bars) */
-        .tile.ready .eq-bar:nth-child(1) { height: 25%; }
-        .tile.ready .eq-bar:nth-child(2) { height: 50%; }
-        .tile.ready .eq-bar:nth-child(3) { height: 75%; }
-        .tile.ready .eq-bar:nth-child(4) { height: 100%; }
 
         @keyframes rollingWave {
             0%, 100% { height: 30%; }
@@ -206,6 +226,7 @@
         .geo-text { font-size: 0.8rem; font-weight: 400; opacity: 0.9; }
         .geo-flag { font-size: 1.3rem; display: inline-block; }
 
+        /* Metro-inspired colors */
         .c1 { background-color: #00A300; } .c2 { background-color: #2D89EF; } 
         .c3 { background-color: #9F00A7; } .c4 { background-color: #603CBA; } 
         .c5 { background-color: #DA532C; } .c6 { background-color: #B91D47; } 
@@ -247,7 +268,7 @@
             { name: "ECOF", geo: "🇩🇪", type: "int", url: "https://cast.egofm.de/egofm.mp3" },   
             { name: "FM4G", geo: "🇩🇪", type: "int", url: "https://orf-live.ors-shoutcast.at/fm4-q2a" },
             { name: "SLOV", geo: "🇸🇮", type: "int", url: "https://kruljo.radiostudent.si:8001/test.ogg" },
-            { name: "NOVA", geo: "🇫🇷", type: "int", url: "https://novazz.ice.infomaniak.ch/novazz-128.mp3" },
+            { name: "NOVA", geo: "🇫🇷", type: "int", url: "https://novazz-128.mp3" },
             { name: "U92M", geo: "WV", type: "us", url: "https://stream.radiojar.com/56p3rt9eytzuv" },
             { name: "DEPA", geo: "IL", type: "us", url: "https://ice26.securenetsystems.net/RADIODEPAUL" },
             { name: "KRVS", geo: "LA", type: "us", url: "https://29223.live.streamtheworld.com/KRVSFMAAC.aac" },
@@ -352,10 +373,13 @@
                 const tile = document.createElement('div');
                 tile.className = `tile c${(station.id % 8) + 1}`;
                 if (favoriteIds.includes(station.id)) tile.classList.add('is-fav');
+                
+                // Class assignment: only the first station (anchor) can have status icons
                 if (currentStationId === station.id) {
                     tile.classList.add(isActuallyPlaying ? 'active' : 'ready');
                     if (!isActuallyPlaying) playPauseBtn.disabled = false;
                 }
+                
                 tile.dataset.id = station.id;
 
                 const flagMatch = station.geo.match(/[\u{1F1E6}-\u{1F1FF}]{2}/u);
@@ -364,11 +388,14 @@
 
                 tile.innerHTML = `
                     <div class="fav-star">★</div>
-                    <div class="eq-container">
-                        <div class="eq-bar"></div>
-                        <div class="eq-bar"></div>
-                        <div class="eq-bar"></div>
-                        <div class="eq-bar"></div>
+                    <div class="status-container">
+                        <svg class="tile-play-icon" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+                        <div class="eq-container">
+                            <div class="eq-bar"></div>
+                            <div class="eq-bar"></div>
+                            <div class="eq-bar"></div>
+                            <div class="eq-bar"></div>
+                        </div>
                     </div>
                     <div class="tile-name">${station.name}</div>
                     <div class="geo-tag">
