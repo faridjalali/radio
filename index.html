@@ -38,8 +38,11 @@
             backdrop-filter: blur(20px);
             -webkit-backdrop-filter: blur(20px);
             border-bottom: 1px solid rgba(255,255,255,0.05);
-            padding-top: env(safe-area-inset-top); 
-            padding-bottom: 15px;
+            
+            /* INCREASED TOP PADDING: env + extra 15px for breathability */
+            padding-top: calc(env(safe-area-inset-top) + 15px); 
+            padding-bottom: 20px;
+            
             touch-action: pan-y;
         }
 
@@ -49,7 +52,7 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 10px 30px 0 30px;
+            padding: 0 30px;
             box-sizing: border-box;
         }
 
@@ -79,7 +82,8 @@
             top: 0; left: 0; right: 0; bottom: 0;
             overflow-y: auto;
             -webkit-overflow-scrolling: touch;
-            padding-top: calc(85px + env(safe-area-inset-top)); 
+            /* ADAPTED PADDING: Matches the taller header */
+            padding-top: calc(115px + env(safe-area-inset-top)); 
             padding-bottom: env(safe-area-inset-bottom);
             touch-action: pan-y;
         }
@@ -96,9 +100,9 @@
 
         @media (max-width: 600px) {
             .grid { grid-template-columns: repeat(2, 1fr); padding: 15px; gap: 10px; }
-            .header-inner { padding: 5px 15px 0 15px; }
+            .header-inner { padding: 0 15px; }
             h1 { font-size: 1.8rem; }
-            #scroll-container { padding-top: calc(75px + env(safe-area-inset-top)); }
+            #scroll-container { padding-top: calc(105px + env(safe-area-inset-top)); }
         }
 
         .tile {
@@ -120,8 +124,6 @@
         }
 
         .tile:hover { filter: brightness(1.2); transform: scale(1.02); }
-        
-        /* Only apply white border if the station is ACTUALLY playing */
         .tile.active { outline: 4px solid white; outline-offset: -4px; }
 
         .fav-star {
@@ -143,27 +145,30 @@
             top: 22px; 
             right: 15px;
             align-items: flex-end;
-            gap: 1px;
-            height: 7px;
+            gap: 1.5px;
+            height: 9px;
             width: 15px;
             z-index: 3;
         }
 
-        /* Show equalizer for both active and ready states */
         .tile.active .eq-container, .tile.ready .eq-container { display: flex; }
 
         .eq-bar {
             background-color: white;
             width: 3px;
-            height: 100%;
             border-radius: 1px;
         }
 
-        /* Animate only when active (playing) */
-        .tile.active .eq-bar { animation: eq 1s ease-in-out infinite; }
+        /* Animated State */
+        .tile.active .eq-bar {
+            height: 100%;
+            animation: eq 1s ease-in-out infinite;
+        }
 
-        /* Ready state (re-opened) has static bars */
-        .tile.ready .eq-bar { height: 70%; }
+        /* PROGRESSIVE READY STATE: Static bars with increasing heights */
+        .tile.ready .eq-bar:nth-child(1) { height: 35%; }
+        .tile.ready .eq-bar:nth-child(2) { height: 65%; }
+        .tile.ready .eq-bar:nth-child(3) { height: 100%; }
 
         .eq-bar:nth-child(2) { animation-delay: 0.2s; }
         .eq-bar:nth-child(3) { animation-delay: 0.4s; }
@@ -313,6 +318,7 @@
         let touchstartX = 0;
         let touchendX = 0;
 
+        // Two-Tap Reload
         appTitle.onclick = () => {
             let clickCount = parseInt(appTitle.dataset.clicks || 0) + 1;
             appTitle.dataset.clicks = clickCount;
@@ -323,21 +329,17 @@
         function renderGrid() {
             grid.innerHTML = '';
             
-            // Re-order logic
             let anchorStation = null;
             let others = [...stations];
 
-            // 1. Separate the Anchor (Current or Last)
             if (currentStationId !== null) {
                 const index = others.findIndex(s => s.id === currentStationId);
                 if (index > -1) [anchorStation] = others.splice(index, 1);
             }
 
-            // 2. Separate remaining favorites and non-favorites
             let favs = others.filter(s => favoriteIds.includes(s.id));
             let nonFavs = others.filter(s => !favoriteIds.includes(s.id));
 
-            // Apply location sorting to favorites and non-favorites if enabled
             if (isLocationSorted) {
                 const sortLogic = (a, b) => {
                     if (a.type === "int" && b.type === "us") return -1;
@@ -348,7 +350,6 @@
                 nonFavs.sort(sortLogic);
             }
 
-            // 3. Assemble: Anchor -> All Favorites -> All Others
             activePlaylist = anchorStation ? [anchorStation, ...favs, ...nonFavs] : [...favs, ...nonFavs];
 
             activePlaylist.forEach((station) => {
@@ -356,7 +357,6 @@
                 tile.className = `tile c${(station.id % 8) + 1}`;
                 if (favoriteIds.includes(station.id)) tile.classList.add('is-fav');
                 
-                // First tile logic
                 if (currentStationId === station.id) {
                     tile.classList.add(isActuallyPlaying ? 'active' : 'ready');
                     if (!isActuallyPlaying) playPauseBtn.disabled = false;
@@ -458,7 +458,6 @@
             playPauseIcon.innerHTML = `<path d="${playing ? stopPath : playPath}"/>`;
         }
 
-        // Swipe Gestures
         document.addEventListener('touchstart', e => { touchstartX = e.changedTouches[0].screenX; }, {passive: true});
         document.addEventListener('touchend', e => {
             touchendX = e.changedTouches[0].screenX;
