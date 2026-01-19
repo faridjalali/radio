@@ -82,43 +82,48 @@
             h1 { font-size: 2rem; }
         }
 
-        /* Tile Styles */
+        /* Tile Styles - Updated for absolute positioning layout */
         .tile {
             aspect-ratio: 1 / 1;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
+            position: relative; /* Needed for absolute children */
             padding: 15px;
             cursor: pointer;
             transition: filter 0.2s ease;
-            position: relative;
             overflow: hidden;
         }
 
         .tile:hover { filter: brightness(1.2); }
 
-        .tile-top {
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-start;
-            z-index: 3;
-        }
-
+        /* Top Left: Star */
         .fav-star {
+            position: absolute;
+            top: 15px;
+            left: 15px;
             font-size: 1.2rem;
             color: rgba(255, 255, 255, 0.3);
             transition: color 0.2s ease;
+            z-index: 10;
         }
 
         .tile.is-fav .fav-star { color: var(--fav-color); }
 
+        /* Bottom Right: Geo Tag */
         .geo-tag {
+            position: absolute;
+            bottom: 15px;
+            right: 15px;
             font-size: 1rem;
-            font-weight: 700;
+            font-weight: 400; /* Less bold */
             opacity: 0.9;
+            z-index: 2;
+            text-align: right;
         }
 
+        /* Bottom Left: Name */
         .tile-name {
+            position: absolute;
+            bottom: 15px;
+            left: 15px;
             font-size: 1.5rem; 
             font-weight: 600;
             z-index: 2;
@@ -126,15 +131,19 @@
             line-height: 1;
             text-transform: uppercase;
             pointer-events: none;
+            max-width: calc(100% - 50px); /* Prevent overlap with geo tag */
         }
 
-        /* Equalizer Bars */
+        /* Top Right: Equalizer Bars */
         .eq-container {
             display: none;
+            position: absolute;
+            top: 15px;
+            right: 15px;
             align-items: flex-end;
-            gap: 2px;
-            height: 20px;
-            width: 20px;
+            gap: 3px; /* Slightly wider gap */
+            height: 14px; /* Less tall */
+            width: 30px; /* Wider */
             z-index: 3;
         }
 
@@ -142,18 +151,19 @@
 
         .eq-bar {
             background-color: white;
-            width: 3px;
+            width: 6px; /* Wider bars */
             height: 100%;
             animation: eq 1s ease-in-out infinite;
+            border-radius: 2px;
         }
 
         .eq-bar:nth-child(2) { animation-delay: 0.2s; }
         .eq-bar:nth-child(3) { animation-delay: 0.4s; }
 
         @keyframes eq {
-            0% { height: 20%; }
+            0% { height: 30%; }
             50% { height: 100%; }
-            100% { height: 20%; }
+            100% { height: 30%; }
         }
 
         .tile.active { outline: 4px solid white; outline-offset: -4px; }
@@ -261,7 +271,6 @@
         function renderGrid() {
             grid.innerHTML = '';
             
-            // Re-calculate playlist order: Favorites first, then the rest
             const favs = stations.filter(s => favoriteIds.includes(s.id));
             const nonFavs = stations.filter(s => !favoriteIds.includes(s.id));
             
@@ -284,11 +293,10 @@
                 if (currentStationId === station.id && isActuallyPlaying) tile.classList.add('active');
                 
                 tile.dataset.id = station.id;
+                // Updated HTML structure for absolute positioning
                 tile.innerHTML = `
-                    <div class="tile-top">
-                        <div class="fav-star">★</div>
-                        <div class="geo-tag">${station.geo}</div>
-                    </div>
+                    <div class="fav-star">★</div>
+                    <div class="geo-tag">${station.geo}</div>
                     <div class="eq-container">
                         <div class="eq-bar"></div>
                         <div class="eq-bar"></div>
@@ -297,7 +305,6 @@
                     <div class="tile-name">${station.name}</div>
                 `;
                 
-                // Handle Favoriting on star click
                 tile.querySelector('.fav-star').onclick = (e) => {
                     e.stopPropagation();
                     toggleFavorite(station.id);
@@ -329,7 +336,6 @@
         function setupMediaHandlers() {
             if ('mediaSession' in navigator) {
                 navigator.mediaSession.setActionHandler('previoustrack', () => {
-                    // Logic: If there are favorites, next/prev only cycles through favorites
                     const list = favoriteIds.length > 0 ? activePlaylist.filter(s => favoriteIds.includes(s.id)) : activePlaylist;
                     const currentIndex = list.findIndex(s => s.id === currentStationId);
                     const prevIndex = (currentIndex - 1 + list.length) % list.length;
