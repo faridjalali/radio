@@ -10,7 +10,7 @@
         :root {
             --bg-color: #000000;
             --text-color: #ffffff;
-            --accent-color: #0078d7;
+            --accent-color: #0078d7; 
             --disabled-color: #444;
             --fav-color: #ffca28;
         }
@@ -53,16 +53,9 @@
             box-sizing: border-box;
         }
 
-        h1 { 
-            font-weight: 200; 
-            font-size: 2.4rem; 
-            margin: 0; 
-            letter-spacing: -1px; 
-            cursor: pointer; 
-            user-select: none; 
-        }
+        h1 { font-weight: 200; font-size: 2.4rem; margin: 0; letter-spacing: -1px; cursor: pointer; user-select: none; }
 
-        .controls { display: flex; gap: 10px; }
+        .controls { display: flex; gap: 8px; }
 
         .control-btn {
             background: none;
@@ -75,9 +68,18 @@
             align-items: center;
             justify-content: center;
             transition: all 0.2s ease;
+            color: white;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        .control-btn.active {
+            background-color: var(--accent-color);
+            border-color: var(--accent-color);
         }
 
         .control-btn:hover:not(:disabled) { border-color: white; background-color: rgba(255,255,255,0.1); }
+        .control-btn.active:hover { background-color: #0086f0; }
         .control-btn:disabled { border-color: var(--disabled-color); cursor: not-allowed; }
         .control-btn svg { fill: white; width: 16px; height: 16px; display: block; }
 
@@ -237,6 +239,10 @@
         <div class="header-inner">
             <h1 id="app-title">Radio</h1>
             <div class="controls">
+                <button id="timer-btn" class="control-btn" title="Sleep Timer (30m)">
+                    <svg id="timer-icon" viewBox="0 0 24 24"><path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67z"/></svg>
+                    <span id="timer-display" style="display:none;"></span>
+                </button>
                 <button id="sort-btn" class="control-btn" title="Sort by Location">
                     <svg viewBox="0 0 24 24"><path d="M3 18h6v-2H3v2zM3 6v2h18V6H3zm0 7h12v-2H3v2z"/></svg>
                 </button>
@@ -316,6 +322,9 @@
         const grid = document.getElementById('station-grid');
         const player = document.getElementById('radio-player');
         const sortBtn = document.getElementById('sort-btn');
+        const timerBtn = document.getElementById('timer-btn');
+        const timerIcon = document.getElementById('timer-icon');
+        const timerDisplay = document.getElementById('timer-display');
         const shuffleBtn = document.getElementById('shuffle-btn');
         const playPauseBtn = document.getElementById('play-pause-btn');
         const playPauseIcon = document.getElementById('play-pause-icon');
@@ -329,12 +338,11 @@
         let isActuallyPlaying = false;
         let isLocationSorted = false;
         let favoriteIds = JSON.parse(localStorage.getItem('favStations') || '[]');
-        
-        // This is the permanent reference for navigation
         let logicalMasterList = [];
 
-        let touchstartX = 0;
-        let touchendX = 0;
+        let sleepTimerId = null;
+        let sleepMinutesRemaining = 0;
+        let sleepTickInterval = null;
 
         appTitle.onclick = () => {
             let clickCount = parseInt(appTitle.dataset.clicks || 0) + 1;
@@ -345,8 +353,6 @@
 
         function renderGrid() {
             grid.innerHTML = '';
-            
-            // 1. Prepare sorted lists for logical navigation
             let favs = stations.filter(s => favoriteIds.includes(s.id));
             let others = stations.filter(s => !favoriteIds.includes(s.id));
 
@@ -360,10 +366,7 @@
                 others.sort(sortLogic);
             }
 
-            // 2. THIS IS THE KEY: The logical list is Favorites -> Others (Original order)
             logicalMasterList = [...favs, ...others];
-
-            // 3. Prepare visual display (Anchor -> Others)
             let anchorStation = null;
             let visualList = [...logicalMasterList];
 
@@ -378,12 +381,10 @@
                 const tile = document.createElement('div');
                 tile.className = `tile c${(station.id % 8) + 1}`;
                 if (favoriteIds.includes(station.id)) tile.classList.add('is-fav');
-                
                 if (currentStationId === station.id) {
                     tile.classList.add(isActuallyPlaying ? 'active' : 'ready');
                     if (!isActuallyPlaying) playPauseBtn.disabled = false;
                 }
-                
                 tile.dataset.id = station.id;
 
                 const flagMatch = station.geo.match(/[\u{1F1E6}-\u{1F1FF}]{2}/u);
@@ -395,10 +396,7 @@
                     <div class="status-container">
                         <svg class="tile-play-icon" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
                         <div class="eq-container">
-                            <div class="eq-bar"></div>
-                            <div class="eq-bar"></div>
-                            <div class="eq-bar"></div>
-                            <div class="eq-bar"></div>
+                            <div class="eq-bar"></div><div class="eq-bar"></div><div class="eq-bar"></div><div class="eq-bar"></div>
                         </div>
                     </div>
                     <div class="tile-name">${station.name}</div>
@@ -411,6 +409,47 @@
                 tile.onclick = () => handleTileClick(station.id);
                 grid.appendChild(tile);
             });
+        }
+
+        timerBtn.onclick = () => {
+            if (sleepTimerId) {
+                clearSleepTimer();
+            } else {
+                startSleepTimer(30);
+            }
+        };
+
+        function startSleepTimer(minutes) {
+            sleepMinutesRemaining = minutes;
+            timerBtn.classList.add('active');
+            timerIcon.style.display = 'none';
+            timerDisplay.style.display = 'block';
+            timerDisplay.innerText = `${sleepMinutesRemaining}m`;
+
+            sleepTickInterval = setInterval(() => {
+                sleepMinutesRemaining--;
+                if (sleepMinutesRemaining <= 0) {
+                    stopPlayback();
+                    clearSleepTimer();
+                } else {
+                    timerDisplay.innerText = `${sleepMinutesRemaining}m`;
+                }
+            }, 60000);
+
+            sleepTimerId = setTimeout(() => {
+                stopPlayback();
+                clearSleepTimer();
+            }, minutes * 60000);
+        }
+
+        function clearSleepTimer() {
+            clearTimeout(sleepTimerId);
+            clearInterval(sleepTickInterval);
+            sleepTimerId = null;
+            sleepTickInterval = null;
+            timerBtn.classList.remove('active');
+            timerIcon.style.display = 'block';
+            timerDisplay.style.display = 'none';
         }
 
         function toggleFavorite(id) {
@@ -435,7 +474,6 @@
         }
 
         function navigateStation(direction) {
-            // FIXED: Reference the permanent list order, not the visual grid order
             const currentIndex = logicalMasterList.findIndex(s => s.id === currentStationId);
             const nextIndex = (currentIndex + direction + logicalMasterList.length) % logicalMasterList.length;
             playStation(logicalMasterList[nextIndex].id);
@@ -476,13 +514,15 @@
             if ('mediaSession' in navigator) navigator.mediaSession.playbackState = "paused";
             updatePlayPauseButton(false);
             renderGrid();
-            document.title = "Radio Tile Player";
+            document.title = "Radio";
         }
 
         function updatePlayPauseButton(playing) {
             playPauseIcon.innerHTML = `<path d="${playing ? stopPath : playPath}"/>`;
         }
 
+        let touchstartX = 0;
+        let touchendX = 0;
         document.addEventListener('touchstart', e => { touchstartX = e.changedTouches[0].screenX; }, {passive: true});
         document.addEventListener('touchend', e => {
             touchendX = e.changedTouches[0].screenX;
@@ -493,7 +533,13 @@
             }
         }, {passive: true});
 
-        sortBtn.onclick = () => { isLocationSorted = !isLocationSorted; renderGrid(); };
+        sortBtn.onclick = () => { 
+            isLocationSorted = !isLocationSorted; 
+            if (isLocationSorted) sortBtn.classList.add('active');
+            else sortBtn.classList.remove('active');
+            renderGrid(); 
+        };
+
         shuffleBtn.onclick = () => { const randomIndex = Math.floor(Math.random() * stations.length); playStation(stations[randomIndex].id); };
         
         playPauseBtn.onclick = () => { 
