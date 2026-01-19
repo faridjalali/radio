@@ -176,7 +176,6 @@
             max-width: calc(100% - 75px);
         }
 
-        /* Improved Geo-Tag Layout */
         .geo-tag {
             position: absolute;
             bottom: 15px;
@@ -184,21 +183,20 @@
             z-index: 2;
             text-align: right;
             display: flex;
-            align-items: baseline;
+            align-items: center;
             gap: 4px;
             line-height: 1;
         }
 
-        /* Smaller font for state text */
         .geo-text {
             font-size: 0.8rem; 
             font-weight: 400;
             opacity: 0.9;
         }
 
-        /* Larger font for emoji flag */
         .geo-flag {
             font-size: 1.3rem;
+            display: inline-block;
         }
 
         .c1 { background-color: #00A300; } .c2 { background-color: #2D89EF; } 
@@ -325,8 +323,9 @@
                 
                 tile.dataset.id = station.id;
 
-                // Split flag from state text to allow independent sizing
-                const flagEmoji = [...station.geo].find(char => /\p{Emoji}/u.test(char)) || "";
+                // Robust split: Emoji flags live in regional indicator range \u1F1E6-\u1F1FF
+                const flagMatch = station.geo.match(/[\uD83C][\uDDE6-\uDDFF][\uD83C][\uDDE6-\uDDFF]/);
+                const flagEmoji = flagMatch ? flagMatch[0] : "";
                 const stateText = station.geo.replace(flagEmoji, "").trim();
 
                 tile.innerHTML = `
