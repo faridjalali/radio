@@ -15,6 +15,13 @@
             --fav-color: #ffca28;
         }
 
+        /* Needed for smooth gradient angle animation */
+        @property --wipe-angle {
+          syntax: '<angle>';
+          initial-value: 0deg;
+          inherits: false;
+        }
+
         html, body {
             position: fixed;
             overflow: hidden;
@@ -58,6 +65,7 @@
         .controls { display: flex; gap: 8px; }
 
         .control-btn {
+            position: relative;
             background: none;
             border: 1.5px solid rgba(255,255,255,0.2);
             border-radius: 50%;
@@ -69,13 +77,31 @@
             justify-content: center;
             transition: all 0.2s ease;
             color: white;
-            font-size: 0.8rem;
+            font-size: 0.9rem;
             font-weight: 600;
+            overflow: hidden; /* Ensures gradient doesn't spill */
         }
 
+        /* General active state (for Sort button) */
         .control-btn.active {
             background-color: var(--accent-color);
             border-color: var(--accent-color);
+        }
+
+        /* Specific active state for Timer button with wipe animation */
+        #timer-btn.active {
+            /* The gradient creates the blue-to-transparent wipe effect */
+            background: conic-gradient(
+                transparent var(--wipe-angle), /* The revealed background growing clockwise */
+                var(--accent-color) 0deg /* The remaining blue part */
+            );
+            border-color: var(--accent-color);
+            animation: wipeClockwise 60s linear infinite;
+        }
+
+        @keyframes wipeClockwise {
+            from { --wipe-angle: 0deg; }
+            to { --wipe-angle: 360deg; }
         }
 
         .control-btn:hover:not(:disabled) { border-color: white; background-color: rgba(255,255,255,0.1); }
@@ -239,9 +265,9 @@
         <div class="header-inner">
             <h1 id="app-title">Radio</h1>
             <div class="controls">
-                <button id="timer-btn" class="control-btn" title="Sleep Timer (30m)">
+                <button id="timer-btn" class="control-btn" title="Sleep Timer">
                     <svg id="timer-icon" viewBox="0 0 24 24"><path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67z"/></svg>
-                    <span id="timer-display" style="display:none;"></span>
+                    <span id="timer-display" style="display:none; z-index: 3; position: relative;"></span>
                 </button>
                 <button id="sort-btn" class="control-btn" title="Sort by Location">
                     <svg viewBox="0 0 24 24"><path d="M3 18h6v-2H3v2zM3 6v2h18V6H3zm0 7h12v-2H3v2z"/></svg>
@@ -340,8 +366,9 @@
         let favoriteIds = JSON.parse(localStorage.getItem('favStations') || '[]');
         let logicalMasterList = [];
 
-        let sleepTimerId = null;
-        let sleepMinutesRemaining = 0;
+        // Sleep Timer States: 0 (Off), 30, 15
+        let currentTimerDuration = 0; 
+        let sleepTimerTimeout = null;
         let sleepTickInterval = null;
 
         appTitle.onclick = () => {
@@ -411,42 +438,50 @@
             });
         }
 
+        // Sleep Timer Toggle Logic: 30 -> 15 -> Off
         timerBtn.onclick = () => {
-            if (sleepTimerId) {
-                clearSleepTimer();
-            } else {
+            if (currentTimerDuration === 0) {
                 startSleepTimer(30);
+            } else if (currentTimerDuration === 30) {
+                startSleepTimer(15);
+            } else {
+                clearSleepTimer();
             }
         };
 
         function startSleepTimer(minutes) {
-            sleepMinutesRemaining = minutes;
+            if (sleepTimerTimeout) clearTimeout(sleepTimerTimeout);
+            if (sleepTickInterval) clearInterval(sleepTickInterval);
+
+            currentTimerDuration = minutes;
             timerBtn.classList.add('active');
             timerIcon.style.display = 'none';
             timerDisplay.style.display = 'block';
-            timerDisplay.innerText = `${sleepMinutesRemaining}m`;
+            timerDisplay.innerText = currentTimerDuration;
 
+            let remaining = minutes;
             sleepTickInterval = setInterval(() => {
-                sleepMinutesRemaining--;
-                if (sleepMinutesRemaining <= 0) {
+                remaining--;
+                if (remaining <= 0) {
                     stopPlayback();
                     clearSleepTimer();
                 } else {
-                    timerDisplay.innerText = `${sleepMinutesRemaining}m`;
+                    timerDisplay.innerText = remaining;
                 }
             }, 60000);
 
-            sleepTimerId = setTimeout(() => {
+            sleepTimerTimeout = setTimeout(() => {
                 stopPlayback();
                 clearSleepTimer();
             }, minutes * 60000);
         }
 
         function clearSleepTimer() {
-            clearTimeout(sleepTimerId);
-            clearInterval(sleepTickInterval);
-            sleepTimerId = null;
+            if (sleepTimerTimeout) clearTimeout(sleepTimerTimeout);
+            if (sleepTickInterval) clearInterval(sleepTickInterval);
+            sleepTimerTimeout = null;
             sleepTickInterval = null;
+            currentTimerDuration = 0;
             timerBtn.classList.remove('active');
             timerIcon.style.display = 'block';
             timerDisplay.style.display = 'none';
