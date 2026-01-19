@@ -82,10 +82,10 @@
             h1 { font-size: 2rem; }
         }
 
-        /* Tile Styles - Updated for absolute positioning layout */
+        /* Tile Styles */
         .tile {
             aspect-ratio: 1 / 1;
-            position: relative; /* Needed for absolute children */
+            position: relative;
             padding: 15px;
             cursor: pointer;
             transition: filter 0.2s ease;
@@ -113,7 +113,7 @@
             bottom: 15px;
             right: 15px;
             font-size: 1rem;
-            font-weight: 400; /* Less bold */
+            font-weight: 400;
             opacity: 0.9;
             z-index: 2;
             text-align: right;
@@ -131,19 +131,19 @@
             line-height: 1;
             text-transform: uppercase;
             pointer-events: none;
-            max-width: calc(100% - 50px); /* Prevent overlap with geo tag */
+            max-width: calc(100% - 50px);
         }
 
-        /* Top Right: Equalizer Bars */
+        /* Top Right: Equalizer Bars - Updated Size and Position */
         .eq-container {
             display: none;
             position: absolute;
-            top: 15px;
+            top: 20px; /* Lowered from 15px for visual alignment with star */
             right: 15px;
             align-items: flex-end;
-            gap: 3px; /* Slightly wider gap */
-            height: 14px; /* Less tall */
-            width: 30px; /* Wider */
+            gap: 1px; /* Tighter gap */
+            height: 7px; /* 50% shorter */
+            width: 15px; /* 50% narrower */
             z-index: 3;
         }
 
@@ -151,10 +151,10 @@
 
         .eq-bar {
             background-color: white;
-            width: 6px; /* Wider bars */
+            width: 3px; /* 50% thinner bars */
             height: 100%;
             animation: eq 1s ease-in-out infinite;
-            border-radius: 2px;
+            border-radius: 1px; /* Smaller radius */
         }
 
         .eq-bar:nth-child(2) { animation-delay: 0.2s; }
@@ -293,7 +293,6 @@
                 if (currentStationId === station.id && isActuallyPlaying) tile.classList.add('active');
                 
                 tile.dataset.id = station.id;
-                // Updated HTML structure for absolute positioning
                 tile.innerHTML = `
                     <div class="fav-star">★</div>
                     <div class="geo-tag">${station.geo}</div>
