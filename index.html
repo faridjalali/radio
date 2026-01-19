@@ -8,11 +8,12 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <style>
         :root {
-            --bg-color: #1a1a1a;
+            --bg-color: #000000;
             --text-color: #ffffff;
             --accent-color: #0078d7;
             --disabled-color: #444;
             --fav-color: #ffca28;
+            --dynamic-bg: #000000;
         }
 
         body {
@@ -22,14 +23,28 @@
             margin: 0;
             padding: 0;
             -webkit-tap-highlight-color: transparent;
+            transition: background-color 1.2s ease;
+            overflow-x: hidden;
+            touch-action: pan-y;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: radial-gradient(circle at center, var(--dynamic-bg) 0%, #000000 100%);
+            opacity: 0.4;
+            z-index: -1;
+            pointer-events: none;
         }
 
         header {
             position: sticky;
             top: 0;
             z-index: 1000;
-            background-color: var(--bg-color);
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            background-color: rgba(0,0,0,0.8);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
             border-bottom: 1px solid rgba(255,255,255,0.05);
             padding: 20px 0;
         }
@@ -86,11 +101,22 @@
             position: relative;
             padding: 15px;
             cursor: pointer;
-            transition: filter 0.2s ease;
+            transition: transform 0.2s ease, filter 0.2s ease;
             overflow: hidden;
         }
 
-        .tile:hover { filter: brightness(1.2); }
+        .tile:hover { filter: brightness(1.2); transform: scale(1.02); }
+
+        .tile.active {
+            outline: 4px solid white;
+            outline-offset: -4px;
+            animation: breathe 3s infinite ease-in-out;
+        }
+
+        @keyframes breathe {
+            0%, 100% { box-shadow: 0 0 5px rgba(255,255,255,0.2); }
+            50% { box-shadow: 0 0 25px rgba(255,255,255,0.5); }
+        }
 
         .fav-star {
             position: absolute;
@@ -150,21 +176,30 @@
             max-width: calc(100% - 75px);
         }
 
+        /* Improved Geo-Tag Layout */
         .geo-tag {
             position: absolute;
             bottom: 15px;
             right: 15px;
-            font-size: 1.3rem; 
-            line-height: 1;
-            font-weight: 400;
-            opacity: 0.9;
             z-index: 2;
             text-align: right;
             display: flex;
-            align-items: center;
+            align-items: baseline;
+            gap: 4px;
+            line-height: 1;
         }
 
-        .tile.active { outline: 4px solid white; outline-offset: -4px; }
+        /* Smaller font for state text */
+        .geo-text {
+            font-size: 0.8rem; 
+            font-weight: 400;
+            opacity: 0.9;
+        }
+
+        /* Larger font for emoji flag */
+        .geo-flag {
+            font-size: 1.3rem;
+        }
 
         .c1 { background-color: #00A300; } .c2 { background-color: #2D89EF; } 
         .c3 { background-color: #9F00A7; } .c4 { background-color: #603CBA; } 
@@ -259,13 +294,16 @@
         const playPath = "M8 5v14l11-7z";
         const stopPath = "M6 6h12v12H6z";
 
-        let currentStationId = null;
+        let currentStationId = parseInt(localStorage.getItem('lastStationId')) || null;
         let isActuallyPlaying = false;
         let isLocationSorted = false;
         let favoriteIds = JSON.parse(localStorage.getItem('favStations') || '[]');
         let activePlaylist = [];
 
-        function renderGrid() {
+        let touchstartX = 0;
+        let touchendX = 0;
+
+        function renderGrid(autoScroll = false) {
             grid.innerHTML = '';
             const favs = stations.filter(s => favoriteIds.includes(s.id));
             const nonFavs = stations.filter(s => !favoriteIds.includes(s.id));
@@ -283,8 +321,14 @@
                 const tile = document.createElement('div');
                 tile.className = `tile c${(station.id % 8) + 1}`;
                 if (favoriteIds.includes(station.id)) tile.classList.add('is-fav');
-                if (currentStationId === station.id && isActuallyPlaying) tile.classList.add('active');
+                if (currentStationId === station.id) tile.classList.add(isActuallyPlaying ? 'active' : 'last-played');
+                
                 tile.dataset.id = station.id;
+
+                // Split flag from state text to allow independent sizing
+                const flagEmoji = [...station.geo].find(char => /\p{Emoji}/u.test(char)) || "";
+                const stateText = station.geo.replace(flagEmoji, "").trim();
+
                 tile.innerHTML = `
                     <div class="fav-star">★</div>
                     <div class="eq-container">
@@ -293,57 +337,47 @@
                         <div class="eq-bar"></div>
                     </div>
                     <div class="tile-name">${station.name}</div>
-                    <div class="geo-tag">${station.geo}</div>
+                    <div class="geo-tag">
+                        <span class="geo-text">${stateText}</span>
+                        <span class="geo-flag">${flagEmoji}</span>
+                    </div>
                 `;
-                tile.querySelector('.fav-star').onclick = (e) => {
-                    e.stopPropagation();
-                    toggleFavorite(station.id);
-                };
+                tile.querySelector('.fav-star').onclick = (e) => { e.stopPropagation(); toggleFavorite(station.id); };
                 tile.onclick = () => handleTileClick(station.id);
                 grid.appendChild(tile);
+
+                if (autoScroll && currentStationId === station.id) {
+                    setTimeout(() => tile.scrollIntoView({ behavior: 'smooth', block: 'center' }), 300);
+                }
             });
         }
 
         function toggleFavorite(id) {
-            if (favoriteIds.includes(id)) {
-                favoriteIds = favoriteIds.filter(fid => fid !== id);
-            } else {
-                favoriteIds.push(id);
-            }
+            if (favoriteIds.includes(id)) { favoriteIds = favoriteIds.filter(fid => fid !== id); } 
+            else { favoriteIds.push(id); }
             localStorage.setItem('favStations', JSON.stringify(favoriteIds));
             renderGrid();
         }
 
         function handleTileClick(id) {
-            if (currentStationId === id && isActuallyPlaying) {
-                stopPlayback();
-            } else {
-                playStation(id);
-            }
+            if (currentStationId === id && isActuallyPlaying) { stopPlayback(); } 
+            else { playStation(id); }
         }
 
         function setupMediaHandlers() {
             if ('mediaSession' in navigator) {
-                navigator.mediaSession.setActionHandler('previoustrack', () => {
-                    const list = favoriteIds.length > 0 ? activePlaylist.filter(s => favoriteIds.includes(s.id)) : activePlaylist;
-                    const currentIndex = list.findIndex(s => s.id === currentStationId);
-                    const prevIndex = (currentIndex - 1 + list.length) % list.length;
-                    playStation(list[prevIndex].id);
-                });
-
-                navigator.mediaSession.setActionHandler('nexttrack', () => {
-                    const list = favoriteIds.length > 0 ? activePlaylist.filter(s => favoriteIds.includes(s.id)) : activePlaylist;
-                    const currentIndex = list.findIndex(s => s.id === currentStationId);
-                    const nextIndex = (currentIndex + 1) % list.length;
-                    playStation(list[nextIndex].id);
-                });
-
-                navigator.mediaSession.setActionHandler('play', () => {
-                   if (currentStationId !== null) player.play();
-                });
-
+                navigator.mediaSession.setActionHandler('previoustrack', () => navigateStation(-1));
+                navigator.mediaSession.setActionHandler('nexttrack', () => navigateStation(1));
+                navigator.mediaSession.setActionHandler('play', () => { if (currentStationId !== null) player.play(); });
                 navigator.mediaSession.setActionHandler('pause', () => stopPlayback());
             }
+        }
+
+        function navigateStation(direction) {
+            const list = favoriteIds.length > 0 ? activePlaylist.filter(s => favoriteIds.includes(s.id)) : activePlaylist;
+            const currentIndex = list.findIndex(s => s.id === currentStationId);
+            const nextIndex = (currentIndex + direction + list.length) % list.length;
+            playStation(list[nextIndex].id);
         }
 
         function updateMediaMetadata(station) {
@@ -363,36 +397,31 @@
         function playStation(id) {
             const station = stations.find(s => s.id === id);
             currentStationId = id;
-            
-            // UI Visual update (even if backgrounded)
-            const allTiles = document.querySelectorAll('.tile');
-            allTiles.forEach(t => t.classList.remove('active'));
-            const activeTile = document.querySelector(`.tile[data-id="${id}"]`);
-            if (activeTile) activeTile.classList.add('active');
+            localStorage.setItem('lastStationId', id);
 
-            // CRITICAL BACKGROUND FIX:
-            // Ensure URL is swapped and play is triggered in one synchronous thread
+            const tileForColor = document.querySelector(`.tile[data-id="${id}"]`);
+            if (tileForColor) {
+                const tileStyle = getComputedStyle(tileForColor);
+                document.documentElement.style.setProperty('--dynamic-bg', tileStyle.backgroundColor);
+            }
+
             player.src = station.url;
             player.play().then(() => {
-                updateMediaMetadata(station);
                 isActuallyPlaying = true;
                 playPauseBtn.disabled = false;
                 updatePlayPauseButton(true);
-            }).catch(e => {
-                // Secondary trigger for stubborn iOS states
-                player.load();
-                player.play();
-            });
+                renderGrid();
+                updateMediaMetadata(station);
+            }).catch(e => { player.load(); player.play(); });
         }
 
         function stopPlayback() {
             player.pause();
             isActuallyPlaying = false;
-            if ('mediaSession' in navigator) {
-                navigator.mediaSession.playbackState = "paused";
-            }
+            document.documentElement.style.setProperty('--dynamic-bg', '#000000');
+            if ('mediaSession' in navigator) navigator.mediaSession.playbackState = "paused";
             updatePlayPauseButton(false);
-            document.querySelectorAll('.tile').forEach(t => t.classList.remove('active'));
+            renderGrid();
             document.title = "Radio Tile Player";
         }
 
@@ -400,25 +429,21 @@
             playPauseIcon.innerHTML = `<path d="${playing ? stopPath : playPath}"/>`;
         }
 
-        sortBtn.onclick = () => {
-            isLocationSorted = !isLocationSorted;
-            renderGrid();
-        };
-
-        shuffleBtn.onclick = () => {
-            const randomIndex = Math.floor(Math.random() * stations.length);
-            playStation(stations[randomIndex].id);
-        };
-
-        playPauseBtn.onclick = () => {
-            if (isActuallyPlaying) {
-                stopPlayback();
-            } else if (currentStationId !== null) {
-                player.play();
+        document.addEventListener('touchstart', e => { touchstartX = e.changedTouches[0].screenX; });
+        document.addEventListener('touchend', e => {
+            touchendX = e.changedTouches[0].screenX;
+            const diff = touchstartX - touchendX;
+            if (Math.abs(diff) > 100) {
+                if (diff > 0) navigateStation(1);
+                else navigateStation(-1);
             }
-        };
+        });
 
-        renderGrid();
+        sortBtn.onclick = () => { isLocationSorted = !isLocationSorted; renderGrid(); };
+        shuffleBtn.onclick = () => { const randomIndex = Math.floor(Math.random() * stations.length); playStation(stations[randomIndex].id); };
+        playPauseBtn.onclick = () => { if (isActuallyPlaying) stopPlayback(); else if (currentStationId !== null) player.play(); };
+
+        renderGrid(true);
         setupMediaHandlers();
     </script>
 </body>
