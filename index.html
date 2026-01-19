@@ -87,10 +87,7 @@
         }
 
         #timer-btn.active {
-            background: conic-gradient(
-                transparent var(--wipe-angle), 
-                var(--accent-color) 0deg
-            );
+            background: conic-gradient(transparent var(--wipe-angle), var(--accent-color) 0deg);
             border-color: var(--accent-color);
             animation: wipeClockwise 60s linear infinite;
         }
@@ -176,6 +173,22 @@
             align-items: flex-start;
         }
 
+        /* WAITING SPINNER */
+        .spinner {
+            display: none;
+            width: 18px;
+            height: 18px;
+            border: 2px solid rgba(255,255,255,0.2);
+            border-top-color: white;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+            pointer-events: none;
+        }
+
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        .tile.buffering .spinner { display: block; }
+
         .tile-play-icon {
             width: 24px;
             height: 24px;
@@ -185,6 +198,7 @@
         }
 
         .tile.ready .tile-play-icon { display: block; }
+        .tile.buffering .tile-play-icon { display: none; }
 
         .eq-container {
             display: none;
@@ -197,6 +211,7 @@
         }
 
         .tile.active .eq-container { display: flex; }
+        .tile.buffering .eq-container { display: none; }
 
         .eq-bar {
             background-color: white;
@@ -205,44 +220,27 @@
             height: 30%;
         }
 
-        .tile.active .eq-bar {
-            animation: rollingWave 0.8s ease-in-out infinite;
-        }
-
+        .tile.active .eq-bar { animation: rollingWave 0.8s ease-in-out infinite; }
         .tile.active .eq-bar:nth-child(1) { animation-delay: 0.0s; }
         .tile.active .eq-bar:nth-child(2) { animation-delay: 0.1s; }
         .tile.active .eq-bar:nth-child(3) { animation-delay: 0.2s; }
         .tile.active .eq-bar:nth-child(4) { animation-delay: 0.3s; }
 
-        @keyframes rollingWave {
-            0%, 100% { height: 30%; }
-            50% { height: 100%; }
-        }
+        @keyframes rollingWave { 0%, 100% { height: 30%; } 50% { height: 100%; } }
 
         .tile-name {
             position: absolute;
-            bottom: 15px;
-            left: 15px;
-            font-size: 1.4rem; 
-            font-weight: 600;
-            z-index: 2;
-            letter-spacing: -0.5px;
-            line-height: 1;
-            text-transform: uppercase;
-            pointer-events: none;
-            max-width: calc(100% - 75px);
+            bottom: 15px; left: 15px;
+            font-size: 1.4rem; font-weight: 600; z-index: 2;
+            letter-spacing: -0.5px; line-height: 1; text-transform: uppercase;
+            pointer-events: none; max-width: calc(100% - 75px);
         }
 
         .geo-tag {
             position: absolute;
-            bottom: 15px;
-            right: 15px;
-            z-index: 2;
-            text-align: right;
-            display: flex;
-            align-items: center;
-            gap: 4px;
-            line-height: 1;
+            bottom: 15px; right: 15px;
+            z-index: 2; text-align: right; display: flex;
+            align-items: center; gap: 4px; line-height: 1;
         }
 
         .geo-text { font-size: 0.8rem; font-weight: 400; opacity: 0.9; }
@@ -293,7 +291,7 @@
             { name: "EGO", geo: "🇩🇪", type: "int", url: "https://cast.egofm.de/egofm.mp3" },   
             { name: "FM4", geo: "🇩🇪", type: "int", url: "https://orf-live.ors-shoutcast.at/fm4-q2a" },
             { name: "STUD", geo: "🇸🇮", type: "int", url: "https://kruljo.radiostudent.si:8001/test.ogg" },
-            { name: "NOVA", geo: "🇫🇷", type: "int", url: "https://novazz.ice.infomaniak.ch/novazz-128.mp3" },
+            { name: "NOVA", geo: "🇫🇷", type: "int", url: "https://novazz-128.mp3" },
             { name: "U92M", geo: "WV", type: "us", url: "https://stream.radiojar.com/56p3rt9eytzuv" },
             { name: "DEPA", geo: "IL", type: "us", url: "https://ice26.securenetsystems.net/RADIODEPAUL" },
             { name: "KRVS", geo: "LA", type: "us", url: "https://29223.live.streamtheworld.com/KRVSFMAAC.aac" },
@@ -357,6 +355,7 @@
         const stopPath = "M6 6h12v12H6z";
 
         let currentStationId = parseInt(localStorage.getItem('lastStationId')) || null;
+        let bufferingStationId = null; // Track which station is loading
         let isActuallyPlaying = false;
         let isLocationSorted = false;
         let favoriteIds = JSON.parse(localStorage.getItem('favStations') || '[]');
@@ -403,10 +402,15 @@
                 const tile = document.createElement('div');
                 tile.className = `tile c${(station.id % 8) + 1}`;
                 if (favoriteIds.includes(station.id)) tile.classList.add('is-fav');
-                if (currentStationId === station.id) {
+                
+                // Buffering takes precedence for visual state
+                if (bufferingStationId === station.id) {
+                    tile.classList.add('buffering');
+                } else if (currentStationId === station.id) {
                     tile.classList.add(isActuallyPlaying ? 'active' : 'ready');
                     if (!isActuallyPlaying) playPauseBtn.disabled = false;
                 }
+                
                 tile.dataset.id = station.id;
 
                 const flagMatch = station.geo.match(/[\u{1F1E6}-\u{1F1FF}]{2}/u);
@@ -416,6 +420,7 @@
                 tile.innerHTML = `
                     <div class="fav-star">★</div>
                     <div class="status-container">
+                        <div class="spinner"></div>
                         <svg class="tile-play-icon" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
                         <div class="eq-container">
                             <div class="eq-bar"></div><div class="eq-bar"></div><div class="eq-bar"></div><div class="eq-bar"></div>
@@ -434,55 +439,35 @@
         }
 
         timerBtn.onclick = () => {
-            if (currentTimerDuration === 0) {
-                startSleepTimer(30);
-            } else if (currentTimerDuration === 30) {
-                startSleepTimer(15);
-            } else {
-                clearSleepTimer();
-            }
+            if (currentTimerDuration === 0) startSleepTimer(30);
+            else if (currentTimerDuration === 30) startSleepTimer(15);
+            else clearSleepTimer();
         };
 
         function startSleepTimer(minutes) {
             if (sleepTimerTimeout) clearTimeout(sleepTimerTimeout);
             if (sleepTickInterval) clearInterval(sleepTickInterval);
-
-            // FORCE RESTART ANIMATION: Briefly remove and re-add class
             timerBtn.classList.remove('active');
-            void timerBtn.offsetWidth; // Trigger reflow to reset CSS animation
+            void timerBtn.offsetWidth;
             timerBtn.classList.add('active');
-
             currentTimerDuration = minutes;
             timerIcon.style.display = 'none';
             timerDisplay.style.display = 'block';
             timerDisplay.innerText = currentTimerDuration;
-
             let remaining = minutes;
             sleepTickInterval = setInterval(() => {
                 remaining--;
-                if (remaining <= 0) {
-                    stopPlayback();
-                    clearSleepTimer();
-                } else {
-                    timerDisplay.innerText = remaining;
-                }
+                if (remaining <= 0) { stopPlayback(); clearSleepTimer(); } 
+                else { timerDisplay.innerText = remaining; }
             }, 60000);
-
-            sleepTimerTimeout = setTimeout(() => {
-                stopPlayback();
-                clearSleepTimer();
-            }, minutes * 60000);
+            sleepTimerTimeout = setTimeout(() => { stopPlayback(); clearSleepTimer(); }, minutes * 60000);
         }
 
         function clearSleepTimer() {
             if (sleepTimerTimeout) clearTimeout(sleepTimerTimeout);
             if (sleepTickInterval) clearInterval(sleepTickInterval);
-            sleepTimerTimeout = null;
-            sleepTickInterval = null;
-            currentTimerDuration = 0;
-            timerBtn.classList.remove('active');
-            timerIcon.style.display = 'block';
-            timerDisplay.style.display = 'none';
+            sleepTimerTimeout = null; sleepTickInterval = null; currentTimerDuration = 0;
+            timerBtn.classList.remove('active'); timerIcon.style.display = 'block'; timerDisplay.style.display = 'none';
         }
 
         function toggleFavorite(id) {
@@ -515,9 +500,7 @@
         function updateMediaMetadata(station) {
             if ('mediaSession' in navigator) {
                 navigator.mediaSession.metadata = new MediaMetadata({
-                    title: station.name,
-                    artist: "Radio",
-                    album: station.geo,
+                    title: station.name, artist: "Radio", album: station.geo,
                     artwork: [{ src: 'image_0.png.jpg', sizes: '512x512', type: 'image/png' }]
                 });
                 navigator.mediaSession.playbackState = "playing";
@@ -528,11 +511,20 @@
 
         function playStation(id) {
             const station = stations.find(s => s.id === id);
-            currentStationId = id;
-            localStorage.setItem('lastStationId', id);
+            
+            // Set buffering state and re-render grid instantly
+            bufferingStationId = id;
+            isActuallyPlaying = false;
+            renderGrid();
+
             player.src = station.url;
             player.play().then(() => {
+                // Clear buffering, set active state, and re-order grid
+                bufferingStationId = null;
+                currentStationId = id;
                 isActuallyPlaying = true;
+                localStorage.setItem('lastStationId', id);
+                
                 playPauseBtn.disabled = false;
                 updatePlayPauseButton(true);
                 renderGrid();
@@ -554,8 +546,7 @@
             playPauseIcon.innerHTML = `<path d="${playing ? stopPath : playPath}"/>`;
         }
 
-        let touchstartX = 0;
-        let touchendX = 0;
+        let touchstartX = 0; let touchendX = 0;
         document.addEventListener('touchstart', e => { touchstartX = e.changedTouches[0].screenX; }, {passive: true});
         document.addEventListener('touchend', e => {
             touchendX = e.changedTouches[0].screenX;
