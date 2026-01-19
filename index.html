@@ -39,7 +39,7 @@
             -webkit-backdrop-filter: blur(20px);
             border-bottom: 1px solid rgba(255,255,255,0.05);
             padding-top: calc(env(safe-area-inset-top) + 15px); 
-            padding-bottom: 12px; /* Slightly reduced */
+            padding-bottom: 12px;
             touch-action: pan-y;
         }
 
@@ -79,7 +79,6 @@
             top: 0; left: 0; right: 0; bottom: 0;
             overflow-y: auto;
             -webkit-overflow-scrolling: touch;
-            /* SHRUNK PADDING: Reduced from 115px to 95px */
             padding-top: calc(95px + env(safe-area-inset-top)); 
             padding-bottom: env(safe-area-inset-bottom);
             touch-action: pan-y;
@@ -91,7 +90,7 @@
             gap: 15px;
             max-width: 1600px;
             margin: 0 auto;
-            padding: 10px 30px 20px 30px; /* Reduced top grid padding */
+            padding: 10px 30px 20px 30px;
             box-sizing: border-box;
         }
 
@@ -99,7 +98,6 @@
             .grid { grid-template-columns: repeat(2, 1fr); padding: 10px 15px 20px 15px; gap: 10px; }
             .header-inner { padding: 0 15px; }
             h1 { font-size: 1.8rem; }
-            /* Mobile adjustment for shrunken gap */
             #scroll-container { padding-top: calc(85px + env(safe-area-inset-top)); }
         }
 
@@ -144,8 +142,8 @@
             right: 15px;
             align-items: flex-end;
             gap: 1.5px;
-            height: 9px;
-            width: 15px;
+            height: 10px;
+            width: 18px;
             z-index: 3;
         }
 
@@ -155,20 +153,28 @@
             background-color: white;
             width: 3px;
             border-radius: 1px;
+            height: 30%;
         }
 
-        .tile.active .eq-bar { height: 100%; animation: eq 1s ease-in-out infinite; }
-        .tile.ready .eq-bar:nth-child(1) { height: 35%; }
-        .tile.ready .eq-bar:nth-child(2) { height: 65%; }
-        .tile.ready .eq-bar:nth-child(3) { height: 100%; }
+        /* ACTIVE: Rolling Wave Animation */
+        .tile.active .eq-bar {
+            animation: rollingWave 0.8s ease-in-out infinite;
+        }
 
-        .eq-bar:nth-child(2) { animation-delay: 0.2s; }
-        .eq-bar:nth-child(3) { animation-delay: 0.4s; }
+        .tile.active .eq-bar:nth-child(1) { animation-delay: 0.0s; }
+        .tile.active .eq-bar:nth-child(2) { animation-delay: 0.1s; }
+        .tile.active .eq-bar:nth-child(3) { animation-delay: 0.2s; }
+        .tile.active .eq-bar:nth-child(4) { animation-delay: 0.3s; }
 
-        @keyframes eq {
-            0% { height: 30%; }
+        /* READY: Static Progressive Heights (4 Bars) */
+        .tile.ready .eq-bar:nth-child(1) { height: 25%; }
+        .tile.ready .eq-bar:nth-child(2) { height: 50%; }
+        .tile.ready .eq-bar:nth-child(3) { height: 75%; }
+        .tile.ready .eq-bar:nth-child(4) { height: 100%; }
+
+        @keyframes rollingWave {
+            0%, 100% { height: 30%; }
             50% { height: 100%; }
-            100% { height: 30%; }
         }
 
         .tile-name {
@@ -359,6 +365,7 @@
                 tile.innerHTML = `
                     <div class="fav-star">★</div>
                     <div class="eq-container">
+                        <div class="eq-bar"></div>
                         <div class="eq-bar"></div>
                         <div class="eq-bar"></div>
                         <div class="eq-bar"></div>
