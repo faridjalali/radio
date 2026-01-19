@@ -38,11 +38,8 @@
             backdrop-filter: blur(20px);
             -webkit-backdrop-filter: blur(20px);
             border-bottom: 1px solid rgba(255,255,255,0.05);
-            
-            /* FIX: Respect the Dynamic Island / Notch */
             padding-top: env(safe-area-inset-top); 
             padding-bottom: 15px;
-            
             touch-action: pan-y;
         }
 
@@ -92,12 +89,8 @@
             bottom: 0;
             overflow-y: auto;
             -webkit-overflow-scrolling: touch;
-            
-            /* FIX: Push grid down exactly by header height + safe area */
-            padding-top: calc(80px + env(safe-area-inset-top)); 
-            /* FIX: Ensure bottom tiles aren't behind the Home Bar */
+            padding-top: calc(85px + env(safe-area-inset-top)); 
             padding-bottom: env(safe-area-inset-bottom);
-            
             touch-action: pan-y;
         }
 
@@ -115,6 +108,7 @@
             .grid { grid-template-columns: repeat(2, 1fr); padding: 15px; gap: 10px; }
             .header-inner { padding: 5px 15px 0 15px; }
             h1 { font-size: 1.8rem; }
+            #scroll-container { padding-top: calc(75px + env(safe-area-inset-top)); }
         }
 
         .tile {
@@ -320,18 +314,20 @@
         let touchstartX = 0;
         let touchendX = 0;
 
-        // Two-Tap Reload
-        let clickCount = 0;
         appTitle.onclick = () => {
-            clickCount++;
+            let clickCount = parseInt(appTitle.dataset.clicks || 0) + 1;
+            appTitle.dataset.clicks = clickCount;
             if (clickCount >= 2) window.location.reload(true);
-            setTimeout(() => clickCount = 0, 500); 
+            setTimeout(() => appTitle.dataset.clicks = 0, 500); 
         };
 
-        function renderGrid(autoScroll = false) {
+        function renderGrid() {
             grid.innerHTML = '';
-            const favs = stations.filter(s => favoriteIds.includes(s.id));
-            const nonFavs = stations.filter(s => !favoriteIds.includes(s.id));
+            
+            // Re-order logic: Pinned Last Station -> Favorites -> Others
+            let favs = stations.filter(s => favoriteIds.includes(s.id));
+            let nonFavs = stations.filter(s => !favoriteIds.includes(s.id));
+            
             if (isLocationSorted) {
                 const sortLogic = (a, b) => {
                     if (a.type === "int" && b.type === "us") return -1;
@@ -341,7 +337,18 @@
                 favs.sort(sortLogic);
                 nonFavs.sort(sortLogic);
             }
+
             activePlaylist = [...favs, ...nonFavs];
+
+            // NEW: If there's a last-played station, move it to the absolute front (index 0)
+            if (currentStationId !== null) {
+                const lastStationIndex = activePlaylist.findIndex(s => s.id === currentStationId);
+                if (lastStationIndex > -1) {
+                    const [lastStation] = activePlaylist.splice(lastStationIndex, 1);
+                    activePlaylist.unshift(lastStation);
+                }
+            }
+
             activePlaylist.forEach((station) => {
                 const tile = document.createElement('div');
                 tile.className = `tile c${(station.id % 8) + 1}`;
@@ -370,11 +377,6 @@
                 tile.querySelector('.fav-star').onclick = (e) => { e.stopPropagation(); toggleFavorite(station.id); };
                 tile.onclick = () => handleTileClick(station.id);
                 grid.appendChild(tile);
-
-                if (autoScroll && currentStationId === station.id) {
-                    const tileEl = tile;
-                    setTimeout(() => tileEl.scrollIntoView({ behavior: 'smooth', block: 'center' }), 300);
-                }
             });
         }
 
@@ -467,7 +469,7 @@
             else if (currentStationId !== null) { playStation(currentStationId); }
         };
 
-        renderGrid(true);
+        renderGrid();
         setupMediaHandlers();
 
         // Extra guard for Safari bounce
