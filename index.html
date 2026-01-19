@@ -92,7 +92,6 @@
 
         .tile:hover { filter: brightness(1.2); }
 
-        /* Top Left: Favorites Star */
         .fav-star {
             position: absolute;
             top: 15px;
@@ -104,12 +103,8 @@
             z-index: 10;
         }
 
-        .tile.is-fav .fav-star { 
-            color: var(--fav-color); 
-            text-shadow: 0 0 10px rgba(255,202,40,0.4);
-        }
+        .tile.is-fav .fav-star { color: var(--fav-color); }
 
-        /* Top Right: Equalizer (22px Top, Shrunk) */
         .eq-container {
             display: none;
             position: absolute;
@@ -141,7 +136,6 @@
             100% { height: 30%; }
         }
 
-        /* Bottom Left: Station Name */
         .tile-name {
             position: absolute;
             bottom: 15px;
@@ -156,7 +150,6 @@
             max-width: calc(100% - 75px);
         }
 
-        /* Bottom Right: Flags (Slightly Larger, Aligned) */
         .geo-tag {
             position: absolute;
             bottom: 15px;
@@ -274,10 +267,8 @@
 
         function renderGrid() {
             grid.innerHTML = '';
-            
             const favs = stations.filter(s => favoriteIds.includes(s.id));
             const nonFavs = stations.filter(s => !favoriteIds.includes(s.id));
-            
             if (isLocationSorted) {
                 const sortLogic = (a, b) => {
                     if (a.type === "int" && b.type === "us") return -1;
@@ -287,15 +278,12 @@
                 favs.sort(sortLogic);
                 nonFavs.sort(sortLogic);
             }
-            
             activePlaylist = [...favs, ...nonFavs];
-            
             activePlaylist.forEach((station) => {
                 const tile = document.createElement('div');
                 tile.className = `tile c${(station.id % 8) + 1}`;
                 if (favoriteIds.includes(station.id)) tile.classList.add('is-fav');
                 if (currentStationId === station.id && isActuallyPlaying) tile.classList.add('active');
-                
                 tile.dataset.id = station.id;
                 tile.innerHTML = `
                     <div class="fav-star">★</div>
@@ -307,12 +295,10 @@
                     <div class="tile-name">${station.name}</div>
                     <div class="geo-tag">${station.geo}</div>
                 `;
-                
                 tile.querySelector('.fav-star').onclick = (e) => {
                     e.stopPropagation();
                     toggleFavorite(station.id);
                 };
-                
                 tile.onclick = () => handleTileClick(station.id);
                 grid.appendChild(tile);
             });
@@ -336,7 +322,6 @@
             }
         }
 
-        // Setup handlers to look at the LATEST activePlaylist
         function setupMediaHandlers() {
             if ('mediaSession' in navigator) {
                 navigator.mediaSession.setActionHandler('previoustrack', () => {
@@ -370,8 +355,6 @@
                     artwork: [{ src: 'image_0.png.jpg', sizes: '512x512', type: 'image/png' }]
                 });
                 navigator.mediaSession.playbackState = "playing";
-                
-                // RE-BIND HANDLERS EVERY TIME TO PREVENT iOS SUSPENSION
                 setupMediaHandlers(); 
             }
             document.title = `${station.name} - Radio`;
@@ -379,22 +362,27 @@
 
         function playStation(id) {
             const station = stations.find(s => s.id === id);
-            document.querySelectorAll('.tile').forEach(t => t.classList.remove('active'));
             currentStationId = id;
             
-            // iOS Workaround: Direct URL update keeps media session warm
-            player.pause();
-            player.src = station.url;
-            player.load(); 
-            player.play().catch(e => console.log("Playback error:", e));
-            
+            // UI Visual update (even if backgrounded)
+            const allTiles = document.querySelectorAll('.tile');
+            allTiles.forEach(t => t.classList.remove('active'));
             const activeTile = document.querySelector(`.tile[data-id="${id}"]`);
             if (activeTile) activeTile.classList.add('active');
-            
-            updateMediaMetadata(station);
-            isActuallyPlaying = true;
-            playPauseBtn.disabled = false;
-            updatePlayPauseButton(true);
+
+            // CRITICAL BACKGROUND FIX:
+            // Ensure URL is swapped and play is triggered in one synchronous thread
+            player.src = station.url;
+            player.play().then(() => {
+                updateMediaMetadata(station);
+                isActuallyPlaying = true;
+                playPauseBtn.disabled = false;
+                updatePlayPauseButton(true);
+            }).catch(e => {
+                // Secondary trigger for stubborn iOS states
+                player.load();
+                player.play();
+            });
         }
 
         function stopPlayback() {
