@@ -135,46 +135,39 @@
 
         .tile.is-fav .fav-star { color: var(--fav-color); }
 
+        /* Icon Container (Top Right Corner) - Aligned with other corners */
         .status-container {
             position: absolute;
-            top: 22px; 
+            top: 15px;
             right: 15px;
-            width: 24px; /* Increased width to accommodate larger icon */
-            height: 16px;
             z-index: 3;
             display: flex;
             justify-content: flex-end;
-            align-items: flex-end;
+            align-items: flex-start;
         }
 
-        /* TILE PLAY ICON: Sized up to 16px */
+        /* TILE PLAY ICON - Larger and instant */
         .tile-play-icon {
-            position: absolute;
-            width: 16px;
-            height: 16px;
+            width: 24px;
+            height: 24px;
             fill: white;
-            opacity: 0;
-            /* Transition for fading out quickly when pushed */
-            transition: opacity 0.3s ease;
+            display: none;
             pointer-events: none;
         }
 
-        .tile.ready .tile-play-icon { opacity: 1; }
+        .tile.ready .tile-play-icon { display: block; }
 
-        /* EQ CONTAINER: Fades in slowly after play icon fades out */
+        /* EQ CONTAINER - Instant appearance */
         .eq-container {
-            display: flex;
+            display: none;
             align-items: flex-end;
             gap: 1.5px;
-            height: 10px;
-            width: 18px;
-            opacity: 0;
-            /* Added 0.3s delay so it waits for the play icon to disappear */
-            transition: opacity 0.5s ease 0.3s;
+            height: 12px;
+            width: 20px;
             pointer-events: none;
         }
 
-        .tile.active .eq-container { opacity: 1; }
+        .tile.active .eq-container { display: flex; }
 
         .eq-bar {
             background-color: white;
@@ -453,7 +446,6 @@
             const station = stations.find(s => s.id === id);
             currentStationId = id;
             localStorage.setItem('lastStationId', id);
-
             player.src = station.url;
             player.play().then(() => {
                 isActuallyPlaying = true;
@@ -503,7 +495,6 @@
             if (e.target.closest('#scroll-container')) return;
             e.preventDefault();
         }, { passive: false });
-
     </script>
 </body>
 </html>
