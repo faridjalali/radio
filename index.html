@@ -34,11 +34,15 @@
             top: 0;
             width: 100%;
             z-index: 1000;
-            background-color: rgba(0,0,0,0.8);
+            background-color: rgba(0,0,0,0.85);
             backdrop-filter: blur(20px);
             -webkit-backdrop-filter: blur(20px);
             border-bottom: 1px solid rgba(255,255,255,0.05);
-            padding: 20px 0;
+            
+            /* FIX: Respect the Dynamic Island / Notch */
+            padding-top: env(safe-area-inset-top); 
+            padding-bottom: 15px;
+            
             touch-action: pan-y;
         }
 
@@ -48,13 +52,13 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 0 30px;
+            padding: 10px 30px 0 30px;
             box-sizing: border-box;
         }
 
         h1 { 
             font-weight: 200; 
-            font-size: 2.5rem; 
+            font-size: 2.2rem; 
             margin: 0; 
             letter-spacing: -1px; 
             cursor: pointer;
@@ -67,8 +71,8 @@
             background: none;
             border: 1.5px solid rgba(255,255,255,0.2);
             border-radius: 50%;
-            width: 44px;
-            height: 44px;
+            width: 40px;
+            height: 40px;
             cursor: pointer;
             display: flex;
             align-items: center;
@@ -78,7 +82,7 @@
 
         .control-btn:hover:not(:disabled) { border-color: white; background-color: rgba(255,255,255,0.1); }
         .control-btn:disabled { border-color: var(--disabled-color); cursor: not-allowed; }
-        .control-btn svg { fill: white; width: 18px; height: 18px; display: block; }
+        .control-btn svg { fill: white; width: 16px; height: 16px; display: block; }
 
         #scroll-container {
             position: absolute;
@@ -88,7 +92,12 @@
             bottom: 0;
             overflow-y: auto;
             -webkit-overflow-scrolling: touch;
-            padding-top: 100px;
+            
+            /* FIX: Push grid down exactly by header height + safe area */
+            padding-top: calc(80px + env(safe-area-inset-top)); 
+            /* FIX: Ensure bottom tiles aren't behind the Home Bar */
+            padding-bottom: env(safe-area-inset-bottom);
+            
             touch-action: pan-y;
         }
 
@@ -98,15 +107,14 @@
             gap: 15px;
             max-width: 1600px;
             margin: 0 auto;
-            padding: 30px;
+            padding: 20px 30px;
             box-sizing: border-box;
         }
 
         @media (max-width: 600px) {
             .grid { grid-template-columns: repeat(2, 1fr); padding: 15px; gap: 10px; }
-            .header-inner { padding: 0 15px; }
-            h1 { font-size: 2rem; }
-            #scroll-container { padding-top: 80px; }
+            .header-inner { padding: 5px 15px 0 15px; }
+            h1 { font-size: 1.8rem; }
         }
 
         .tile {
@@ -118,15 +126,13 @@
             overflow: hidden;
         }
 
-        /* NEW: Subtle dark shading gradient toward bottom right */
         .tile::after {
             content: '';
             position: absolute;
             top: 0; left: 0; right: 0; bottom: 0;
-            /* Radial gradient anchored at bottom right, fading from semi-transparent black to transparent */
             background: radial-gradient(circle at bottom right, rgba(0,0,0,0.35) 0%, transparent 65%);
-            pointer-events: none; /* Ensure clicks pass through to the tile */
-            z-index: 1; /* Sit above background color, below text content */
+            pointer-events: none;
+            z-index: 1;
         }
 
         .tile:hover { filter: brightness(1.2); transform: scale(1.02); }
@@ -180,7 +186,7 @@
             position: absolute;
             bottom: 15px;
             left: 15px;
-            font-size: 1.5rem; 
+            font-size: 1.4rem; 
             font-weight: 600;
             z-index: 2;
             letter-spacing: -0.5px;
@@ -314,7 +320,7 @@
         let touchstartX = 0;
         let touchendX = 0;
 
-        // Two-Tap Manual Reload
+        // Two-Tap Reload
         let clickCount = 0;
         appTitle.onclick = () => {
             clickCount++;
