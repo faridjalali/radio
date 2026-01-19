@@ -15,7 +15,6 @@
             --fav-color: #ffca28;
         }
 
-        /* CRITICAL: Total lockdown of the document to prevent pull-to-refresh */
         html, body {
             position: fixed;
             overflow: hidden;
@@ -27,7 +26,6 @@
             color: var(--text-color);
             font-family: "Segoe UI", "Segoe UI Semibold", Tahoma, sans-serif;
             -webkit-tap-highlight-color: transparent;
-            /* Disables all browser-level gestures except for what we define */
             touch-action: none; 
         }
 
@@ -41,7 +39,6 @@
             -webkit-backdrop-filter: blur(20px);
             border-bottom: 1px solid rgba(255,255,255,0.05);
             padding: 20px 0;
-            /* Allow internal clicks but no drag triggers */
             touch-action: pan-y;
         }
 
@@ -81,9 +78,8 @@
 
         .control-btn:hover:not(:disabled) { border-color: white; background-color: rgba(255,255,255,0.1); }
         .control-btn:disabled { border-color: var(--disabled-color); cursor: not-allowed; }
-        .control-btn svg { fill: white; width: 18px; height: 18px; }
+        .control-btn svg { fill: white; width: 18px; height: 18px; display: block; }
 
-        /* Container that handles scrolling internally instead of the body */
         #scroll-container {
             position: absolute;
             top: 0;
@@ -92,7 +88,7 @@
             bottom: 0;
             overflow-y: auto;
             -webkit-overflow-scrolling: touch;
-            padding-top: 100px; /* Space for the header */
+            padding-top: 100px;
             touch-action: pan-y;
         }
 
@@ -215,7 +211,10 @@
                     <svg viewBox="0 0 24 24"><path d="M3 18h6v-2H3v2zM3 6v2h18V6H3zm0 7h12v-2H3v2z"/></svg>
                 </button>
                 <button id="shuffle-btn" class="control-btn" title="Shuffle Station">
-                    <svg viewBox="0 0 24 24"><path d="M10.59 9.17L5.41 4 4 5.41l5.17 5.17 1.42-1.41zM14.5 4l2.04 2.04L4 18.59 5.41 20 17.96 7.45 20 9.5V4h-5.5l2.05-2.05-3.13-3.13z"/></svg>
+                    <svg viewBox="0 0 24 24">
+                        <path d="M14.83 13.41L13.42 14.82L16.59 18H5V20H16.59L13.42 23.17L14.83 24.58L20.41 19L14.83 13.41Z" transform="translate(0, -3)"/>
+                        <path d="M9.17 10.59L10.58 9.18L7.41 6H19V4H7.41L10.58 0.83L9.17 -0.58L3.59 5L9.17 10.59Z" transform="translate(0, 3)"/>
+                    </svg>
                 </button>
                 <button id="play-pause-btn" class="control-btn" title="Play/Stop" disabled>
                     <svg id="play-pause-icon" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
