@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>Radio Tile Player</title>
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -15,28 +15,34 @@
             --fav-color: #ffca28;
         }
 
-        body {
+        /* CRITICAL: Total lockdown of the document to prevent pull-to-refresh */
+        html, body {
+            position: fixed;
+            overflow: hidden;
+            width: 100%;
+            height: 100%;
+            margin: 0;
+            padding: 0;
             background-color: var(--bg-color);
             color: var(--text-color);
             font-family: "Segoe UI", "Segoe UI Semibold", Tahoma, sans-serif;
-            margin: 0;
-            padding: 0;
             -webkit-tap-highlight-color: transparent;
-            overflow-x: hidden;
-            /* Prevents the pull-down reload gesture */
-            overscroll-behavior-y: contain; 
-            touch-action: pan-y;
+            /* Disables all browser-level gestures except for what we define */
+            touch-action: none; 
         }
 
         header {
-            position: sticky;
+            position: absolute;
             top: 0;
+            width: 100%;
             z-index: 1000;
             background-color: rgba(0,0,0,0.8);
             backdrop-filter: blur(20px);
             -webkit-backdrop-filter: blur(20px);
             border-bottom: 1px solid rgba(255,255,255,0.05);
             padding: 20px 0;
+            /* Allow internal clicks but no drag triggers */
+            touch-action: pan-y;
         }
 
         .header-inner {
@@ -77,6 +83,19 @@
         .control-btn:disabled { border-color: var(--disabled-color); cursor: not-allowed; }
         .control-btn svg { fill: white; width: 18px; height: 18px; }
 
+        /* Container that handles scrolling internally instead of the body */
+        #scroll-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
+            padding-top: 100px; /* Space for the header */
+            touch-action: pan-y;
+        }
+
         .grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(175px, 1fr));
@@ -91,6 +110,7 @@
             .grid { grid-template-columns: repeat(2, 1fr); padding: 15px; gap: 10px; }
             .header-inner { padding: 0 15px; }
             h1 { font-size: 2rem; }
+            #scroll-container { padding-top: 80px; }
         }
 
         .tile {
@@ -103,7 +123,6 @@
         }
 
         .tile:hover { filter: brightness(1.2); transform: scale(1.02); }
-
         .tile.active { outline: 4px solid white; outline-offset: -4px; }
 
         .fav-star {
@@ -205,8 +224,11 @@
         </div>
     </header>
 
+    <div id="scroll-container">
+        <div class="grid" id="station-grid"></div>
+    </div>
+
     <audio id="radio-player" style="display:none;" preload="none"></audio>
-    <div class="grid" id="station-grid"></div>
 
     <script>
         const stations = [
@@ -282,7 +304,7 @@
         let touchstartX = 0;
         let touchendX = 0;
 
-        // Two-Tap Manual Reload
+        // Two-Tap Reload
         let clickCount = 0;
         appTitle.onclick = () => {
             clickCount++;
@@ -334,7 +356,8 @@
                 grid.appendChild(tile);
 
                 if (autoScroll && currentStationId === station.id) {
-                    setTimeout(() => tile.scrollIntoView({ behavior: 'smooth', block: 'center' }), 300);
+                    const tileEl = tile;
+                    setTimeout(() => tileEl.scrollIntoView({ behavior: 'smooth', block: 'center' }), 300);
                 }
             });
         }
@@ -409,7 +432,8 @@
             playPauseIcon.innerHTML = `<path d="${playing ? stopPath : playPath}"/>`;
         }
 
-        document.addEventListener('touchstart', e => { touchstartX = e.changedTouches[0].screenX; });
+        // Swipe Gestures
+        document.addEventListener('touchstart', e => { touchstartX = e.changedTouches[0].screenX; }, {passive: true});
         document.addEventListener('touchend', e => {
             touchendX = e.changedTouches[0].screenX;
             const diff = touchstartX - touchendX;
@@ -417,7 +441,7 @@
                 if (diff > 0) navigateStation(1);
                 else navigateStation(-1);
             }
-        });
+        }, {passive: true});
 
         sortBtn.onclick = () => { isLocationSorted = !isLocationSorted; renderGrid(); };
         shuffleBtn.onclick = () => { const randomIndex = Math.floor(Math.random() * stations.length); playStation(stations[randomIndex].id); };
@@ -429,6 +453,13 @@
 
         renderGrid(true);
         setupMediaHandlers();
+
+        // Extra guard for Safari bounce
+        document.addEventListener('touchmove', function (e) {
+            if (e.target.closest('#scroll-container')) return;
+            e.preventDefault();
+        }, { passive: false });
+
     </script>
 </body>
 </html>
