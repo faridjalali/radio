@@ -135,33 +135,33 @@
 
         .tile.is-fav .fav-star { color: var(--fav-color); }
 
-        /* Icon Container (Top Right Corner) */
         .status-container {
             position: absolute;
             top: 22px; 
             right: 15px;
-            width: 20px;
-            height: 12px;
+            width: 24px; /* Increased width to accommodate larger icon */
+            height: 16px;
             z-index: 3;
             display: flex;
             justify-content: flex-end;
             align-items: flex-end;
         }
 
-        /* Purely visual play icon for the "Ready" Anchor tile */
+        /* TILE PLAY ICON: Sized up to 16px */
         .tile-play-icon {
             position: absolute;
-            width: 12px;
-            height: 12px;
+            width: 16px;
+            height: 16px;
             fill: white;
             opacity: 0;
-            transition: opacity 0.4s ease;
+            /* Transition for fading out quickly when pushed */
+            transition: opacity 0.3s ease;
             pointer-events: none;
         }
 
         .tile.ready .tile-play-icon { opacity: 1; }
 
-        /* Mexican Wave Equalizer Container */
+        /* EQ CONTAINER: Fades in slowly after play icon fades out */
         .eq-container {
             display: flex;
             align-items: flex-end;
@@ -169,7 +169,8 @@
             height: 10px;
             width: 18px;
             opacity: 0;
-            transition: opacity 0.4s ease;
+            /* Added 0.3s delay so it waits for the play icon to disappear */
+            transition: opacity 0.5s ease 0.3s;
             pointer-events: none;
         }
 
@@ -186,7 +187,6 @@
             animation: rollingWave 0.8s ease-in-out infinite;
         }
 
-        /* Sequential delays for the "Mexican Soccer Wave" motion */
         .tile.active .eq-bar:nth-child(1) { animation-delay: 0.0s; }
         .tile.active .eq-bar:nth-child(2) { animation-delay: 0.1s; }
         .tile.active .eq-bar:nth-child(3) { animation-delay: 0.2s; }
@@ -226,7 +226,6 @@
         .geo-text { font-size: 0.8rem; font-weight: 400; opacity: 0.9; }
         .geo-flag { font-size: 1.3rem; display: inline-block; }
 
-        /* Metro-inspired colors */
         .c1 { background-color: #00A300; } .c2 { background-color: #2D89EF; } 
         .c3 { background-color: #9F00A7; } .c4 { background-color: #603CBA; } 
         .c5 { background-color: #DA532C; } .c6 { background-color: #B91D47; } 
@@ -374,7 +373,6 @@
                 tile.className = `tile c${(station.id % 8) + 1}`;
                 if (favoriteIds.includes(station.id)) tile.classList.add('is-fav');
                 
-                // Class assignment: only the first station (anchor) can have status icons
                 if (currentStationId === station.id) {
                     tile.classList.add(isActuallyPlaying ? 'active' : 'ready');
                     if (!isActuallyPlaying) playPauseBtn.disabled = false;
@@ -455,6 +453,7 @@
             const station = stations.find(s => s.id === id);
             currentStationId = id;
             localStorage.setItem('lastStationId', id);
+
             player.src = station.url;
             player.play().then(() => {
                 isActuallyPlaying = true;
@@ -504,6 +503,7 @@
             if (e.target.closest('#scroll-container')) return;
             e.preventDefault();
         }, { passive: false });
+
     </script>
 </body>
 </html>
