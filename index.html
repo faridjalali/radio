@@ -291,15 +291,11 @@
         let touchstartX = 0;
         let touchendX = 0;
 
-        // Solution: Two-Tap Manual Reload Logic
+        // Two-Tap Reload Logic
         let clickCount = 0;
         appTitle.onclick = () => {
             clickCount++;
-            if (clickCount >= 2) {
-                // Force a hard reload from the server
-                window.location.reload(true);
-            }
-            // Reset counter after 500ms to require a quick double-tap
+            if (clickCount >= 2) window.location.reload(true);
             setTimeout(() => clickCount = 0, 500); 
         };
 
@@ -325,7 +321,8 @@
                 
                 tile.dataset.id = station.id;
 
-                const flagMatch = station.geo.match(/[\uD83C][\uDDE6-\uDDFF][\uD83C][\uDDE6-\uDDFF]/);
+                // Robust Flag Split: Target regional indicator pairs for flags
+                const flagMatch = station.geo.match(/[\u{1F1E6}-\u{1F1FF}]{2}/u);
                 const flagEmoji = flagMatch ? flagMatch[0] : "";
                 const stateText = station.geo.replace(flagEmoji, "").trim();
 
@@ -368,7 +365,7 @@
             if ('mediaSession' in navigator) {
                 navigator.mediaSession.setActionHandler('previoustrack', () => navigateStation(-1));
                 navigator.mediaSession.setActionHandler('nexttrack', () => navigateStation(1));
-                navigator.mediaSession.setActionHandler('play', () => { if (currentStationId !== null) player.play(); });
+                navigator.mediaSession.setActionHandler('play', () => { if (currentStationId !== null) playStation(currentStationId); });
                 navigator.mediaSession.setActionHandler('pause', () => stopPlayback());
             }
         }
@@ -434,7 +431,15 @@
 
         sortBtn.onclick = () => { isLocationSorted = !isLocationSorted; renderGrid(); };
         shuffleBtn.onclick = () => { const randomIndex = Math.floor(Math.random() * stations.length); playStation(stations[randomIndex].id); };
-        playPauseBtn.onclick = () => { if (isActuallyPlaying) stopPlayback(); else if (currentStationId !== null) player.play(); };
+        
+        // FIX: Re-run playStation logic to ensure UI & State are updated
+        playPauseBtn.onclick = () => { 
+            if (isActuallyPlaying) {
+                stopPlayback(); 
+            } else if (currentStationId !== null) {
+                playStation(currentStationId); 
+            }
+        };
 
         renderGrid(true);
         setupMediaHandlers();
