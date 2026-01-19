@@ -133,21 +133,20 @@
             justify-content: flex-end; align-items: flex-start;
         }
 
-        /* BUFFERING SPINNER */
         .spinner {
             display: none; width: 18px; height: 18px;
             border: 2px solid rgba(255,255,255,0.2);
             border-top-color: white; border-radius: 50%;
             animation: spin 0.8s linear infinite; pointer-events: none;
+            margin-top: 3px; margin-right: 3px; /* Centers relative to 24px icon space */
         }
         @keyframes spin { to { transform: rotate(360deg); } }
         .tile.buffering .spinner { display: block; }
 
-        /* ERROR ICON */
+        /* SLEEK ERROR ICON */
         .error-icon {
-            display: none; color: var(--error-color);
-            font-size: 1.4rem; font-weight: 800; line-height: 1;
-            pointer-events: none;
+            display: none; width: 24px; height: 24px;
+            fill: var(--error-color); pointer-events: none;
         }
         .tile.error .error-icon { display: block; }
 
@@ -298,7 +297,7 @@
 
         let currentStationId = parseInt(localStorage.getItem('lastStationId')) || null;
         let bufferingStationId = null; 
-        let errorStationId = null; // Track which station failed to load
+        let errorStationId = null; 
         let isActuallyPlaying = false;
         let isLocationSorted = false;
         let favoriteIds = JSON.parse(localStorage.getItem('favStations') || '[]');
@@ -361,7 +360,9 @@
                     <div class="fav-star">★</div>
                     <div class="status-container">
                         <div class="spinner"></div>
-                        <div class="error-icon">!</div>
+                        <svg class="error-icon" viewBox="0 0 24 24">
+                            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/>
+                        </svg>
                         <svg class="tile-play-icon" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
                         <div class="eq-container">
                             <div class="eq-bar"></div><div class="eq-bar"></div><div class="eq-bar"></div><div class="eq-bar"></div>
@@ -445,8 +446,6 @@
 
         function playStation(id) {
             const station = stations.find(s => s.id === id);
-            
-            // Clear any previous error and set buffering state
             errorStationId = null;
             bufferingStationId = id;
             isActuallyPlaying = false;
@@ -464,14 +463,12 @@
                 scrollContainer.scrollTo({top: 0, behavior: 'smooth'});
                 updateMediaMetadata(station);
             }).catch(e => {
-                // If play fails (e.g., broken URL or user didn't interact)
                 bufferingStationId = null;
                 errorStationId = id;
                 renderGrid();
             });
         }
 
-        // Global Error Handling for Audio Object
         player.onerror = () => {
             if (bufferingStationId !== null) {
                 errorStationId = bufferingStationId;
