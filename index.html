@@ -92,7 +92,7 @@
 
         .tile:hover { filter: brightness(1.2); }
 
-        /* Top Left Corner */
+        /* Top Left: Favorites Star */
         .fav-star {
             position: absolute;
             top: 15px;
@@ -109,7 +109,7 @@
             text-shadow: 0 0 10px rgba(255,202,40,0.4);
         }
 
-        /* Top Right Corner - Moved to 22px Top */
+        /* Top Right: Equalizer (22px Top, Shrunk) */
         .eq-container {
             display: none;
             position: absolute;
@@ -141,7 +141,7 @@
             100% { height: 30%; }
         }
 
-        /* Bottom Left Corner */
+        /* Bottom Left: Station Name */
         .tile-name {
             position: absolute;
             bottom: 15px;
@@ -153,15 +153,15 @@
             line-height: 1;
             text-transform: uppercase;
             pointer-events: none;
-            max-width: calc(100% - 70px); /* Adjusted for larger geo tag */
+            max-width: calc(100% - 75px);
         }
 
-        /* Bottom Right Corner - Enlarged Geo Tag */
+        /* Bottom Right: Flags (Slightly Larger, Aligned) */
         .geo-tag {
             position: absolute;
             bottom: 15px;
             right: 15px;
-            font-size: 1.3rem; /* Slightly bigger */
+            font-size: 1.3rem; 
             line-height: 1;
             font-weight: 400;
             opacity: 0.9;
@@ -173,7 +173,6 @@
 
         .tile.active { outline: 4px solid white; outline-offset: -4px; }
 
-        /* Metro Colors */
         .c1 { background-color: #00A300; } .c2 { background-color: #2D89EF; } 
         .c3 { background-color: #9F00A7; } .c4 { background-color: #603CBA; } 
         .c5 { background-color: #DA532C; } .c6 { background-color: #B91D47; } 
@@ -337,6 +336,7 @@
             }
         }
 
+        // Setup handlers to look at the LATEST activePlaylist
         function setupMediaHandlers() {
             if ('mediaSession' in navigator) {
                 navigator.mediaSession.setActionHandler('previoustrack', () => {
@@ -370,6 +370,8 @@
                     artwork: [{ src: 'image_0.png.jpg', sizes: '512x512', type: 'image/png' }]
                 });
                 navigator.mediaSession.playbackState = "playing";
+                
+                // RE-BIND HANDLERS EVERY TIME TO PREVENT iOS SUSPENSION
                 setupMediaHandlers(); 
             }
             document.title = `${station.name} - Radio`;
@@ -380,6 +382,7 @@
             document.querySelectorAll('.tile').forEach(t => t.classList.remove('active'));
             currentStationId = id;
             
+            // iOS Workaround: Direct URL update keeps media session warm
             player.pause();
             player.src = station.url;
             player.load(); 
