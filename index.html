@@ -15,7 +15,6 @@
             --fav-color: #ffca28;
         }
 
-        /* Needed for smooth gradient angle animation */
         @property --wipe-angle {
           syntax: '<angle>';
           initial-value: 0deg;
@@ -79,21 +78,18 @@
             color: white;
             font-size: 0.9rem;
             font-weight: 600;
-            overflow: hidden; /* Ensures gradient doesn't spill */
+            overflow: hidden;
         }
 
-        /* General active state (for Sort button) */
         .control-btn.active {
             background-color: var(--accent-color);
             border-color: var(--accent-color);
         }
 
-        /* Specific active state for Timer button with wipe animation */
         #timer-btn.active {
-            /* The gradient creates the blue-to-transparent wipe effect */
             background: conic-gradient(
-                transparent var(--wipe-angle), /* The revealed background growing clockwise */
-                var(--accent-color) 0deg /* The remaining blue part */
+                transparent var(--wipe-angle), 
+                var(--accent-color) 0deg
             );
             border-color: var(--accent-color);
             animation: wipeClockwise 60s linear infinite;
@@ -366,7 +362,6 @@
         let favoriteIds = JSON.parse(localStorage.getItem('favStations') || '[]');
         let logicalMasterList = [];
 
-        // Sleep Timer States: 0 (Off), 30, 15
         let currentTimerDuration = 0; 
         let sleepTimerTimeout = null;
         let sleepTickInterval = null;
@@ -438,7 +433,6 @@
             });
         }
 
-        // Sleep Timer Toggle Logic: 30 -> 15 -> Off
         timerBtn.onclick = () => {
             if (currentTimerDuration === 0) {
                 startSleepTimer(30);
@@ -453,8 +447,12 @@
             if (sleepTimerTimeout) clearTimeout(sleepTimerTimeout);
             if (sleepTickInterval) clearInterval(sleepTickInterval);
 
-            currentTimerDuration = minutes;
+            // FORCE RESTART ANIMATION: Briefly remove and re-add class
+            timerBtn.classList.remove('active');
+            void timerBtn.offsetWidth; // Trigger reflow to reset CSS animation
             timerBtn.classList.add('active');
+
+            currentTimerDuration = minutes;
             timerIcon.style.display = 'none';
             timerDisplay.style.display = 'block';
             timerDisplay.innerText = currentTimerDuration;
