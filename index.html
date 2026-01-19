@@ -13,6 +13,7 @@
             --accent-color: #0078d7; 
             --disabled-color: #444;
             --fav-color: #ffca28;
+            --error-color: #ff4d4d;
         }
 
         @property --wipe-angle {
@@ -24,10 +25,8 @@
         html, body {
             position: fixed;
             overflow: hidden;
-            width: 100%;
-            height: 100%;
-            margin: 0;
-            padding: 0;
+            width: 100%; height: 100%;
+            margin: 0; padding: 0;
             background-color: var(--bg-color);
             color: var(--text-color);
             font-family: "Segoe UI", "Segoe UI Semibold", Tahoma, sans-serif;
@@ -37,12 +36,9 @@
 
         header {
             position: absolute;
-            top: 0;
-            width: 100%;
-            z-index: 1000;
+            top: 0; width: 100%; z-index: 1000;
             background-color: rgba(0,0,0,0.85);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
+            backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
             border-bottom: 1px solid rgba(255,255,255,0.05);
             padding-top: calc(env(safe-area-inset-top) + 15px); 
             padding-bottom: 12px;
@@ -50,13 +46,9 @@
         }
 
         .header-inner {
-            max-width: 1600px;
-            margin: 0 auto;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 0 30px;
-            box-sizing: border-box;
+            max-width: 1600px; margin: 0 auto;
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 0 30px; box-sizing: border-box;
         }
 
         h1 { font-weight: 200; font-size: 2.4rem; margin: 0; letter-spacing: -1px; cursor: pointer; user-select: none; }
@@ -65,26 +57,14 @@
 
         .control-btn {
             position: relative;
-            background: none;
-            border: 1.5px solid rgba(255,255,255,0.2);
-            border-radius: 50%;
-            width: 40px;
-            height: 40px;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: all 0.2s ease;
-            color: white;
-            font-size: 0.9rem;
-            font-weight: 600;
+            background: none; border: 1.5px solid rgba(255,255,255,0.2);
+            border-radius: 50%; width: 40px; height: 40px;
+            cursor: pointer; display: flex; align-items: center; justify-content: center;
+            transition: all 0.2s ease; color: white; font-size: 0.9rem; font-weight: 600;
             overflow: hidden;
         }
 
-        .control-btn.active {
-            background-color: var(--accent-color);
-            border-color: var(--accent-color);
-        }
+        .control-btn.active { background-color: var(--accent-color); border-color: var(--accent-color); }
 
         #timer-btn.active {
             background: conic-gradient(transparent var(--wipe-angle), var(--accent-color) 0deg);
@@ -92,10 +72,7 @@
             animation: wipeClockwise 60s linear infinite;
         }
 
-        @keyframes wipeClockwise {
-            from { --wipe-angle: 0deg; }
-            to { --wipe-angle: 360deg; }
-        }
+        @keyframes wipeClockwise { from { --wipe-angle: 0deg; } to { --wipe-angle: 360deg; } }
 
         .control-btn:hover:not(:disabled) { border-color: white; background-color: rgba(255,255,255,0.1); }
         .control-btn.active:hover { background-color: #0086f0; }
@@ -105,8 +82,7 @@
         #scroll-container {
             position: absolute;
             top: 0; left: 0; right: 0; bottom: 0;
-            overflow-y: auto;
-            -webkit-overflow-scrolling: touch;
+            overflow-y: auto; -webkit-overflow-scrolling: touch;
             padding-top: calc(95px + env(safe-area-inset-top)); 
             padding-bottom: env(safe-area-inset-bottom);
             touch-action: pan-y;
@@ -115,11 +91,8 @@
         .grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(175px, 1fr));
-            gap: 15px;
-            max-width: 1600px;
-            margin: 0 auto;
-            padding: 10px 30px 20px 30px;
-            box-sizing: border-box;
+            gap: 15px; max-width: 1600px; margin: 0 auto;
+            padding: 10px 30px 20px 30px; box-sizing: border-box;
         }
 
         @media (max-width: 600px) {
@@ -130,95 +103,67 @@
         }
 
         .tile {
-            aspect-ratio: 1 / 1;
-            position: relative;
-            padding: 15px;
-            cursor: pointer;
+            aspect-ratio: 1 / 1; position: relative;
+            padding: 15px; cursor: pointer;
             transition: transform 0.2s ease, filter 0.2s ease;
             overflow: hidden;
         }
 
         .tile::after {
-            content: '';
-            position: absolute;
+            content: ''; position: absolute;
             top: 0; left: 0; right: 0; bottom: 0;
             background: radial-gradient(circle at bottom right, rgba(0,0,0,0.35) 0%, transparent 65%);
-            pointer-events: none;
-            z-index: 1;
+            pointer-events: none; z-index: 1;
         }
 
-        .tile:hover { filter: brightness(1.2); transform: scale(1.02); }
+        .tile:hover { filter: brightness(1.2); }
         .tile.active { outline: 4px solid white; outline-offset: -4px; }
 
         .fav-star {
-            position: absolute;
-            top: 20px;
-            left: 15px;
-            font-size: 1.2rem;
-            line-height: 1;
-            color: rgba(255, 255, 255, 0.3);
-            transition: all 0.2s ease;
-            z-index: 10;
+            position: absolute; top: 20px; left: 15px;
+            font-size: 1.2rem; line-height: 1;
+            color: rgba(255, 255, 255, 0.3); transition: all 0.2s ease; z-index: 10;
         }
 
         .tile.is-fav .fav-star { color: var(--fav-color); }
 
         .status-container {
-            position: absolute;
-            top: 19px; 
-            right: 15px;
-            z-index: 3;
-            display: flex;
-            justify-content: flex-end;
-            align-items: flex-start;
+            position: absolute; top: 19px; right: 15px;
+            z-index: 3; display: flex;
+            justify-content: flex-end; align-items: flex-start;
         }
 
+        /* BUFFERING SPINNER */
         .spinner {
-            display: none;
-            width: 18px;
-            height: 18px;
+            display: none; width: 18px; height: 18px;
             border: 2px solid rgba(255,255,255,0.2);
-            border-top-color: white;
-            border-radius: 50%;
-            animation: spin 0.8s linear infinite;
-            pointer-events: none;
+            border-top-color: white; border-radius: 50%;
+            animation: spin 0.8s linear infinite; pointer-events: none;
         }
-
         @keyframes spin { to { transform: rotate(360deg); } }
-
         .tile.buffering .spinner { display: block; }
 
-        .tile-play-icon {
-            width: 24px;
-            height: 24px;
-            fill: white;
-            display: none;
+        /* ERROR ICON */
+        .error-icon {
+            display: none; color: var(--error-color);
+            font-size: 1.4rem; font-weight: 800; line-height: 1;
             pointer-events: none;
         }
+        .tile.error .error-icon { display: block; }
 
+        .tile-play-icon { width: 24px; height: 24px; fill: white; display: none; pointer-events: none; }
         .tile.ready .tile-play-icon { display: block; }
-        .tile.buffering .tile-play-icon { display: none; }
+        .tile.buffering .tile-play-icon, .tile.error .tile-play-icon { display: none; }
 
         .eq-container {
-            display: none;
-            align-items: flex-end;
-            gap: 1.5px;
-            height: 12px;
-            width: 20px;
-            pointer-events: none;
-            margin-top: 4px;
+            display: none; align-items: flex-end; gap: 1.5px;
+            height: 12px; width: 20px;
+            pointer-events: none; margin-top: 4px;
         }
-
         .tile.active .eq-container { display: flex; }
-        .tile.buffering .eq-container { display: none; }
+        .tile.buffering .eq-container, .tile.error .eq-container { display: none; }
 
-        .eq-bar {
-            background-color: white;
-            width: 3px;
-            border-radius: 1px;
-            height: 30%;
-        }
-
+        .eq-bar { background-color: white; width: 3px; border-radius: 1px; height: 30%; }
         .tile.active .eq-bar { animation: rollingWave 0.8s ease-in-out infinite; }
         .tile.active .eq-bar:nth-child(1) { animation-delay: 0.0s; }
         .tile.active .eq-bar:nth-child(2) { animation-delay: 0.1s; }
@@ -228,16 +173,14 @@
         @keyframes rollingWave { 0%, 100% { height: 30%; } 50% { height: 100%; } }
 
         .tile-name {
-            position: absolute;
-            bottom: 15px; left: 15px;
+            position: absolute; bottom: 15px; left: 15px;
             font-size: 1.4rem; font-weight: 600; z-index: 2;
             letter-spacing: -0.5px; line-height: 1; text-transform: uppercase;
             pointer-events: none; max-width: calc(100% - 75px);
         }
 
         .geo-tag {
-            position: absolute;
-            bottom: 15px; right: 15px;
+            position: absolute; bottom: 15px; right: 15px;
             z-index: 2; text-align: right; display: flex;
             align-items: center; gap: 4px; line-height: 1;
         }
@@ -355,6 +298,7 @@
 
         let currentStationId = parseInt(localStorage.getItem('lastStationId')) || null;
         let bufferingStationId = null; 
+        let errorStationId = null; // Track which station failed to load
         let isActuallyPlaying = false;
         let isLocationSorted = false;
         let favoriteIds = JSON.parse(localStorage.getItem('favStations') || '[]');
@@ -364,10 +308,7 @@
         let sleepTimerTimeout = null;
         let sleepTickInterval = null;
 
-        function haptic(pattern) { if (navigator.vibrate) navigator.vibrate(pattern); }
-
         appTitle.onclick = () => {
-            haptic(10);
             let clickCount = parseInt(appTitle.dataset.clicks || 0) + 1;
             appTitle.dataset.clicks = clickCount;
             if (clickCount >= 2) window.location.reload(true);
@@ -403,13 +344,15 @@
                 const tile = document.createElement('div');
                 tile.className = `tile c${(station.id % 8) + 1}`;
                 if (favoriteIds.includes(station.id)) tile.classList.add('is-fav');
+                
                 if (bufferingStationId === station.id) tile.classList.add('buffering');
+                else if (errorStationId === station.id) tile.classList.add('error');
                 else if (currentStationId === station.id) {
                     tile.classList.add(isActuallyPlaying ? 'active' : 'ready');
                     if (!isActuallyPlaying) playPauseBtn.disabled = false;
                 }
+                
                 tile.dataset.id = station.id;
-
                 const flagMatch = station.geo.match(/[\u{1F1E6}-\u{1F1FF}]{2}/u);
                 const flagEmoji = flagMatch ? flagMatch[0] : "";
                 const stateText = station.geo.replace(flagEmoji, "").trim();
@@ -418,6 +361,7 @@
                     <div class="fav-star">★</div>
                     <div class="status-container">
                         <div class="spinner"></div>
+                        <div class="error-icon">!</div>
                         <svg class="tile-play-icon" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
                         <div class="eq-container">
                             <div class="eq-bar"></div><div class="eq-bar"></div><div class="eq-bar"></div><div class="eq-bar"></div>
@@ -429,14 +373,13 @@
                         <span class="geo-flag">${flagEmoji}</span>
                     </div>
                 `;
-                tile.querySelector('.fav-star').onclick = (e) => { e.stopPropagation(); haptic([10, 30, 10]); toggleFavorite(station.id); };
-                tile.onclick = () => { haptic(10); handleTileClick(station.id); };
+                tile.querySelector('.fav-star').onclick = (e) => { e.stopPropagation(); toggleFavorite(station.id); };
+                tile.onclick = () => handleTileClick(station.id);
                 grid.appendChild(tile);
             });
         }
 
         timerBtn.onclick = () => {
-            haptic([10, 30, 10]);
             if (currentTimerDuration === 0) startSleepTimer(30);
             else if (currentTimerDuration === 30) startSleepTimer(15);
             else clearSleepTimer();
@@ -484,7 +427,6 @@
         }
 
         function navigateStation(direction) {
-            haptic(10);
             const currentIndex = logicalMasterList.findIndex(s => s.id === currentStationId);
             const nextIndex = (currentIndex + direction + logicalMasterList.length) % logicalMasterList.length;
             playStation(logicalMasterList[nextIndex].id);
@@ -503,18 +445,43 @@
 
         function playStation(id) {
             const station = stations.find(s => s.id === id);
-            bufferingStationId = id; isActuallyPlaying = false; renderGrid();
+            
+            // Clear any previous error and set buffering state
+            errorStationId = null;
+            bufferingStationId = id;
+            isActuallyPlaying = false;
+            renderGrid();
+
             player.src = station.url;
             player.play().then(() => {
-                bufferingStationId = null; currentStationId = id; isActuallyPlaying = true;
-                localStorage.setItem('lastStationId', id); playPauseBtn.disabled = false;
-                updatePlayPauseButton(true); renderGrid(); scrollContainer.scrollTo({top: 0, behavior: 'smooth'});
+                bufferingStationId = null;
+                currentStationId = id;
+                isActuallyPlaying = true;
+                localStorage.setItem('lastStationId', id);
+                playPauseBtn.disabled = false;
+                updatePlayPauseButton(true);
+                renderGrid();
+                scrollContainer.scrollTo({top: 0, behavior: 'smooth'});
                 updateMediaMetadata(station);
-            }).catch(e => { player.load(); player.play(); });
+            }).catch(e => {
+                // If play fails (e.g., broken URL or user didn't interact)
+                bufferingStationId = null;
+                errorStationId = id;
+                renderGrid();
+            });
         }
 
+        // Global Error Handling for Audio Object
+        player.onerror = () => {
+            if (bufferingStationId !== null) {
+                errorStationId = bufferingStationId;
+                bufferingStationId = null;
+                renderGrid();
+            }
+        };
+
         function stopPlayback() {
-            haptic(10); player.pause(); isActuallyPlaying = false;
+            player.pause(); isActuallyPlaying = false;
             if ('mediaSession' in navigator) navigator.mediaSession.playbackState = "paused";
             updatePlayPauseButton(false); renderGrid(); document.title = "Radio";
         }
@@ -529,13 +496,13 @@
         }, {passive: true});
 
         sortBtn.onclick = () => { 
-            haptic([10, 30, 10]); isLocationSorted = !isLocationSorted; 
+            isLocationSorted = !isLocationSorted; 
             if (isLocationSorted) sortBtn.classList.add('active'); else sortBtn.classList.remove('active');
             renderGrid(); 
         };
 
-        shuffleBtn.onclick = () => { haptic(10); const randomIndex = Math.floor(Math.random() * stations.length); playStation(stations[randomIndex].id); };
-        playPauseBtn.onclick = () => { if (isActuallyPlaying) stopPlayback(); else if (currentStationId !== null) { haptic(10); playStation(currentStationId); } };
+        shuffleBtn.onclick = () => { const randomIndex = Math.floor(Math.random() * stations.length); playStation(stations[randomIndex].id); };
+        playPauseBtn.onclick = () => { if (isActuallyPlaying) stopPlayback(); else if (currentStationId !== null) playStation(currentStationId); };
 
         renderGrid(); setupMediaHandlers();
         document.addEventListener('touchmove', function (e) { if (e.target.closest('#scroll-container')) return; e.preventDefault(); }, { passive: false });
