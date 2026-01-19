@@ -53,7 +53,6 @@
             box-sizing: border-box;
         }
 
-        /* INCREASED FONT SIZE: 2.4rem */
         h1 { 
             font-weight: 200; 
             font-size: 2.4rem; 
@@ -105,7 +104,6 @@
         @media (max-width: 600px) {
             .grid { grid-template-columns: repeat(2, 1fr); padding: 10px 15px 20px 15px; gap: 10px; }
             .header-inner { padding: 0 15px; }
-            /* MOBILE FONT SIZE: 2.0rem */
             h1 { font-size: 2rem; }
             #scroll-container { padding-top: calc(85px + env(safe-area-inset-top)); }
         }
@@ -131,7 +129,6 @@
         .tile:hover { filter: brightness(1.2); transform: scale(1.02); }
         .tile.active { outline: 4px solid white; outline-offset: -4px; }
 
-        /* NUDGED DOWN: Adjusted Top-Left star to 20px */
         .fav-star {
             position: absolute;
             top: 20px;
@@ -145,7 +142,6 @@
 
         .tile.is-fav .fav-star { color: var(--fav-color); }
 
-        /* REMAINS AT 19px: Keeping horizontal balance with play icon */
         .status-container {
             position: absolute;
             top: 19px; 
@@ -265,10 +261,10 @@
 
     <script>
         const stations = [
-            { name: "FIP", geo: "🇫🇷", type: "int", url: "https://stream.radiofrance.fr/fip/fip.m3u8" },   
-            { name: "EGO", geo: "🇩🇪", type: "int", url: "https://cast.egofm.de/egofm.mp3" },   
-            { name: "FM4", geo: "🇩🇪", type: "int", url: "https://orf-live.ors-shoutcast.at/fm4-q2a" },
-            { name: "STUD", geo: "🇸🇮", type: "int", url: "https://kruljo.radiostudent.si:8001/test.ogg" },
+            { name: "FIPF", geo: "🇫🇷", type: "int", url: "https://stream.radiofrance.fr/fip/fip.m3u8" },   
+            { name: "ECOF", geo: "🇩🇪", type: "int", url: "https://cast.egofm.de/egofm.mp3" },   
+            { name: "FM4G", geo: "🇩🇪", type: "int", url: "https://orf-live.ors-shoutcast.at/fm4-q2a" },
+            { name: "SLOV", geo: "🇸🇮", type: "int", url: "https://kruljo.radiostudent.si:8001/test.ogg" },
             { name: "NOVA", geo: "🇫🇷", type: "int", url: "https://novazz-128.mp3" },
             { name: "U92M", geo: "WV", type: "us", url: "https://stream.radiojar.com/56p3rt9eytzuv" },
             { name: "DEPA", geo: "IL", type: "us", url: "https://ice26.securenetsystems.net/RADIODEPAUL" },
@@ -333,7 +329,9 @@
         let isActuallyPlaying = false;
         let isLocationSorted = false;
         let favoriteIds = JSON.parse(localStorage.getItem('favStations') || '[]');
-        let activePlaylist = [];
+        
+        // This is the permanent reference for navigation
+        let logicalMasterList = [];
 
         let touchstartX = 0;
         let touchendX = 0;
@@ -347,16 +345,10 @@
 
         function renderGrid() {
             grid.innerHTML = '';
-            let anchorStation = null;
-            let others = [...stations];
-
-            if (currentStationId !== null) {
-                const index = others.findIndex(s => s.id === currentStationId);
-                if (index > -1) [anchorStation] = others.splice(index, 1);
-            }
-
-            let favs = others.filter(s => favoriteIds.includes(s.id));
-            let nonFavs = others.filter(s => !favoriteIds.includes(s.id));
+            
+            // 1. Prepare sorted lists for logical navigation
+            let favs = stations.filter(s => favoriteIds.includes(s.id));
+            let others = stations.filter(s => !favoriteIds.includes(s.id));
 
             if (isLocationSorted) {
                 const sortLogic = (a, b) => {
@@ -365,12 +357,24 @@
                     return a.geo.localeCompare(b.geo);
                 };
                 favs.sort(sortLogic);
-                nonFavs.sort(sortLogic);
+                others.sort(sortLogic);
             }
 
-            activePlaylist = anchorStation ? [anchorStation, ...favs, ...nonFavs] : [...favs, ...nonFavs];
+            // 2. THIS IS THE KEY: The logical list is Favorites -> Others (Original order)
+            logicalMasterList = [...favs, ...others];
 
-            activePlaylist.forEach((station) => {
+            // 3. Prepare visual display (Anchor -> Others)
+            let anchorStation = null;
+            let visualList = [...logicalMasterList];
+
+            if (currentStationId !== null) {
+                const index = visualList.findIndex(s => s.id === currentStationId);
+                if (index > -1) [anchorStation] = visualList.splice(index, 1);
+            }
+
+            const activeDisplayList = anchorStation ? [anchorStation, ...visualList] : visualList;
+
+            activeDisplayList.forEach((station) => {
                 const tile = document.createElement('div');
                 tile.className = `tile c${(station.id % 8) + 1}`;
                 if (favoriteIds.includes(station.id)) tile.classList.add('is-fav');
@@ -431,10 +435,10 @@
         }
 
         function navigateStation(direction) {
-            const list = favoriteIds.length > 0 ? activePlaylist.filter(s => favoriteIds.includes(s.id)) : activePlaylist;
-            const currentIndex = list.findIndex(s => s.id === currentStationId);
-            const nextIndex = (currentIndex + direction + list.length) % list.length;
-            playStation(list[nextIndex].id);
+            // FIXED: Reference the permanent list order, not the visual grid order
+            const currentIndex = logicalMasterList.findIndex(s => s.id === currentStationId);
+            const nextIndex = (currentIndex + direction + logicalMasterList.length) % logicalMasterList.length;
+            playStation(logicalMasterList[nextIndex].id);
         }
 
         function updateMediaMetadata(station) {
