@@ -118,6 +118,17 @@
             overflow: hidden;
         }
 
+        /* NEW: Subtle dark shading gradient toward bottom right */
+        .tile::after {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            /* Radial gradient anchored at bottom right, fading from semi-transparent black to transparent */
+            background: radial-gradient(circle at bottom right, rgba(0,0,0,0.35) 0%, transparent 65%);
+            pointer-events: none; /* Ensure clicks pass through to the tile */
+            z-index: 1; /* Sit above background color, below text content */
+        }
+
         .tile:hover { filter: brightness(1.2); transform: scale(1.02); }
         .tile.active { outline: 4px solid white; outline-offset: -4px; }
 
@@ -303,7 +314,7 @@
         let touchstartX = 0;
         let touchendX = 0;
 
-        // Two-Tap Reload
+        // Two-Tap Manual Reload
         let clickCount = 0;
         appTitle.onclick = () => {
             clickCount++;
