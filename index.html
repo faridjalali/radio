@@ -4,6 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>Radio</title>
+    
+    <link rel="icon" type="image/jpeg" href="image_0.png.jpg">
+    <link rel="apple-touch-icon" href="image_0.png.jpg">
+    
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <style>
@@ -13,7 +17,6 @@
             --accent-color: #0078d7; 
             --disabled-color: #444;
             --fav-color: #ffca28;
-            /* Removed --error-color as it is no longer needed */
         }
 
         @property --wipe-angle {
@@ -143,7 +146,6 @@
         @keyframes spin { to { transform: rotate(360deg); } }
         .tile.buffering .spinner { display: block; }
 
-        /* SLEEK ERROR ICON - Changed fill to white */
         .error-icon {
             display: none; width: 24px; height: 24px;
             fill: white; pointer-events: none;
@@ -446,8 +448,6 @@
 
         function playStation(id) {
             const station = stations.find(s => s.id === id);
-            
-            // Clear any previous error and set buffering state
             errorStationId = null;
             bufferingStationId = id;
             isActuallyPlaying = false;
@@ -465,14 +465,12 @@
                 scrollContainer.scrollTo({top: 0, behavior: 'smooth'});
                 updateMediaMetadata(station);
             }).catch(e => {
-                // If play fails (e.g., broken URL or user didn't interact)
                 bufferingStationId = null;
                 errorStationId = id;
                 renderGrid();
             });
         }
 
-        // Global Error Handling for Audio Object
         player.onerror = () => {
             if (bufferingStationId !== null) {
                 errorStationId = bufferingStationId;
