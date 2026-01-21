@@ -146,6 +146,7 @@
         @keyframes spin { to { transform: rotate(360deg); } }
         .tile.buffering .spinner { display: block; }
 
+        /* White Error Icon */
         .error-icon {
             display: none; width: 24px; height: 24px;
             fill: white; pointer-events: none;
@@ -346,6 +347,7 @@
                 tile.className = `tile c${(station.id % 8) + 1}`;
                 if (favoriteIds.includes(station.id)) tile.classList.add('is-fav');
                 
+                // Priority: Buffering > Error > Playing
                 if (bufferingStationId === station.id) tile.classList.add('buffering');
                 else if (errorStationId === station.id) tile.classList.add('error');
                 else if (currentStationId === station.id) {
@@ -448,8 +450,10 @@
 
         function playStation(id) {
             const station = stations.find(s => s.id === id);
+            
+            // RESET: Clear any previous error state (including the one on the current tile)
             errorStationId = null;
-            bufferingStationId = id;
+            bufferingStationId = id; // Show spinner instantly
             isActuallyPlaying = false;
             renderGrid();
 
@@ -465,6 +469,7 @@
                 scrollContainer.scrollTo({top: 0, behavior: 'smooth'});
                 updateMediaMetadata(station);
             }).catch(e => {
+                // Buffer failed -> transition to Error icon
                 bufferingStationId = null;
                 errorStationId = id;
                 renderGrid();
