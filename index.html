@@ -57,20 +57,28 @@
         .brand-container {
             display: flex;
             align-items: center;
-            gap: 10px;
-            cursor: pointer;
+            gap: 12px;
             user-select: none;
         }
 
-        h1 { font-weight: 200; font-size: 2.4rem; margin: 0; letter-spacing: -1px; }
+        h1 { font-weight: 200; font-size: 2.4rem; margin: 0; letter-spacing: -1px; cursor: pointer; }
+
+        /* LARGER EXCLUSIVE TRIGGER ICON */
+        .menu-trigger {
+            cursor: pointer;
+            padding: 5px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-top: 8px;
+        }
 
         #menu-arrow {
-            width: 22px;
-            height: 22px;
+            width: 28px;
+            height: 28px;
             fill: #ffffff;
-            opacity: 0.9;
+            opacity: 1;
             transition: transform 0.3s ease;
-            margin-top: 8px;
         }
 
         .brand-container.active #menu-arrow { transform: rotate(180deg); }
@@ -313,9 +321,11 @@
 
     <header>
         <div class="header-inner">
-            <div class="brand-container" id="brand-area">
+            <div class="brand-container">
                 <h1 id="app-title">Radio</h1>
-                <svg id="menu-arrow" viewBox="0 0 24 24"><path d="M7 10l5 5 5-5z"/></svg>
+                <div class="menu-trigger" id="menu-arrow-container">
+                    <svg id="menu-arrow" viewBox="0 0 24 24"><path d="M7 10l5 5 5-5z"/></svg>
+                </div>
             </div>
             
             <div id="dropdown-menu"></div>
@@ -461,14 +471,39 @@
             { name: "NOVAH", genre: "Hip Hop", geo: "🇫🇷", type: "int", url: "https://nova-odn.ice.infomaniak.ch/nova-odn-128.mp3" },
             { name: "NOVALN", genre: "Jazz", geo: "🇫🇷", type: "int", url: "https://nova-ln.ice.infomaniak.ch/nova-ln-128.mp3" },
             { name: "NOVAD", genre: "Dance", geo: "🇫🇷", type: "int", url: "https://nova-dance.ice.infomaniak.ch/nova-dance-128.mp3" },
+            // NEW ITALIAN BATCH (RMC)
+            { name: "RMCH", genre: "Pop", geo: "🇮🇹", type: "int", url: "https://icy.unitedradio.it/rmcweb001" },
+            { name: "RMCBM", genre: "Pop", geo: "🇮🇹", type: "int", url: "https://icy.unitedradio.it/rmcweb017" },
+            { name: "RMCBB", genre: "Jazz", geo: "🇮🇹", type: "int", url: "https://icy.unitedradio.it/rmcweb002" },
+            { name: "RMCJ", genre: "Jazz", geo: "🇮🇹", type: "int", url: "https://icy.unitedradio.it/rmcweb019" },
+            { name: "RMCI", genre: "World", geo: "🇮🇹", type: "int", url: "https://icy.unitedradio.it/rmcweb005" },
+            { name: "RMCVL", genre: "Pop", geo: "🇮🇹", type: "int", url: "https://icy.unitedradio.it/rmcweb020" },
+            { name: "RMCNS", genre: "Jazz", geo: "🇮🇹", type: "int", url: "https://icy.unitedradio.it/rmcweb012" },
+            { name: "RMCRB", genre: "R&B", geo: "🇮🇹", type: "int", url: "https://icy.unitedradio.it/rmcweb003" },
+            { name: "RMCL", genre: "Pop", geo: "🇮🇹", type: "int", url: "https://icy.unitedradio.it/rmcweb006" },
+            { name: "RMCGA", genre: "Pop", geo: "🇮🇹", type: "int", url: "https://icy.unitedradio.it/rmcweb007" },
+            { name: "RMC80", genre: "Pop", geo: "🇮🇹", type: "int", url: "https://icy.unitedradio.it/rmcweb008" },
+            { name: "RMC90", genre: "Pop", geo: "🇮🇹", type: "int", url: "https://icy.unitedradio.it/rmcweb009" },
+            { name: "RMCMA", genre: "Pop", geo: "🇮🇹", type: "int", url: "https://icy.unitedradio.it/rmcweb010" },
+            { name: "RMCC", genre: "Dance", geo: "🇮🇹", type: "int", url: "https://icy.unitedradio.it/rmcweb004" },
+            { name: "RMCNC", genre: "Pop", geo: "🇮🇹", type: "int", url: "https://icy.unitedradio.it/rmcweb011" },
+            { name: "RMCVV", genre: "Pop", geo: "🇮🇹", type: "int", url: "https://icy.unitedradio.it/rmcweb022" },
+            { name: "RMCA", genre: "Pop", geo: "🇮🇹", type: "int", url: "https://icy.unitedradio.it/rmcweb016" },
+            { name: "RMCDF", genre: "Dance", geo: "🇮🇹", type: "int", url: "https://icy.unitedradio.it/rmcweb025" },
+            { name: "RMCRR", genre: "Rock", geo: "🇮🇹", type: "int", url: "https://icy.unitedradio.it/rmcweb015" },
+            { name: "RMCR", genre: "Dance", geo: "🇮🇹", type: "int", url: "https://icy.unitedradio.it/rmcweb021" },
+            { name: "RMCP", genre: "Dance", geo: "🇮🇹", type: "int", url: "https://icy.unitedradio.it/rmcweb018" },
+            { name: "RMCF", genre: "Dance", geo: "🇮🇹", type: "int", url: "https://icy.unitedradio.it/rmcweb023" },
+            { name: "RMCP2", genre: "Dance", geo: "🇮🇹", type: "int", url: "https://icy.unitedradio.it/rmcweb026" },
         ];
 
         stations.forEach((s, i) => s.id = i);
 
         const countryFlagMap = {
-            "France": "🇫🇷", "Germany": "🇩🇪", "Austria": "🇦🇹", "Slovenia": "🇸🇮", 
-            "UK": "🇬🇧", "Australia": "🇦🇺", "Canada": "🇨🇦", "Netherlands": "🇳🇱", 
-            "Mexico": "🇲🇽", "Switzerland": "🇨🇭", "Italy": "🇮🇹", "US": "🇺🇸"
+            "US": "🇺🇸", "France": "🇫🇷", "Italy": "🇮🇹", "UK": "🇬🇧", 
+            "Germany": "🇩🇪", "Austria": "🇦🇹", "Slovenia": "🇸🇮", 
+            "Australia": "🇦🇺", "Canada": "🇨🇦", "Netherlands": "🇳🇱", 
+            "Mexico": "🇲🇽", "Switzerland": "🇨🇭"
         };
         
         const reverseFlagMap = {};
@@ -483,7 +518,8 @@
         const shuffleBtn = document.getElementById('shuffle-btn');
         const playPauseBtn = document.getElementById('play-pause-btn');
         const playPauseIcon = document.getElementById('play-pause-icon');
-        const brandArea = document.getElementById('brand-area');
+        const titleArea = document.getElementById('app-title');
+        const menuContainer = document.getElementById('menu-arrow-container');
         const dropdownMenu = document.getElementById('dropdown-menu');
         const scrollContainer = document.getElementById('scroll-container');
 
@@ -499,28 +535,36 @@
         let logicalMasterList = [];
         let activeFilter = { type: 'all', value: null };
 
-        brandArea.onclick = (e) => {
+        // RESTORE DOUBLE-CLICK REFRESH
+        titleArea.onclick = () => {
+            let clickCount = parseInt(titleArea.dataset.clicks || 0) + 1;
+            titleArea.dataset.clicks = clickCount;
+            if (clickCount >= 2) window.location.reload(true);
+            setTimeout(() => titleArea.dataset.clicks = 0, 500); 
+        };
+
+        // EXCLUSIVE MENU TRIGGER
+        menuContainer.onclick = (e) => {
             e.stopPropagation();
-            brandArea.classList.toggle('active');
+            menuContainer.parentElement.classList.toggle('active');
             dropdownMenu.classList.toggle('visible');
         };
 
         document.onclick = (e) => {
             if (!e.target.closest('#dropdown-menu')) {
-                brandArea.classList.remove('active');
+                menuContainer.parentElement.classList.remove('active');
                 dropdownMenu.classList.remove('visible');
             }
         };
 
         function closeMenu() {
-            brandArea.classList.remove('active');
+            menuContainer.parentElement.classList.remove('active');
             dropdownMenu.classList.remove('visible');
             scrollContainer.scrollTo({top: 0, behavior: 'smooth'});
         }
 
         function buildMenu() {
             dropdownMenu.innerHTML = '';
-            
             const createItem = (label, type, val) => {
                 const item = document.createElement('div');
                 item.className = `menu-item ${activeFilter.type === type && activeFilter.value === val ? 'active' : ''}`;
@@ -528,7 +572,6 @@
                 item.onclick = () => { activeFilter = { type, value: val }; renderGrid(); closeMenu(); };
                 return item;
             };
-
             dropdownMenu.appendChild(createItem('Show All Stations', 'all', null));
             const cLabel = document.createElement('div');
             cLabel.className = 'menu-label'; cLabel.innerText = 'Countries';
@@ -537,11 +580,19 @@
             const flagGrid = document.createElement('div');
             flagGrid.className = 'flag-grid';
             
-            const rawCountries = [...new Set(stations.map(s => s.type === 'us' ? 'US' : reverseFlagMap[s.geo] || s.geo))].sort();
-            const usIdx = rawCountries.indexOf('US');
-            if (usIdx > -1) rawCountries.unshift(rawCountries.splice(usIdx, 1)[0]);
+            // FLAG ORDER: US, FR, IT, UK, then Alpha
+            const allFoundCountries = [...new Set(stations.map(s => s.type === 'us' ? 'US' : reverseFlagMap[s.geo] || s.geo))];
+            const priorities = ["US", "France", "Italy", "UK"];
+            const sortedCountries = allFoundCountries.sort((a, b) => {
+                const idxA = priorities.indexOf(a);
+                const idxB = priorities.indexOf(b);
+                if (idxA !== -1 && idxB !== -1) return idxA - idxB;
+                if (idxA !== -1) return -1;
+                if (idxB !== -1) return 1;
+                return a.localeCompare(b);
+            });
 
-            rawCountries.forEach(c => {
+            sortedCountries.forEach(c => {
                 const f = countryFlagMap[c] || c;
                 const btn = document.createElement('div');
                 btn.className = `flag-btn ${activeFilter.type === 'country' && activeFilter.value === c ? 'active' : ''}`;
@@ -552,21 +603,12 @@
             dropdownMenu.appendChild(flagGrid);
 
             dropdownMenu.appendChild(document.createElement('div')).className = 'menu-divider';
-
             const gLabel = document.createElement('div');
             gLabel.className = 'menu-label'; gLabel.innerText = 'Genres';
             dropdownMenu.appendChild(gLabel);
 
-            // REMOVED "TOP FOUR" LOGIC - ALL GENRES NOW LISTED ALPHABETICALLY
             const allGenres = [...new Set(stations.map(s => s.genre))].sort();
-
-            allGenres.forEach(g => {
-                const item = document.createElement('div');
-                item.className = `menu-item ${activeFilter.type === 'genre' && activeFilter.value === g ? 'active' : ''}`;
-                item.innerText = g;
-                item.onclick = () => { activeFilter = { type: 'genre', value: g }; renderGrid(); closeMenu(); };
-                dropdownMenu.appendChild(item);
-            });
+            allGenres.forEach(g => dropdownMenu.appendChild(createItem(g, 'genre', g)));
         }
 
         function renderGrid() {
@@ -578,26 +620,20 @@
             } else if (activeFilter.type === 'genre') {
                 filtered = stations.filter(s => s.genre === activeFilter.value);
             }
-
             let favs = filtered.filter(s => favoriteIds.includes(s.id));
             let others = filtered.filter(s => !favoriteIds.includes(s.id));
-
             if (isAlphabeticalSorted) {
                 const sortLogic = (a, b) => a.name.localeCompare(b.name);
                 favs.sort(sortLogic); others.sort(sortLogic);
             }
-
             logicalMasterList = [...favs, ...others];
             let anchorStation = null;
             let visualList = [...logicalMasterList];
-
             if (currentStationId !== null) {
                 const index = visualList.findIndex(s => s.id === currentStationId);
                 if (index > -1) [anchorStation] = visualList.splice(index, 1);
             }
-
             const activeDisplayList = anchorStation ? [anchorStation, ...visualList] : visualList;
-
             activeDisplayList.forEach((station) => {
                 const tile = document.createElement('div');
                 tile.className = `tile c${(station.id % 8) + 1}`;
@@ -608,12 +644,10 @@
                     tile.classList.add(isActuallyPlaying ? 'active' : 'ready');
                     if (!isActuallyPlaying) playPauseBtn.disabled = false;
                 }
-                
                 tile.dataset.id = station.id;
                 const flagMatch = station.geo.match(/[\u{1F1E6}-\u{1F1FF}]{2}/u);
                 const flagEmoji = flagMatch ? flagMatch[0] : "";
                 const stateText = station.geo.replace(flagEmoji, "").trim();
-
                 tile.innerHTML = `
                     <div class="fav-star">★</div>
                     <div class="status-container">
