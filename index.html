@@ -64,7 +64,6 @@
 
         h1 { font-weight: 200; font-size: 2.4rem; margin: 0; letter-spacing: -1px; }
 
-        /* LARGER AND WHITER DROPDOWN ICON */
         #menu-arrow {
             width: 22px;
             height: 22px;
@@ -94,7 +93,7 @@
             box-shadow: 0 20px 50px rgba(0,0,0,0.8);
             padding: 15px 0;
             margin-top: 10px;
-            touch-action: pan-y; /* Enable scrolling */
+            touch-action: pan-y; 
         }
 
         #dropdown-menu.visible { display: flex; animation: menuFade 0.2s ease; }
@@ -123,7 +122,6 @@
         .menu-item:hover { background: rgba(255,255,255,0.1); }
         .menu-item.active { color: var(--accent-color); font-weight: 600; }
 
-        /* FLAG GRID STYLING */
         .flag-grid {
             display: flex;
             flex-wrap: wrap;
@@ -132,7 +130,7 @@
         }
 
         .flag-btn {
-            font-size: 1.6rem; /* Same as tiles roughly */
+            font-size: 1.6rem;
             cursor: pointer;
             padding: 4px;
             border-radius: 6px;
@@ -354,80 +352,80 @@
             { name: "FIP", genre: "Eclectic", geo: "🇫🇷", type: "int", url: "https://stream.radiofrance.fr/fip/fip_hifi.m3u8?id=radiofrance" },   
             { name: "EGO", genre: "Indie", geo: "🇩🇪", type: "int", url: "https://cast.egofm.de/egofm.mp3" },   
             { name: "FM4", genre: "Alternative", geo: "🇦🇹", type: "int", url: "https://orf-live.ors-shoutcast.at/fm4-q2a" },
-            { name: "STUD", genre: "College", geo: "🇸🇮", type: "int", url: "https://kruljo.radiostudent.si:8001/test.ogg" },
+            { name: "STUD", genre: "Eclectic", geo: "🇸🇮", type: "int", url: "https://kruljo.radiostudent.si:8001/test.ogg" },
             { name: "NOVA", genre: "World", geo: "🇫🇷", type: "int", url: "https://novazz.ice.infomaniak.ch/novazz-128.mp3" },
-            { name: "U92M", genre: "Hip Hop", geo: "WV", type: "us", url: "https://stream.radiojar.com/56p3rt9eytzuv" },
-            { name: "DEPA", genre: "College", geo: "IL", type: "us", url: "https://ice26.securenetsystems.net/RADIODEPAUL" },
-            { name: "KRVS", genre: "Public", geo: "LA", type: "us", url: "https://29223.live.streamtheworld.com/KRVSFMAAC.aac" },
-            { name: "WKNC", genre: "Indie", geo: "NC", type: "us", url: "https://das-edge12-live365-dal02.cdnstream.com/a30009" },
-            { name: "KCSU", genre: "Alternative", geo: "CO", type: "us", url: "https://listen.kcsufm.com/stream" },
+            { name: "U92M", genre: "Eclectic", geo: "WV", type: "us", url: "https://stream.radiojar.com/56p3rt9eytzuv" },
+            { name: "DEPA", genre: "Eclectic", geo: "IL", type: "us", url: "https://ice26.securenetsystems.net/RADIODEPAUL" },
+            { name: "KRVS", genre: "Eclectic", geo: "LA", type: "us", url: "https://29223.live.streamtheworld.com/KRVSFMAAC.aac" },
+            { name: "WKNC", genre: "Eclectic", geo: "NC", type: "us", url: "https://das-edge12-live365-dal02.cdnstream.com/a30009" },
+            { name: "KCSU", genre: "Eclectic", geo: "CO", type: "us", url: "https://listen.kcsufm.com/stream" },
             { name: "WERS", genre: "Eclectic", geo: "MA", type: "us", url: "https://18503.live.streamtheworld.com/WERSFMAAC.aac" },
-            { name: "KAMP", genre: "College", geo: "AZ", type: "us", url: "https://ice42.securenetsystems.net/KAMP" },
-            { name: "WUTK", genre: "Alternative", geo: "TN", type: "us", url: "https://26223.live.streamtheworld.com/WUTKFM.mp3" },
-            { name: "WCBN", genre: "Freeform", geo: "MI", type: "us", url: "https://floyd.wcbn.org:8443/wcbn-hd.mp3" },
-            { name: "WREK", genre: "Experimental", geo: "GA", type: "us", url: "https://streaming.wrek.org/main/320kb.mp3" },
-            { name: "WBRU", genre: "Indie", geo: "RI", type: "us", url: "https://stream.radio.co/s4d09e922b/listen" },
-            { name: "WRIU", genre: "College", geo: "RI", type: "us", url: "https://stream.wriu.org/wriu-fm" },
-            { name: "KJHK", genre: "College", geo: "KS", type: "us", url: "https://listen.mixlr.com/86b854be3889dc43aed2f0eb6f2b814b" },
-            { name: "WICB", genre: "College", geo: "NY", type: "us", url: "https://icecast.do.zufall.co/wicb_aac_high" },
-            { name: "WXYC", genre: "College", geo: "NC", type: "us", url: "https://audio-mp3.ibiblio.org/wxyc.mp3" },
+            { name: "KAMP", genre: "Eclectic", geo: "AZ", type: "us", url: "https://ice42.securenetsystems.net/KAMP" },
+            { name: "WUTK", genre: "Eclectic", geo: "TN", type: "us", url: "https://26223.live.streamtheworld.com/WUTKFM.mp3" },
+            { name: "WCBN", genre: "Eclectic", geo: "MI", type: "us", url: "https://floyd.wcbn.org:8443/wcbn-hd.mp3" },
+            { name: "WREK", genre: "Eclectic", geo: "GA", type: "us", url: "https://streaming.wrek.org/main/320kb.mp3" },
+            { name: "WBRU", genre: "Eclectic", geo: "RI", type: "us", url: "https://stream.radio.co/s4d09e922b/listen" },
+            { name: "WRIU", genre: "Eclectic", geo: "RI", type: "us", url: "https://stream.wriu.org/wriu-fm" },
+            { name: "KJHK", genre: "Eclectic", geo: "KS", type: "us", url: "https://listen.mixlr.com/86b854be3889dc43aed2f0eb6f2b814b" },
+            { name: "WICB", genre: "Eclectic", geo: "NY", type: "us", url: "https://icecast.do.zufall.co/wicb_aac_high" },
+            { name: "WXYC", genre: "Eclectic", geo: "NC", type: "us", url: "https://audio-mp3.ibiblio.org/wxyc.mp3" },
             { name: "KEXP", genre: "Indie", geo: "WA", type: "us", url: "https://kexp-mp3-128.streamguys1.com/kexp128.mp3" },
-            { name: "WUOG", genre: "College", geo: "GA", type: "us", url: "https://stream.wuog.org/stream" },  
-            { name: "KCRW", genre: "Public", geo: "CA", type: "us", url: "https://streams.kcrw.com/kcrw_mp3" },
-            { name: "WFMU", genre: "Freeform", geo: "NJ", type: "us", url: "https://stream0.wfmu.org/freeform-128k" },
+            { name: "WUOG", genre: "Eclectic", geo: "GA", type: "us", url: "https://stream.wuog.org/stream" },  
+            { name: "KCRW", genre: "Eclectic", geo: "CA", type: "us", url: "https://streams.kcrw.com/kcrw_mp3" },
+            { name: "WFMU", genre: "Eclectic", geo: "NJ", type: "us", url: "https://stream0.wfmu.org/freeform-128k" },
             { name: "WWOZ", genre: "Jazz", geo: "LA", type: "us", url: "https://wwoz-sc.streamguys1.com/wwoz-hi.mp3" },
-            { name: "KKJZ", genre: "Jazz", geo: "CA", type: "us", url: "https://streaming.live365.com/a49833" },
+            { name: "KKJZ", genre: "Eclectic", geo: "CA", type: "us", url: "https://streaming.live365.com/a49833" },
             { name: "KNKX", genre: "Jazz", geo: "WA", type: "us", url: "https://knkx-live-a.edge.audiocdn.com/6285_256k" },
-            { name: "WPSU", genre: "Public", geo: "PA", type: "us", url: "https://wpsu-ice.streamguys1.com/wpsu2" },
-            { name: "KCSN", genre: "AAA", geo: "CA", type: "us", url: "https://www.streamvortex.com:8444/s/12200/" },
-            { name: "WXPN", genre: "AAA", geo: "PA", type: "us", url: "https://wxpn.xpn.org/xpnmp3hi" },
+            { name: "WPSU", genre: "Eclectic", geo: "PA", type: "us", url: "https://wpsu-ice.streamguys1.com/wpsu2" },
+            { name: "KCSN", genre: "Eclectic", geo: "CA", type: "us", url: "https://www.streamvortex.com:8444/s/12200/" },
+            { name: "WXPN", genre: "Eclectic", geo: "PA", type: "us", url: "https://wxpn.xpn.org/xpnmp3hi" },
             { name: "WKIT", genre: "Rock", geo: "ME", type: "us", url: "https://ice6.securenetsystems.net/WKIT" },
-            { name: "WDBM", genre: "College", geo: "MI", type: "us", url: "https://play.impact89fm.org:8000/impact89fm" },
-            { name: "WLUW", genre: "College", geo: "IL", type: "us", url: "https://ice26.securenetsystems.net/WLUW" },
-            { name: "WNUR", genre: "Freeform", geo: "IL", type: "us", url: "https://n16.rcs.revma.com/w4pmmfkdx4zuv" },
-            { name: "WIIT", genre: "College", geo: "IL", type: "us", url: "https://icecast.iit.edu/WIITstream" },
-            { name: "WRAS", genre: "Public", geo: "GA", type: "us", url: "https://gpb.streamguys1.com/oom/gpb-radio-mp3-website" },   
-            { name: "KING", genre: "Classical", geo: "WA", type: "us", url: "https://classicalking.streamguys1.com/king-fm-aac-128k" },     
-            { name: "KVCU", genre: "College", geo: "CO", type: "us", url: "https://kvcu.streamguys1.com/live" },   
-            { name: "WBOR", genre: "College", geo: "ME", type: "us", url: "https://listen.wbor.org/" },   
-            { name: "WZND", genre: "College", geo: "IL", type: "us", url: "https://14543.live.streamtheworld.com/WZNDFM.mp3" },
-            { name: "WASU", genre: "College", geo: "NC", type: "us", url: "https://prod-54-85-93-254.amperwave.net/wasu-wasuaac-hlsc1.m3u8" },
-            { name: "KXLU", genre: "Indie", geo: "CA", type: "us", url: "https://kxlu.streamguys1.com/kxlu-hi" },
-            { name: "WXRT", genre: "AAA", geo: "IL", type: "us", url: "https://prod-3-83-123-147.amperwave.net/audacy-wxrtfmaac-hlsc.m3u8" }, 
-            { name: "WTJU", genre: "College", geo: "VA", type: "us", url: "https://streams.wtju.net/wtju-live.mp3" },
-            { name: "KVRX", genre: "College", geo: "TX", type: "us", url: "https://streams.kut.org/5020_192.mp3" },
-            { name: "WUMF", genre: "College", geo: "ME", type: "us", url: "http://wumfstreaming.umf.maine.edu:8000/wumf" },
-            { name: "WMEB", genre: "College", geo: "ME", type: "us", url: "http://wmeb-stream.maine.edu:8000/wmeb" },
-            { name: "WQFS", genre: "College", geo: "NC", type: "us", url: "http://wqfs.arcostream.com:7109/wqfs" },
+            { name: "WDBM", genre: "Eclectic", geo: "MI", type: "us", url: "https://play.impact89fm.org:8000/impact89fm" },
+            { name: "WLUW", genre: "Eclectic", geo: "IL", type: "us", url: "https://ice26.securenetsystems.net/WLUW" },
+            { name: "WNUR", genre: "Eclectic", geo: "IL", type: "us", url: "https://n16.rcs.revma.com/w4pmmfkdx4zuv" },
+            { name: "WIIT", genre: "Eclectic", geo: "IL", type: "us", url: "https://icecast.iit.edu/WIITstream" },
+            { name: "WRAS", genre: "Eclectic", geo: "GA", type: "us", url: "https://gpb.streamguys1.com/oom/gpb-radio-mp3-website" },   
+            { name: "KING", genre: "Classic", geo: "WA", type: "us", url: "https://classicalking.streamguys1.com/king-fm-aac-128k" },     
+            { name: "KVCU", genre: "Eclectic", geo: "CO", type: "us", url: "https://kvcu.streamguys1.com/live" },   
+            { name: "WBOR", genre: "Eclectic", geo: "ME", type: "us", url: "https://listen.wbor.org/" },   
+            { name: "WZND", genre: "Eclectic", geo: "IL", type: "us", url: "https://14543.live.streamtheworld.com/WZNDFM.mp3" },
+            { name: "WASU", genre: "Eclectic", geo: "NC", type: "us", url: "https://prod-54-85-93-254.amperwave.net/wasu-wasuaac-hlsc1.m3u8" },
+            { name: "KXLU", genre: "Eclectic", geo: "CA", type: "us", url: "https://kxlu.streamguys1.com/kxlu-hi" },
+            { name: "WXRT", genre: "Eclectic", geo: "IL", type: "us", url: "https://prod-3-83-123-147.amperwave.net/audacy-wxrtfmaac-hlsc.m3u8" }, 
+            { name: "WTJU", genre: "Eclectic", geo: "VA", type: "us", url: "https://streams.wtju.net/wtju-live.mp3" },
+            { name: "KVRX", genre: "Eclectic", geo: "TX", type: "us", url: "https://streams.kut.org/5020_192.mp3" },
+            { name: "WUMF", genre: "Eclectic", geo: "ME", type: "us", url: "http://wumfstreaming.umf.maine.edu:8000/wumf" },
+            { name: "WMEB", genre: "Eclectic", geo: "ME", type: "us", url: "http://wmeb-stream.maine.edu:8000/wmeb" },
+            { name: "WQFS", genre: "Eclectic", geo: "NC", type: "us", url: "http://wqfs.arcostream.com:7109/wqfs" },
             { name: "FOLK", genre: "Americana", geo: "OH", type: "us", url: "https://freshgrass.streamguys1.com/folkalley-128mp3" },
-            { name: "WPRM", genre: "Classical", geo: "WI", type: "us", url: "https://wpr-ice.streamguys1.com/wpr-music-mp3-96" },
+            { name: "WPRM", genre: "Classic", geo: "WI", type: "us", url: "https://wpr-ice.streamguys1.com/wpr-music-mp3-96" },
             { name: "HPR", genre: "Americana", geo: "MN", type: "us", url: "https://radioheartland.stream.publicradio.org/radioheartland.aac" },
-            { name: "WAMU", genre: "Americana", geo: "DC", type: "us", url: "https://ice24.securenetsystems.net/WAMU" },
-            { name: "WQXR", genre: "Classical", geo: "NY", type: "us", url: "https://stream.wqxr.org/wqxr-web" },
-            { name: "KUSC", genre: "Classical", geo: "CA", type: "us", url: "https://16603.live.streamtheworld.com/KUSCAAC96.aac" },
-            { name: "WFMT", genre: "Classical", geo: "IL", type: "us", url: "https://wfmt.streamguys1.com/main-mp3" },
-            { name: "WGBH", genre: "Classical", geo: "MA", type: "us", url: "https://wgbh-live.streamguys1.com/classical-hi/" },
-            { name: "WCPE", genre: "Classical", geo: "NC", type: "us", url: "https://18093.live.streamtheworld.com/WCPE_FM.mp3" },
-            { name: "KQAC", genre: "Classical", geo: "OR", type: "us", url: "https://allclassical.streamguys1.com/ac128kmp3" },
-            { name: "CMPR", genre: "Classical", geo: "MN", type: "us", url: "https://ycradio.stream.publicradio.org/ycradio.aac" },
-            { name: "KMFA", genre: "Classical", geo: "TX", type: "us", url: "https://kmfa.streamguys1.com/KMFA-mp3" },
-            { name: "WETA", genre: "Classical", geo: "DC", type: "us", url: "https://weta.streamguys1.com/wetaclassical-icy" },
-            { name: "RSC", genre: "Classical", geo: "🇨🇭", type: "int", url: "https://livestreaming-node-3.srg-ssr.ch/srgssr/rsc_de/aac/96" },
-            { name: "VCR", genre: "Classical", geo: "🇮🇹", type: "int", url: "https://de2.streamingpulse.com/ssl/vcr1" },
-            { name: "VCR+", genre: "Classical", geo: "🇮🇹", type: "int", url: "https://de2.streamingpulse.com/ssl/vcr2" },
-            { name: "FMUS", genre: "Classical", geo: "🇫🇷", type: "int", url: "https://stream.radiofrance.fr/francemusique/francemusique_hifi.m3u8?id=radiofrance" },
-            { name: "BRK", genre: "Classical", geo: "🇩🇪", type: "int", url: "https://mcdn.hf.br.de/br/hf/brklassik/master-256000.m3u8" },
-            { name: "ABCC", genre: "Classical", geo: "🇦🇺", type: "int", url: "https://mediaserviceslive.akamaized.net/hls/live/2108547/classicfmnsw/v0-221.m3u8" },
+            { name: "WAMU", genre: "Eclectic", geo: "DC", type: "us", url: "https://ice24.securenetsystems.net/WAMU" },
+            { name: "WQXR", genre: "Classic", geo: "NY", type: "us", url: "https://stream.wqxr.org/wqxr-web" },
+            { name: "KUSC", genre: "Classic", geo: "CA", type: "us", url: "https://16603.live.streamtheworld.com/KUSCAAC96.aac" },
+            { name: "WFMT", genre: "Classic", geo: "IL", type: "us", url: "https://wfmt.streamguys1.com/main-mp3" },
+            { name: "WGBH", genre: "Classic", geo: "MA", type: "us", url: "https://wgbh-live.streamguys1.com/classical-hi/" },
+            { name: "WCPE", genre: "Classic", geo: "NC", type: "us", url: "https://18093.live.streamtheworld.com/WCPE_FM.mp3" },
+            { name: "KQAC", genre: "Classic", geo: "OR", type: "us", url: "https://allclassical.streamguys1.com/ac128kmp3" },
+            { name: "CMPR", genre: "Classic", geo: "MN", type: "us", url: "https://ycradio.stream.publicradio.org/ycradio.aac" },
+            { name: "KMFA", genre: "Classic", geo: "TX", type: "us", url: "https://kmfa.streamguys1.com/KMFA-mp3" },
+            { name: "WETA", genre: "Classic", geo: "DC", type: "us", url: "https://weta.streamguys1.com/wetaclassical-icy" },
+            { name: "RSC", genre: "Classic", geo: "🇨🇭", type: "int", url: "https://livestreaming-node-3.srg-ssr.ch/srgssr/rsc_de/aac/96" },
+            { name: "VCR", genre: "Classic", geo: "🇮🇹", type: "int", url: "https://de2.streamingpulse.com/ssl/vcr1" },
+            { name: "VCR+", genre: "Classic", geo: "🇮🇹", type: "int", url: "https://de2.streamingpulse.com/ssl/vcr2" },
+            { name: "FMUS", genre: "Classic", geo: "🇫🇷", type: "int", url: "https://stream.radiofrance.fr/francemusique/francemusique_hifi.m3u8?id=radiofrance" },
+            { name: "BRK", genre: "Classic", geo: "🇩🇪", type: "int", url: "https://mcdn.hf.br.de/br/hf/brklassik/master-256000.m3u8" },
+            { name: "ABCC", genre: "Classic", geo: "🇦🇺", type: "int", url: "https://mediaserviceslive.akamaized.net/hls/live/2108547/classicfmnsw/v0-221.m3u8" },
             { name: "CBCM", genre: "Pop", geo: "🇨🇦", type: "int", url: "https://cbcradiolive.akamaized.net/hls/live/2041059/ES_R2PVC/adaptive_192/chunklist_ao.m3u8" },
-            { name: "NPOR", genre: "Classical", geo: "🇳🇱", type: "int", url: "https://icecast.omroep.nl/radio4-sb-aac" },
-            { name: "OPUS", genre: "Classical", geo: "🇲🇽", type: "int", url: "https://s2.mexside.net:7014/stream" },
+            { name: "NPOR", genre: "Classic", geo: "🇳🇱", type: "int", url: "https://icecast.omroep.nl/radio4-sb-aac" },
+            { name: "OPUS", genre: "Classic", geo: "🇲🇽", type: "int", url: "https://s2.mexside.net:7014/stream" },
             { name: "BBC1", genre: "Pop", geo: "🇬🇧", type: "int", url: "https://lsn.lv/bbcradio.m3u8?station=bbc_radio_one&bitrate=320000" },
             { name: "BBC1A", genre: "Pop", geo: "🇬🇧", type: "int", url: "https://lsn.lv/bbcradio.m3u8?station=bbc_radio_one_anthems&bitrate=320000" },
             { name: "BBC1D", genre: "Dance", geo: "🇬🇧", type: "int", url: "https://lsn.lv/bbcradio.m3u8?station=bbc_radio_one_dance&bitrate=320000" },
             { name: "BBC1X", genre: "Hip Hop", geo: "🇬🇧", type: "int", url: "https://lsn.lv/bbcradio.m3u8?station=bbc_1xtra&bitrate=320000" },
             { name: "BBC2", genre: "Pop", geo: "🇬🇧", type: "int", url: "https://lsn.lv/bbcradio.m3u8?station=bbc_radio_two&bitrate=320000" },
-            { name: "BBC3", genre: "Classical", geo: "🇬🇧", type: "int", url: "https://lsn.lv/bbcradio.m3u8?station=bbc_radio_three&bitrate=320000" },
-            { name: "BBC3U", genre: "Classical", geo: "🇬🇧", type: "int", url: "https://lsn.lv/bbcradio.m3u8?station=bbc_radio_three_unwind&bitrate=320000" },
+            { name: "BBC3", genre: "Classic", geo: "🇬🇧", type: "int", url: "https://lsn.lv/bbcradio.m3u8?station=bbc_radio_three&bitrate=320000" },
+            { name: "BBC3U", genre: "Classic", geo: "🇬🇧", type: "int", url: "https://lsn.lv/bbcradio.m3u8?station=bbc_radio_three_unwind&bitrate=320000" },
             { name: "BBC6", genre: "Alternative", geo: "🇬🇧", type: "int", url: "https://lsn.lv/bbcradio.m3u8?station=bbc_6music&bitrate=320000" },
             { name: "IDM", genre: "Dance", geo: "🇬🇧", type: "int", url: "https://stream.indemandradio.com/stream/160/160.m3u8" },
             { name: "IDD", genre: "Pop", geo: "🇬🇧", type: "int", url: "https://stream.indemandradio.com/stream/160/160.m3u8" },
@@ -440,21 +438,21 @@
             { name: "FIPG", genre: "Jazz", geo: "🇫🇷", type: "int", url: "https://stream.radiofrance.fr/fipgroove/fipgroove_hifi.m3u8?id=radiofrance" },
             { name: "FIPRE", genre: "Reggae", geo: "🇫🇷", type: "int", url: "https://stream.radiofrance.fr/fipreggae/fipreggae_hifi.m3u8?id=radiofrance" },
             { name: "FIPP", genre: "Pop", geo: "🇫🇷", type: "int", url: "https://stream.radiofrance.fr/fippop/fippop_hifi.m3u8?id=radiofrance" },
-            { name: "FIPE", genre: "Electronica", geo: "🇫🇷", type: "int", url: "https://stream.radiofrance.fr/fipelectro/fipelectro_hifi.m3u8?id=radiofrance" },
+            { name: "FIPE", genre: "Dance", geo: "🇫🇷", type: "int", url: "https://stream.radiofrance.fr/fipelectro/fipelectro_hifi.m3u8?id=radiofrance" },
             { name: "FIPM", genre: "World", geo: "🇫🇷", type: "int", url: "https://stream.radiofrance.fr/fipworld/fipworld_hifi.m3u8?id=radiofrance" },
-            { name: "FIPN", genre: "New Age", geo: "🇫🇷", type: "int", url: "https://stream.radiofrance.fr/fipnouveautes/fipnouveautes_hifi.m3u8?id=radiofrance" },
+            { name: "FIPN", genre: "Eclectic", geo: "🇫🇷", type: "int", url: "https://stream.radiofrance.fr/fipnouveautes/fipnouveautes_hifi.m3u8?id=radiofrance" },
             { name: "FIPHH", genre: "Hip Hop", geo: "🇫🇷", type: "int", url: "https://stream.radiofrance.fr/fiphiphop/fiphiphop_hifi.m3u8?id=radiofrance" },
             { name: "RFFM", genre: "French", geo: "🇫🇷", type: "int", url: "https://stream.radiofrance.fr/francemusique/francemusique_hifi.m3u8?id=radiofrance" },
             { name: "RFCE", genre: "Classic", geo: "🇫🇷", type: "int", url: "https://stream.radiofrance.fr/francemusiqueeasyclassique/francemusiqueeasyclassique_hifi.m3u8?id=radiofrance" },
-            { name: "RFCL", genre: "Love", geo: "🇫🇷", type: "int", url: "https://stream.radiofrance.fr/francemusiqueclassiquelove/francemusiqueclassiquelove_hifi.m3u8?id=radiofrance" },
-            { name: "RFBA", genre: "Baroque", geo: "🇫🇷", type: "int", url: "https://stream.radiofrance.fr/francemusiquebaroque/francemusiquebaroque_hifi.m3u8?id=radiofrance" },
-            { name: "RFPZ", genre: "Piano", geo: "🇫🇷", type: "int", url: "https://stream.radiofrance.fr/francemusiquepianozen/francemusiquepianozen_hifi.m3u8?id=radiofrance" },
-            { name: "RFFI", genre: "Films", geo: "🇫🇷", type: "int", url: "https://stream.radiofrance.fr/francemusiquelabo/francemusiquelabo_hifi.m3u8?id=radiofrance" },
-            { name: "RFCO", genre: "Concert", geo: "🇫🇷", type: "int", url: "https://stream.radiofrance.fr/francemusiqueconcertsradiofrance/francemusiqueconcertsradiofrance_hifi.m3u8?id=radiofrance" },
+            { name: "RFCL", genre: "Classic", geo: "🇫🇷", type: "int", url: "https://stream.radiofrance.fr/francemusiqueclassiquelove/francemusiqueclassiquelove_hifi.m3u8?id=radiofrance" },
+            { name: "RFBA", genre: "Classic", geo: "🇫🇷", type: "int", url: "https://stream.radiofrance.fr/francemusiquebaroque/francemusiquebaroque_hifi.m3u8?id=radiofrance" },
+            { name: "RFPZ", genre: "Classic", geo: "🇫🇷", type: "int", url: "https://stream.radiofrance.fr/francemusiquepianozen/francemusiquepianozen_hifi.m3u8?id=radiofrance" },
+            { name: "RFFI", genre: "Classic", geo: "🇫🇷", type: "int", url: "https://stream.radiofrance.fr/francemusiquelabo/francemusiquelabo_hifi.m3u8?id=radiofrance" },
+            { name: "RFCO", genre: "Classic", geo: "🇫🇷", type: "int", url: "https://stream.radiofrance.fr/francemusiqueconcertsradiofrance/francemusiqueconcertsradiofrance_hifi.m3u8?id=radiofrance" },
             { name: "RFCP", genre: "Classic", geo: "🇫🇷", type: "int", url: "https://stream.radiofrance.fr/francemusiqueclassiqueplus/francemusiqueclassiqueplus_hifi.m3u8?id=radiofrance" },
             { name: "RFJA", genre: "Jazz", geo: "🇫🇷", type: "int", url: "https://stream.radiofrance.fr/francemusiquelajazz/francemusiquelajazz_hifi.m3u8?id=radiofrance" },
-            { name: "RFOP", genre: "Opera", geo: "🇫🇷", type: "int", url: "https://stream.radiofrance.fr/francemusiqueopera/francemusiqueopera_hifi.m3u8?id=radiofrance" },
-            { name: "RFLC", genre: "Contemporary", geo: "🇫🇷", type: "int", url: "https://stream.radiofrance.fr/francemusiquelacontemporaine/francemusiquelacontemporaine_hifi.m3u8?id=radiofrance" },
+            { name: "RFOP", genre: "Classic", geo: "🇫🇷", type: "int", url: "https://stream.radiofrance.fr/francemusiqueopera/francemusiqueopera_hifi.m3u8?id=radiofrance" },
+            { name: "RFLC", genre: "Classic", geo: "🇫🇷", type: "int", url: "https://stream.radiofrance.fr/francemusiquelacontemporaine/francemusiquelacontemporaine_hifi.m3u8?id=radiofrance" },
             { name: "RFOM", genre: "Blues", geo: "🇫🇷", type: "int", url: "https://stream.radiofrance.fr/francemusiqueocoramonde/francemusiqueocoramonde_hifi.m3u8?id=radiofrance" },
         ];
 
@@ -520,19 +518,19 @@
         function buildMenu() {
             dropdownMenu.innerHTML = '';
             
-            // Show All
-            const showAll = document.createElement('div');
-            showAll.className = `menu-item ${activeFilter.type === 'all' ? 'active' : ''}`;
-            showAll.innerText = 'Show All Stations';
-            showAll.onclick = () => { activeFilter = { type: 'all', value: null }; renderGrid(); closeMenu(); };
-            dropdownMenu.appendChild(showAll);
+            const createItem = (label, type, val) => {
+                const item = document.createElement('div');
+                item.className = `menu-item ${activeFilter.type === type && activeFilter.value === val ? 'active' : ''}`;
+                item.innerText = label;
+                item.onclick = () => { activeFilter = { type, value: val }; renderGrid(); closeMenu(); };
+                return item;
+            };
 
-            // Countries Label
+            dropdownMenu.appendChild(createItem('Show All Stations', 'all', null));
             const cLabel = document.createElement('div');
             cLabel.className = 'menu-label'; cLabel.innerText = 'Countries';
             dropdownMenu.appendChild(cLabel);
 
-            // Flag Grid
             const flagGrid = document.createElement('div');
             flagGrid.className = 'flag-grid';
             
@@ -552,13 +550,12 @@
 
             dropdownMenu.appendChild(document.createElement('div')).className = 'menu-divider';
 
-            // Genres
             const gLabel = document.createElement('div');
             gLabel.className = 'menu-label'; gLabel.innerText = 'Genres';
             dropdownMenu.appendChild(gLabel);
 
             const allGenres = [...new Set(stations.map(s => s.genre))].sort();
-            const topFour = ['Pop', 'Rock', 'Classical', 'Jazz'];
+            const topFour = ['Pop', 'Rock', 'Classic', 'Jazz'];
             const prioritized = topFour.filter(g => allGenres.includes(g));
             const remaining = allGenres.filter(g => !topFour.includes(g));
 
@@ -697,9 +694,7 @@
         function updateMediaMetadata(station) {
             if ('mediaSession' in navigator) {
                 navigator.mediaSession.metadata = new MediaMetadata({
-                    title: station.name, 
-                    artist: station.genre, 
-                    album: station.geo,
+                    title: station.name, artist: station.genre, album: station.geo,
                     artwork: [{ src: 'image_0.png.jpg', sizes: '512x512', type: 'image/png' }]
                 });
                 navigator.mediaSession.playbackState = "playing"; setupMediaHandlers(); 
