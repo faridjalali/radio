@@ -155,11 +155,7 @@
 
         .flag-btn:hover { background: rgba(255,255,255,0.1); }
         .flag-btn.active { background: var(--accent-color); }
-
-        /* Fix for Swiss Flag in Menu */
-        .flag-btn.is-swiss {
-            transform: scaleX(1.2); /* Stretch to match rectangular flags */
-        }
+        .flag-btn.is-swiss { transform: scaleX(1.2); }
 
         .menu-divider {
             height: 1px;
@@ -177,6 +173,22 @@
             transition: all 0.2s ease; color: white; font-size: 0.9rem; font-weight: 600;
             overflow: hidden;
         }
+
+        /* SORT BADGE STYLING */
+        .sort-badge {
+            position: absolute;
+            bottom: 4px;
+            right: 4px;
+            font-size: 10px;
+            font-weight: 900;
+            color: white;
+            line-height: 1;
+            pointer-events: none;
+            display: none;
+            text-shadow: 0 0 2px black;
+        }
+
+        .control-btn.active .sort-badge { display: block; }
 
         .control-btn.active { background-color: var(--accent-color); border-color: var(--accent-color); }
 
@@ -321,12 +333,7 @@
 
         .geo-text { font-size: 0.8rem; font-weight: 400; opacity: 0.9; }
         .geo-flag { font-size: 1.3rem; display: inline-block; }
-
-        /* Fix for Swiss Flag in Tiles */
-        .geo-flag.is-swiss {
-            transform: scaleX(1.2);
-            transform-origin: center right; /* Ensure it anchors right to align with text */
-        }
+        .geo-flag.is-swiss { transform: scaleX(1.2); transform-origin: center right; }
 
         .c1 { background-color: #00A300; } .c2 { background-color: #2D89EF; } 
         .c3 { background-color: #9F00A7; } .c4 { background-color: #603CBA; } 
@@ -354,8 +361,9 @@
                     <svg id="timer-icon" viewBox="0 0 24 24"><path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67z"/></svg>
                     <span id="timer-display" style="display:none; z-index: 3; position: relative;"></span>
                 </button>
-                <button id="sort-btn" class="control-btn" title="Sort Alphabetically">
+                <button id="sort-btn" class="control-btn" title="Sort Library">
                     <svg viewBox="0 0 24 24"><path d="M3 18h6v-2H3v2zM3 6v2h18V6H3zm0 7h12v-2H3v2z"/></svg>
+                    <span id="sort-badge-icon" class="sort-badge"></span>
                 </button>
                 <button id="shuffle-btn" class="control-btn" title="Shuffle Contextual">
                     <svg viewBox="0 0 24 24">
@@ -492,7 +500,7 @@
             { name: "NOVAD", genre: "Dance", geo: "🇫🇷", type: "int", url: "https://nova-dance.ice.infomaniak.ch/nova-dance-128.mp3" },
             { name: "RMCH", genre: "Pop", geo: "🇮🇹", type: "int", url: "https://icy.unitedradio.it/rmcweb001" },
             { name: "RMCBM", genre: "Pop", geo: "🇮🇹", type: "int", url: "https://icy.unitedradio.it/rmcweb017" },
-            { name: "RMCBB", genre: "Pop", geo: "🇮🇹", type: "int", url: "https://icy.unitedradio.it/rmcweb002" },
+            { name: "RMCBB", genre: "Jazz", geo: "🇮🇹", type: "int", url: "https://icy.unitedradio.it/rmcweb002" },
             { name: "RMCJ", genre: "Jazz", geo: "🇮🇹", type: "int", url: "https://icy.unitedradio.it/rmcweb019" },
             { name: "RMCI", genre: "World", geo: "🇮🇹", type: "int", url: "https://icy.unitedradio.it/rmcweb005" },
             { name: "RMCVL", genre: "Pop", geo: "🇮🇹", type: "int", url: "https://icy.unitedradio.it/rmcweb020" },
@@ -530,6 +538,7 @@
         const grid = document.getElementById('station-grid');
         const player = document.getElementById('radio-player');
         const sortBtn = document.getElementById('sort-btn');
+        const sortBadge = document.getElementById('sort-badge-icon');
         const timerBtn = document.getElementById('timer-btn');
         const timerIcon = document.getElementById('timer-icon');
         const timerDisplay = document.getElementById('timer-display');
@@ -548,7 +557,7 @@
         let bufferingStationId = null; 
         let errorStationId = null; 
         let isActuallyPlaying = false;
-        let isAlphabeticalSorted = false; 
+        let sortState = 0; // 0: Default, 1: Alphabetical, 2: Genre
         let favoriteIds = JSON.parse(localStorage.getItem('favStations') || '[]');
         let logicalMasterList = [];
         let activeFilter = { type: 'all', value: null };
@@ -612,12 +621,7 @@
                 const btn = document.createElement('div');
                 btn.className = `flag-btn ${activeFilter.type === 'country' && activeFilter.value === c ? 'active' : ''}`;
                 btn.innerText = f;
-                
-                // Add class if it's the Swiss flag
-                if (c === "Switzerland") {
-                    btn.classList.add('is-swiss');
-                }
-                
+                if (c === "Switzerland") btn.classList.add('is-swiss');
                 btn.onclick = () => { activeFilter = { type: 'country', value: c }; renderGrid(); closeMenu(); };
                 flagGrid.appendChild(btn);
             });
@@ -641,12 +645,19 @@
             } else if (activeFilter.type === 'genre') {
                 filtered = stations.filter(s => s.genre === activeFilter.value);
             }
+            
             let favs = filtered.filter(s => favoriteIds.includes(s.id));
             let others = filtered.filter(s => !favoriteIds.includes(s.id));
-            if (isAlphabeticalSorted) {
-                const sortLogic = (a, b) => a.name.localeCompare(b.name);
-                favs.sort(sortLogic); others.sort(sortLogic);
+            
+            // APPLY THREE-STATE SORT
+            if (sortState === 1) { // Alphabetical
+                favs.sort((a, b) => a.name.localeCompare(b.name));
+                others.sort((a, b) => a.name.localeCompare(b.name));
+            } else if (sortState === 2) { // Genre
+                favs.sort((a, b) => a.genre.localeCompare(b.genre) || a.name.localeCompare(b.name));
+                others.sort((a, b) => a.genre.localeCompare(b.genre) || a.name.localeCompare(b.name));
             }
+            
             logicalMasterList = [...favs, ...others];
             let anchorStation = null;
             let visualList = [...logicalMasterList];
@@ -655,6 +666,7 @@
                 if (index > -1) [anchorStation] = visualList.splice(index, 1);
             }
             const activeDisplayList = anchorStation ? [anchorStation, ...visualList] : visualList;
+            
             activeDisplayList.forEach((station) => {
                 const tile = document.createElement('div');
                 tile.className = `tile c${(station.id % 8) + 1}`;
@@ -669,7 +681,6 @@
                 const flagMatch = station.geo.match(/[\u{1F1E6}-\u{1F1FF}]{2}/u);
                 const flagEmoji = flagMatch ? flagMatch[0] : "";
                 const stateText = station.geo.replace(flagEmoji, "").trim();
-                
                 const isSwiss = flagEmoji === "🇨🇭";
 
                 tile.innerHTML = `
@@ -790,9 +801,21 @@
             if (Math.abs(diff) > 100) { if (diff > 0) navigateStation(1); else navigateStation(-1); }
         }, {passive: true});
 
+        // UPDATED THREE-STATE SORT HANDLER
         sortBtn.onclick = () => { 
-            isAlphabeticalSorted = !isAlphabeticalSorted; 
-            if (isAlphabeticalSorted) sortBtn.classList.add('active'); else sortBtn.classList.remove('active');
+            sortState = (sortState + 1) % 3;
+            
+            if (sortState === 0) {
+                sortBtn.classList.remove('active');
+                sortBadge.innerText = '';
+            } else if (sortState === 1) {
+                sortBtn.classList.add('active');
+                sortBadge.innerText = 'A';
+            } else if (sortState === 2) {
+                sortBtn.classList.add('active');
+                sortBadge.innerText = '♪';
+            }
+            
             renderGrid(); 
         };
 
