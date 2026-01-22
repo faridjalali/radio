@@ -57,20 +57,19 @@
         .brand-container {
             display: flex;
             align-items: center;
-            gap: 12px;
+            gap: 4px; /* Tighter gap as requested */
             user-select: none;
         }
 
         h1 { font-weight: 200; font-size: 2.4rem; margin: 0; letter-spacing: -1px; cursor: pointer; }
 
-        /* LARGER EXCLUSIVE TRIGGER ICON */
         .menu-trigger {
             cursor: pointer;
             padding: 5px;
             display: flex;
             align-items: center;
             justify-content: center;
-            margin-top: 8px;
+            margin-top: 8px; /* Alignment adjustment for the arrow */
         }
 
         #menu-arrow {
@@ -471,7 +470,6 @@
             { name: "NOVAH", genre: "Hip Hop", geo: "🇫🇷", type: "int", url: "https://nova-odn.ice.infomaniak.ch/nova-odn-128.mp3" },
             { name: "NOVALN", genre: "Jazz", geo: "🇫🇷", type: "int", url: "https://nova-ln.ice.infomaniak.ch/nova-ln-128.mp3" },
             { name: "NOVAD", genre: "Dance", geo: "🇫🇷", type: "int", url: "https://nova-dance.ice.infomaniak.ch/nova-dance-128.mp3" },
-            // NEW ITALIAN BATCH (RMC)
             { name: "RMCH", genre: "Pop", geo: "🇮🇹", type: "int", url: "https://icy.unitedradio.it/rmcweb001" },
             { name: "RMCBM", genre: "Pop", geo: "🇮🇹", type: "int", url: "https://icy.unitedradio.it/rmcweb017" },
             { name: "RMCBB", genre: "Jazz", geo: "🇮🇹", type: "int", url: "https://icy.unitedradio.it/rmcweb002" },
@@ -535,7 +533,6 @@
         let logicalMasterList = [];
         let activeFilter = { type: 'all', value: null };
 
-        // RESTORE DOUBLE-CLICK REFRESH
         titleArea.onclick = () => {
             let clickCount = parseInt(titleArea.dataset.clicks || 0) + 1;
             titleArea.dataset.clicks = clickCount;
@@ -543,7 +540,6 @@
             setTimeout(() => titleArea.dataset.clicks = 0, 500); 
         };
 
-        // EXCLUSIVE MENU TRIGGER
         menuContainer.onclick = (e) => {
             e.stopPropagation();
             menuContainer.parentElement.classList.toggle('active');
@@ -580,7 +576,6 @@
             const flagGrid = document.createElement('div');
             flagGrid.className = 'flag-grid';
             
-            // FLAG ORDER: US, FR, IT, UK, then Alpha
             const allFoundCountries = [...new Set(stations.map(s => s.type === 'us' ? 'US' : reverseFlagMap[s.geo] || s.geo))];
             const priorities = ["US", "France", "Italy", "UK"];
             const sortedCountries = allFoundCountries.sort((a, b) => {
