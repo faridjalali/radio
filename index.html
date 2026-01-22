@@ -156,11 +156,9 @@
         .flag-btn:hover { background: rgba(255,255,255,0.1); }
         .flag-btn.active { background: var(--accent-color); }
 
-        /* ENSURES RECTANGULAR SWISS FLAG LOOK */
-        .swiss-flag {
-            display: inline-block;
-            transform: scaleX(1.3);
-            margin: 0 4px;
+        /* Fix for Swiss Flag in Menu */
+        .flag-btn.is-swiss {
+            transform: scaleX(1.2); /* Stretch to match rectangular flags */
         }
 
         .menu-divider {
@@ -323,6 +321,12 @@
 
         .geo-text { font-size: 0.8rem; font-weight: 400; opacity: 0.9; }
         .geo-flag { font-size: 1.3rem; display: inline-block; }
+
+        /* Fix for Swiss Flag in Tiles */
+        .geo-flag.is-swiss {
+            transform: scaleX(1.2);
+            transform-origin: center right; /* Ensure it anchors right to align with text */
+        }
 
         .c1 { background-color: #00A300; } .c2 { background-color: #2D89EF; } 
         .c3 { background-color: #9F00A7; } .c4 { background-color: #603CBA; } 
@@ -607,12 +611,11 @@
                 const f = countryFlagMap[c] || c;
                 const btn = document.createElement('div');
                 btn.className = `flag-btn ${activeFilter.type === 'country' && activeFilter.value === c ? 'active' : ''}`;
+                btn.innerText = f;
                 
-                // SWISS FLAG RECTANGLE HANDLING
-                if (f === "🇨🇭") {
-                    btn.innerHTML = `<span class="swiss-flag">${f}</span>`;
-                } else {
-                    btn.innerText = f;
+                // Add class if it's the Swiss flag
+                if (c === "Switzerland") {
+                    btn.classList.add('is-swiss');
                 }
                 
                 btn.onclick = () => { activeFilter = { type: 'country', value: c }; renderGrid(); closeMenu(); };
@@ -664,13 +667,10 @@
                 }
                 tile.dataset.id = station.id;
                 const flagMatch = station.geo.match(/[\u{1F1E6}-\u{1F1FF}]{2}/u);
-                let flagEmoji = flagMatch ? flagMatch[0] : "";
+                const flagEmoji = flagMatch ? flagMatch[0] : "";
                 const stateText = station.geo.replace(flagEmoji, "").trim();
                 
-                // SWISS FLAG RECTANGLE HANDLING FOR TILE
-                if (flagEmoji === "🇨🇭") {
-                    flagEmoji = `<span class="swiss-flag">${flagEmoji}</span>`;
-                }
+                const isSwiss = flagEmoji === "🇨🇭";
 
                 tile.innerHTML = `
                     <div class="fav-star">★</div>
@@ -688,7 +688,7 @@
                     </div>
                     <div class="geo-tag">
                         <span class="geo-text">${stateText}</span>
-                        <span class="geo-flag">${flagEmoji}</span>
+                        <span class="geo-flag ${isSwiss ? 'is-swiss' : ''}">${flagEmoji}</span>
                     </div>
                 `;
                 tile.querySelector('.fav-star').onclick = (e) => { e.stopPropagation(); toggleFavorite(station.id); };
