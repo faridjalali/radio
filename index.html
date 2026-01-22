@@ -57,42 +57,44 @@
         .brand-container {
             display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 10px;
             cursor: pointer;
             user-select: none;
         }
 
         h1 { font-weight: 200; font-size: 2.4rem; margin: 0; letter-spacing: -1px; }
 
+        /* LARGER AND WHITER DROPDOWN ICON */
         #menu-arrow {
-            width: 18px;
-            height: 18px;
-            fill: white;
-            opacity: 0.5;
+            width: 22px;
+            height: 22px;
+            fill: #ffffff;
+            opacity: 0.9;
             transition: transform 0.3s ease;
             margin-top: 8px;
         }
 
-        .brand-container.active #menu-arrow { transform: rotate(180deg); opacity: 1; }
+        .brand-container.active #menu-arrow { transform: rotate(180deg); }
 
         #dropdown-menu {
             position: absolute;
             top: 100%;
             left: 30px;
-            width: 240px;
+            width: 280px;
             background-color: rgba(15,15,15,0.98);
             backdrop-filter: blur(30px);
             -webkit-backdrop-filter: blur(30px);
             border: 1px solid rgba(255,255,255,0.1);
-            border-radius: 8px;
+            border-radius: 12px;
             display: none;
             flex-direction: column;
-            max-height: 70vh;
+            max-height: 65vh;
             overflow-y: auto;
             z-index: 2000;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.6);
-            padding: 10px 0;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.8);
+            padding: 15px 0;
             margin-top: 10px;
+            touch-action: pan-y; /* Enable scrolling */
         }
 
         #dropdown-menu.visible { display: flex; animation: menuFade 0.2s ease; }
@@ -103,7 +105,7 @@
         }
 
         .menu-label {
-            padding: 12px 20px 5px 20px;
+            padding: 5px 20px 8px 20px;
             font-size: 0.7rem;
             text-transform: uppercase;
             letter-spacing: 1.5px;
@@ -113,20 +115,38 @@
 
         .menu-item {
             padding: 10px 20px;
-            font-size: 0.95rem;
+            font-size: 1rem;
             cursor: pointer;
             transition: background 0.2s;
-            display: flex;
-            justify-content: space-between;
         }
-
+        
         .menu-item:hover { background: rgba(255,255,255,0.1); }
         .menu-item.active { color: var(--accent-color); font-weight: 600; }
+
+        /* FLAG GRID STYLING */
+        .flag-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            padding: 5px 20px 15px 20px;
+        }
+
+        .flag-btn {
+            font-size: 1.6rem; /* Same as tiles roughly */
+            cursor: pointer;
+            padding: 4px;
+            border-radius: 6px;
+            transition: background 0.2s;
+            line-height: 1;
+        }
+
+        .flag-btn:hover { background: rgba(255,255,255,0.1); }
+        .flag-btn.active { background: var(--accent-color); }
 
         .menu-divider {
             height: 1px;
             background: rgba(255,255,255,0.1);
-            margin: 10px 20px;
+            margin: 10px 0;
         }
 
         .controls { display: flex; gap: 8px; }
@@ -440,11 +460,14 @@
 
         stations.forEach((s, i) => s.id = i);
 
-        const countryMap = {
-            "🇫🇷": "France", "🇩🇪": "Germany", "🇦🇹": "Austria", "🇸🇮": "Slovenia", 
-            "🇬🇧": "UK", "🇦🇺": "Australia", "🇨🇦": "Canada", "🇳🇱": "Netherlands", 
-            "🇲🇽": "Mexico", "🇨🇭": "Switzerland", "🇮🇹": "Italy"
+        const countryFlagMap = {
+            "France": "🇫🇷", "Germany": "🇩🇪", "Austria": "🇦🇹", "Slovenia": "🇸🇮", 
+            "UK": "🇬🇧", "Australia": "🇦🇺", "Canada": "🇨🇦", "Netherlands": "🇳🇱", 
+            "Mexico": "🇲🇽", "Switzerland": "🇨🇭", "Italy": "🇮🇹", "US": "🇺🇸"
         };
+        
+        const reverseFlagMap = {};
+        Object.entries(countryFlagMap).forEach(([k,v]) => reverseFlagMap[v] = k);
 
         const grid = document.getElementById('station-grid');
         const player = document.getElementById('radio-player');
@@ -481,48 +504,71 @@
             dropdownMenu.classList.toggle('visible');
         };
 
-        document.onclick = () => {
+        document.onclick = (e) => {
+            if (!e.target.closest('#dropdown-menu')) {
+                brandArea.classList.remove('active');
+                dropdownMenu.classList.remove('visible');
+            }
+        };
+
+        function closeMenu() {
             brandArea.classList.remove('active');
             dropdownMenu.classList.remove('visible');
-        };
+            scrollContainer.scrollTo({top: 0, behavior: 'smooth'});
+        }
 
         function buildMenu() {
             dropdownMenu.innerHTML = '';
-            const createItem = (label, type, val) => {
-                const item = document.createElement('div');
-                item.className = `menu-item ${activeFilter.type === type && activeFilter.value === val ? 'active' : ''}`;
-                item.innerText = label;
-                item.onclick = () => { 
-                    activeFilter = { type, value: val }; 
-                    renderGrid(); 
-                    scrollContainer.scrollTo({top: 0, behavior: 'smooth'});
-                    brandArea.classList.remove('active');
-                    dropdownMenu.classList.remove('visible');
-                };
-                return item;
-            };
-
-            dropdownMenu.appendChild(createItem('Show All Stations', 'all', null));
-            const countries = [...new Set(stations.map(s => s.type === 'us' ? 'US' : countryMap[s.geo]))].sort();
-            const usIndex = countries.indexOf('US');
-            if (usIndex > -1) countries.unshift(countries.splice(usIndex, 1)[0]);
             
-            const countryLabel = document.createElement('div');
-            countryLabel.className = 'menu-label'; countryLabel.innerText = 'Countries';
-            dropdownMenu.appendChild(countryLabel);
-            countries.forEach(c => dropdownMenu.appendChild(createItem(c, 'country', c)));
+            // Show All
+            const showAll = document.createElement('div');
+            showAll.className = `menu-item ${activeFilter.type === 'all' ? 'active' : ''}`;
+            showAll.innerText = 'Show All Stations';
+            showAll.onclick = () => { activeFilter = { type: 'all', value: null }; renderGrid(); closeMenu(); };
+            dropdownMenu.appendChild(showAll);
+
+            // Countries Label
+            const cLabel = document.createElement('div');
+            cLabel.className = 'menu-label'; cLabel.innerText = 'Countries';
+            dropdownMenu.appendChild(cLabel);
+
+            // Flag Grid
+            const flagGrid = document.createElement('div');
+            flagGrid.className = 'flag-grid';
+            
+            const rawCountries = [...new Set(stations.map(s => s.type === 'us' ? 'US' : reverseFlagMap[s.geo] || s.geo))].sort();
+            const usIdx = rawCountries.indexOf('US');
+            if (usIdx > -1) rawCountries.unshift(rawCountries.splice(usIdx, 1)[0]);
+
+            rawCountries.forEach(c => {
+                const f = countryFlagMap[c] || c;
+                const btn = document.createElement('div');
+                btn.className = `flag-btn ${activeFilter.type === 'country' && activeFilter.value === c ? 'active' : ''}`;
+                btn.innerText = f;
+                btn.onclick = () => { activeFilter = { type: 'country', value: c }; renderGrid(); closeMenu(); };
+                flagGrid.appendChild(btn);
+            });
+            dropdownMenu.appendChild(flagGrid);
 
             dropdownMenu.appendChild(document.createElement('div')).className = 'menu-divider';
 
+            // Genres
+            const gLabel = document.createElement('div');
+            gLabel.className = 'menu-label'; gLabel.innerText = 'Genres';
+            dropdownMenu.appendChild(gLabel);
+
             const allGenres = [...new Set(stations.map(s => s.genre))].sort();
             const topFour = ['Pop', 'Rock', 'Classical', 'Jazz'];
-            const prioritizedGenres = topFour.filter(g => allGenres.includes(g));
-            const remainingGenres = allGenres.filter(g => !topFour.includes(g));
+            const prioritized = topFour.filter(g => allGenres.includes(g));
+            const remaining = allGenres.filter(g => !topFour.includes(g));
 
-            const genreLabel = document.createElement('div');
-            genreLabel.className = 'menu-label'; genreLabel.innerText = 'Genres';
-            dropdownMenu.appendChild(genreLabel);
-            [...prioritizedGenres, ...remainingGenres].forEach(g => dropdownMenu.appendChild(createItem(g, 'genre', g)));
+            [...prioritized, ...remaining].forEach(g => {
+                const item = document.createElement('div');
+                item.className = `menu-item ${activeFilter.type === 'genre' && activeFilter.value === g ? 'active' : ''}`;
+                item.innerText = g;
+                item.onclick = () => { activeFilter = { type: 'genre', value: g }; renderGrid(); closeMenu(); };
+                dropdownMenu.appendChild(item);
+            });
         }
 
         function renderGrid() {
@@ -530,7 +576,7 @@
             grid.innerHTML = '';
             let filtered = stations;
             if (activeFilter.type === 'country') {
-                filtered = stations.filter(s => (activeFilter.value === 'US' ? s.type === 'us' : countryMap[s.geo] === activeFilter.value));
+                filtered = stations.filter(s => (activeFilter.value === 'US' ? s.type === 'us' : (reverseFlagMap[s.geo] || s.geo) === activeFilter.value));
             } else if (activeFilter.type === 'genre') {
                 filtered = stations.filter(s => s.genre === activeFilter.value);
             }
@@ -564,6 +610,7 @@
                     tile.classList.add(isActuallyPlaying ? 'active' : 'ready');
                     if (!isActuallyPlaying) playPauseBtn.disabled = false;
                 }
+                
                 tile.dataset.id = station.id;
                 const flagMatch = station.geo.match(/[\u{1F1E6}-\u{1F1FF}]{2}/u);
                 const flagEmoji = flagMatch ? flagMatch[0] : "";
@@ -650,7 +697,9 @@
         function updateMediaMetadata(station) {
             if ('mediaSession' in navigator) {
                 navigator.mediaSession.metadata = new MediaMetadata({
-                    title: station.name, artist: "Radio", album: station.geo,
+                    title: station.name, 
+                    artist: station.genre, 
+                    album: station.geo,
                     artwork: [{ src: 'image_0.png.jpg', sizes: '512x512', type: 'image/png' }]
                 });
                 navigator.mediaSession.playbackState = "playing"; setupMediaHandlers(); 
@@ -697,7 +746,10 @@
         playPauseBtn.onclick = () => { if (isActuallyPlaying) stopPlayback(); else if (currentStationId !== null) playStation(currentStationId); };
 
         renderGrid(); setupMediaHandlers();
-        document.addEventListener('touchmove', function (e) { if (e.target.closest('#scroll-container')) return; e.preventDefault(); }, { passive: false });
+        document.addEventListener('touchmove', function (e) { 
+            if (e.target.closest('#scroll-container') || e.target.closest('#dropdown-menu')) return; 
+            e.preventDefault(); 
+        }, { passive: false });
     </script>
 </body>
 </html>
