@@ -54,6 +54,13 @@
             padding: 0 30px; box-sizing: border-box;
         }
 
+        /* NEW WRAPPER TO ANCHOR DROPDOWN */
+        .header-left-area {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+
         .brand-container {
             display: flex;
             align-items: center;
@@ -82,12 +89,11 @@
 
         .brand-container.active #menu-arrow { transform: rotate(180deg); }
 
-        /* ALIGNED DROPDOWN MENU */
+        /* FIXED DROPDOWN POSITIONING */
         #dropdown-menu {
             position: absolute;
-            top: 100%;
-            /* Aligns left side to match the .grid and .header-inner padding (30px) */
-            left: 30px; 
+            top: calc(100% + 10px);
+            left: 0; /* Aligns exactly with the start of the 'Radio' text */
             width: 280px;
             background-color: rgba(15,15,15,0.98);
             backdrop-filter: blur(30px);
@@ -101,7 +107,6 @@
             z-index: 2000;
             box-shadow: 0 20px 50px rgba(0,0,0,0.8);
             padding: 15px 0;
-            margin-top: 10px;
             touch-action: pan-y; 
         }
 
@@ -202,8 +207,7 @@
             .grid { grid-template-columns: repeat(2, 1fr); padding: 10px 15px 20px 15px; gap: 10px; }
             .header-inner { padding: 0 15px; }
             h1 { font-size: 2rem; }
-            /* Mobile adjustment: match grid and header padding (15px) */
-            #dropdown-menu { left: 15px; width: calc(100% - 30px); }
+            #dropdown-menu { width: calc(100vw - 30px); }
             #scroll-container { padding-top: calc(85px + env(safe-area-inset-top)); }
         }
 
@@ -323,14 +327,15 @@
 
     <header>
         <div class="header-inner">
-            <div class="brand-container">
-                <h1 id="app-title">Radio</h1>
-                <div class="menu-trigger" id="menu-arrow-container">
-                    <svg id="menu-arrow" viewBox="0 0 24 24"><path d="M7 10l5 5 5-5z"/></svg>
+            <div class="header-left-area">
+                <div class="brand-container">
+                    <h1 id="app-title">Radio</h1>
+                    <div class="menu-trigger" id="menu-arrow-container">
+                        <svg id="menu-arrow" viewBox="0 0 24 24"><path d="M7 10l5 5 5-5z"/></svg>
+                    </div>
                 </div>
+                <div id="dropdown-menu"></div>
             </div>
-            
-            <div id="dropdown-menu"></div>
 
             <div class="controls">
                 <button id="timer-btn" class="control-btn" title="Sleep Timer">
@@ -620,12 +625,10 @@
             }
             let favs = filtered.filter(s => favoriteIds.includes(s.id));
             let others = filtered.filter(s => !favoriteIds.includes(s.id));
-            
             if (isAlphabeticalSorted) {
                 const sortLogic = (a, b) => a.name.localeCompare(b.name);
                 favs.sort(sortLogic); others.sort(sortLogic);
             }
-            
             logicalMasterList = [...favs, ...others];
             let anchorStation = null;
             let visualList = [...logicalMasterList];
