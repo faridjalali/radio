@@ -397,9 +397,9 @@
             { name: "WUMF", genre: "Eclectic", geo: "ME", type: "us", url: "http://wumfstreaming.umf.maine.edu:8000/wumf" },
             { name: "WMEB", genre: "Eclectic", geo: "ME", type: "us", url: "http://wmeb-stream.maine.edu:8000/wmeb" },
             { name: "WQFS", genre: "Eclectic", geo: "NC", type: "us", url: "http://wqfs.arcostream.com:7109/wqfs" },
-            { name: "FOLK", genre: "Americana", geo: "OH", type: "us", url: "https://freshgrass.streamguys1.com/folkalley-128mp3" },
+            { name: "FOLK", genre: "Folk", geo: "OH", type: "us", url: "https://freshgrass.streamguys1.com/folkalley-128mp3" },
             { name: "WPRM", genre: "Classic", geo: "WI", type: "us", url: "https://wpr-ice.streamguys1.com/wpr-music-mp3-96" },
-            { name: "HPR", genre: "Americana", geo: "MN", type: "us", url: "https://radioheartland.stream.publicradio.org/radioheartland.aac" },
+            { name: "HPR", genre: "Folk", geo: "MN", type: "us", url: "https://radioheartland.stream.publicradio.org/radioheartland.aac" },
             { name: "WAMU", genre: "Eclectic", geo: "DC", type: "us", url: "https://ice24.securenetsystems.net/WAMU" },
             { name: "WQXR", genre: "Classic", geo: "NY", type: "us", url: "https://stream.wqxr.org/wqxr-web" },
             { name: "KUSC", genre: "Classic", geo: "CA", type: "us", url: "https://16603.live.streamtheworld.com/KUSCAAC96.aac" },
@@ -453,7 +453,7 @@
             { name: "RFJA", genre: "Jazz", geo: "🇫🇷", type: "int", url: "https://stream.radiofrance.fr/francemusiquelajazz/francemusiquelajazz_hifi.m3u8?id=radiofrance" },
             { name: "RFOP", genre: "Classic", geo: "🇫🇷", type: "int", url: "https://stream.radiofrance.fr/francemusiqueopera/francemusiqueopera_hifi.m3u8?id=radiofrance" },
             { name: "RFLC", genre: "Classic", geo: "🇫🇷", type: "int", url: "https://stream.radiofrance.fr/francemusiquelacontemporaine/francemusiquelacontemporaine_hifi.m3u8?id=radiofrance" },
-            { name: "RFOM", genre: "Blues", geo: "🇫🇷", type: "int", url: "https://stream.radiofrance.fr/francemusiqueocoramonde/francemusiqueocoramonde_hifi.m3u8?id=radiofrance" },
+            { name: "RFOM", genre: "Folk", geo: "🇫🇷", type: "int", url: "https://stream.radiofrance.fr/francemusiqueocoramonde/francemusiqueocoramonde_hifi.m3u8?id=radiofrance" },
         ];
 
         stations.forEach((s, i) => s.id = i);
@@ -491,10 +491,6 @@
         let favoriteIds = JSON.parse(localStorage.getItem('favStations') || '[]');
         let logicalMasterList = [];
         let activeFilter = { type: 'all', value: null };
-
-        let currentTimerDuration = 0; 
-        let sleepTimerTimeout = null;
-        let sleepTickInterval = null;
 
         brandArea.onclick = (e) => {
             e.stopPropagation();
