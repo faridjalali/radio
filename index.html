@@ -174,11 +174,11 @@
             overflow: hidden;
         }
 
-        /* SORT BADGE STYLING */
+        /* ADJUSTED SORT BADGE POSITION */
         .sort-badge {
             position: absolute;
-            bottom: 4px;
-            right: 4px;
+            bottom: 8px; /* Moved up from 4px */
+            right: 8px;  /* Moved inward from 4px */
             font-size: 10px;
             font-weight: 900;
             color: white;
@@ -557,7 +557,7 @@
         let bufferingStationId = null; 
         let errorStationId = null; 
         let isActuallyPlaying = false;
-        let sortState = 0; // 0: Default, 1: Alphabetical, 2: Genre
+        let sortState = 0; 
         let favoriteIds = JSON.parse(localStorage.getItem('favStations') || '[]');
         let logicalMasterList = [];
         let activeFilter = { type: 'all', value: null };
@@ -649,11 +649,10 @@
             let favs = filtered.filter(s => favoriteIds.includes(s.id));
             let others = filtered.filter(s => !favoriteIds.includes(s.id));
             
-            // APPLY THREE-STATE SORT
-            if (sortState === 1) { // Alphabetical
+            if (sortState === 1) { 
                 favs.sort((a, b) => a.name.localeCompare(b.name));
                 others.sort((a, b) => a.name.localeCompare(b.name));
-            } else if (sortState === 2) { // Genre
+            } else if (sortState === 2) { 
                 favs.sort((a, b) => a.genre.localeCompare(b.genre) || a.name.localeCompare(b.name));
                 others.sort((a, b) => a.genre.localeCompare(b.genre) || a.name.localeCompare(b.name));
             }
@@ -801,7 +800,6 @@
             if (Math.abs(diff) > 100) { if (diff > 0) navigateStation(1); else navigateStation(-1); }
         }, {passive: true});
 
-        // UPDATED THREE-STATE SORT HANDLER
         sortBtn.onclick = () => { 
             sortState = (sortState + 1) % 3;
             
