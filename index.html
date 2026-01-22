@@ -716,7 +716,6 @@
             });
         }
 
-        // FIXED SLEEP TIMER LOGIC
         timerBtn.onclick = () => {
             if (currentTimerDuration === 0) startSleepTimer(30);
             else if (currentTimerDuration === 30) startSleepTimer(15);
@@ -724,7 +723,9 @@
         };
 
         function startSleepTimer(minutes) {
-            clearSleepTimer(); // Ensure previous state is wiped
+            clearSleepTimer();
+            // FORCED REFLOW TO RESTART SWEEP ANIMATION
+            void timerBtn.offsetWidth; 
             timerBtn.classList.add('active'); 
             currentTimerDuration = minutes;
             timerIcon.style.display = 'none'; 
@@ -734,29 +735,17 @@
             let remaining = minutes;
             sleepTickInterval = setInterval(() => {
                 remaining--;
-                if (remaining <= 0) { 
-                    stopPlayback(); 
-                    clearSleepTimer(); 
-                } else {
-                    timerDisplay.innerText = remaining;
-                }
+                if (remaining <= 0) { stopPlayback(); clearSleepTimer(); } else timerDisplay.innerText = remaining;
             }, 60000);
-            
-            sleepTimerTimeout = setTimeout(() => { 
-                stopPlayback(); 
-                clearSleepTimer(); 
-            }, minutes * 60000);
+            sleepTimerTimeout = setTimeout(() => { stopPlayback(); clearSleepTimer(); }, minutes * 60000);
         }
 
         function clearSleepTimer() {
             if (sleepTimerTimeout) clearTimeout(sleepTimerTimeout);
             if (sleepTickInterval) clearInterval(sleepTickInterval);
-            sleepTimerTimeout = null; 
-            sleepTickInterval = null; 
-            currentTimerDuration = 0;
+            sleepTimerTimeout = null; sleepTickInterval = null; currentTimerDuration = 0;
             timerBtn.classList.remove('active'); 
-            timerIcon.style.display = 'block'; 
-            timerDisplay.style.display = 'none';
+            timerIcon.style.display = 'block'; timerDisplay.style.display = 'none';
         }
 
         function toggleFavorite(id) {
