@@ -57,7 +57,7 @@
         .brand-container {
             display: flex;
             align-items: center;
-            gap: 4px; /* Tighter gap as requested */
+            gap: 4px;
             user-select: none;
         }
 
@@ -69,7 +69,7 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            margin-top: 8px; /* Alignment adjustment for the arrow */
+            margin-top: 8px;
         }
 
         #menu-arrow {
@@ -82,10 +82,12 @@
 
         .brand-container.active #menu-arrow { transform: rotate(180deg); }
 
+        /* ALIGNED DROPDOWN MENU */
         #dropdown-menu {
             position: absolute;
             top: 100%;
-            left: 30px;
+            /* Aligns left side to match the .grid and .header-inner padding (30px) */
+            left: 30px; 
             width: 280px;
             background-color: rgba(15,15,15,0.98);
             backdrop-filter: blur(30px);
@@ -200,6 +202,7 @@
             .grid { grid-template-columns: repeat(2, 1fr); padding: 10px 15px 20px 15px; gap: 10px; }
             .header-inner { padding: 0 15px; }
             h1 { font-size: 2rem; }
+            /* Mobile adjustment: match grid and header padding (15px) */
             #dropdown-menu { left: 15px; width: calc(100% - 30px); }
             #scroll-container { padding-top: calc(85px + env(safe-area-inset-top)); }
         }
@@ -517,7 +520,7 @@
         const playPauseBtn = document.getElementById('play-pause-btn');
         const playPauseIcon = document.getElementById('play-pause-icon');
         const titleArea = document.getElementById('app-title');
-        const menuContainer = document.getElementById('menu-arrow-container');
+        const menuTrigger = document.getElementById('menu-arrow-container');
         const dropdownMenu = document.getElementById('dropdown-menu');
         const scrollContainer = document.getElementById('scroll-container');
 
@@ -540,21 +543,21 @@
             setTimeout(() => titleArea.dataset.clicks = 0, 500); 
         };
 
-        menuContainer.onclick = (e) => {
+        menuTrigger.onclick = (e) => {
             e.stopPropagation();
-            menuContainer.parentElement.classList.toggle('active');
+            menuTrigger.parentElement.classList.toggle('active');
             dropdownMenu.classList.toggle('visible');
         };
 
         document.onclick = (e) => {
             if (!e.target.closest('#dropdown-menu')) {
-                menuContainer.parentElement.classList.remove('active');
+                menuTrigger.parentElement.classList.remove('active');
                 dropdownMenu.classList.remove('visible');
             }
         };
 
         function closeMenu() {
-            menuContainer.parentElement.classList.remove('active');
+            menuTrigger.parentElement.classList.remove('active');
             dropdownMenu.classList.remove('visible');
             scrollContainer.scrollTo({top: 0, behavior: 'smooth'});
         }
@@ -617,10 +620,12 @@
             }
             let favs = filtered.filter(s => favoriteIds.includes(s.id));
             let others = filtered.filter(s => !favoriteIds.includes(s.id));
+            
             if (isAlphabeticalSorted) {
                 const sortLogic = (a, b) => a.name.localeCompare(b.name);
                 favs.sort(sortLogic); others.sort(sortLogic);
             }
+            
             logicalMasterList = [...favs, ...others];
             let anchorStation = null;
             let visualList = [...logicalMasterList];
