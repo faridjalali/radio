@@ -1,0 +1,1234 @@
+[
+  {
+    "id": "fip",
+    "name": "FIP",
+    "genre": "Eclectic",
+    "geo": "🇫🇷",
+    "type": "int",
+    "url": "https://stream.radiofrance.fr/fip/fip_hifi.m3u8?id=radiofrance"
+  },
+  {
+    "id": "ego",
+    "name": "EGO",
+    "genre": "Eclectic",
+    "geo": "🇩🇪",
+    "type": "int",
+    "url": "https://cast.egofm.de/egofm.mp3"
+  },
+  {
+    "id": "fm4",
+    "name": "FM4",
+    "genre": "Alternative",
+    "geo": "🇦🇹",
+    "type": "int",
+    "url": "https://orf-live.ors-shoutcast.at/fm4-q2a"
+  },
+  {
+    "id": "stud",
+    "name": "STUD",
+    "genre": "Eclectic",
+    "geo": "🇸🇮",
+    "type": "int",
+    "url": "https://kruljo.radiostudent.si:8001/test.ogg"
+  },
+  {
+    "id": "nova",
+    "name": "NOVA",
+    "genre": "World",
+    "geo": "🇫🇷",
+    "type": "int",
+    "url": "https://novazz.ice.infomaniak.ch/novazz-128.mp3"
+  },
+  {
+    "id": "u92m",
+    "name": "U92M",
+    "genre": "Eclectic",
+    "geo": "WV",
+    "type": "us",
+    "url": "https://stream.radiojar.com/56p3rt9eytzuv"
+  },
+  {
+    "id": "depa",
+    "name": "DEPA",
+    "genre": "Eclectic",
+    "geo": "IL",
+    "type": "us",
+    "url": "https://ice26.securenetsystems.net/RADIODEPAUL"
+  },
+  {
+    "id": "krvs",
+    "name": "KRVS",
+    "genre": "Eclectic",
+    "geo": "LA",
+    "type": "us",
+    "url": "https://29223.live.streamtheworld.com/KRVSFMAAC.aac"
+  },
+  {
+    "id": "wknc",
+    "name": "WKNC",
+    "genre": "Eclectic",
+    "geo": "NC",
+    "type": "us",
+    "url": "https://das-edge12-live365-dal02.cdnstream.com/a30009"
+  },
+  {
+    "id": "kcsu",
+    "name": "KCSU",
+    "genre": "Eclectic",
+    "geo": "CO",
+    "type": "us",
+    "url": "https://listen.kcsufm.com/stream"
+  },
+  {
+    "id": "wers",
+    "name": "WERS",
+    "genre": "Eclectic",
+    "geo": "MA",
+    "type": "us",
+    "url": "https://18503.live.streamtheworld.com/WERSFMAAC.aac"
+  },
+  {
+    "id": "kamp",
+    "name": "KAMP",
+    "genre": "Eclectic",
+    "geo": "AZ",
+    "type": "us",
+    "url": "https://ice42.securenetsystems.net/KAMP"
+  },
+  {
+    "id": "wutk",
+    "name": "WUTK",
+    "genre": "Eclectic",
+    "geo": "TN",
+    "type": "us",
+    "url": "https://26223.live.streamtheworld.com/WUTKFM.mp3"
+  },
+  {
+    "id": "wcbn",
+    "name": "WCBN",
+    "genre": "Eclectic",
+    "geo": "MI",
+    "type": "us",
+    "url": "https://floyd.wcbn.org:8443/wcbn-hd.mp3"
+  },
+  {
+    "id": "wrek",
+    "name": "WREK",
+    "genre": "Eclectic",
+    "geo": "GA",
+    "type": "us",
+    "url": "https://streaming.wrek.org/main/320kb.mp3"
+  },
+  {
+    "id": "wbru",
+    "name": "WBRU",
+    "genre": "Eclectic",
+    "geo": "RI",
+    "type": "us",
+    "url": "https://stream.radio.co/s4d09e922b/listen"
+  },
+  {
+    "id": "wriu",
+    "name": "WRIU",
+    "genre": "Eclectic",
+    "geo": "RI",
+    "type": "us",
+    "url": "https://stream.wriu.org/wriu-fm"
+  },
+  {
+    "id": "kjhk",
+    "name": "KJHK",
+    "genre": "Eclectic",
+    "geo": "KS",
+    "type": "us",
+    "url": "https://listen.mixlr.com/86b854be3889dc43aed2f0eb6f2b814b"
+  },
+  {
+    "id": "wicb",
+    "name": "WICB",
+    "genre": "Eclectic",
+    "geo": "NY",
+    "type": "us",
+    "url": "https://icecast.do.zufall.co/wicb_aac_high"
+  },
+  {
+    "id": "wxyc",
+    "name": "WXYC",
+    "genre": "Eclectic",
+    "geo": "NC",
+    "type": "us",
+    "url": "https://audio-mp3.ibiblio.org/wxyc.mp3"
+  },
+  {
+    "id": "kexp",
+    "name": "KEXP",
+    "genre": "Eclectic",
+    "geo": "WA",
+    "type": "us",
+    "url": "https://kexp-mp3-128.streamguys1.com/kexp128.mp3"
+  },
+  {
+    "id": "wuog",
+    "name": "WUOG",
+    "genre": "Eclectic",
+    "geo": "GA",
+    "type": "us",
+    "url": "https://stream.wuog.org/stream"
+  },
+  {
+    "id": "kcrw",
+    "name": "KCRW",
+    "genre": "Eclectic",
+    "geo": "CA",
+    "type": "us",
+    "url": "https://streams.kcrw.com/kcrw_mp3"
+  },
+  {
+    "id": "wfmu",
+    "name": "WFMU",
+    "genre": "Eclectic",
+    "geo": "NJ",
+    "type": "us",
+    "url": "https://stream0.wfmu.org/freeform-128k"
+  },
+  {
+    "id": "wwoz",
+    "name": "WWOZ",
+    "genre": "Jazz",
+    "geo": "LA",
+    "type": "us",
+    "url": "https://wwoz-sc.streamguys1.com/wwoz-hi.mp3"
+  },
+  {
+    "id": "kkjz",
+    "name": "KKJZ",
+    "genre": "Eclectic",
+    "geo": "CA",
+    "type": "us",
+    "url": "https://streaming.live365.com/a49833"
+  },
+  {
+    "id": "knkx",
+    "name": "KNKX",
+    "genre": "Jazz",
+    "geo": "WA",
+    "type": "us",
+    "url": "https://knkx-live-a.edge.audiocdn.com/6285_256k"
+  },
+  {
+    "id": "wpsu",
+    "name": "WPSU",
+    "genre": "Eclectic",
+    "geo": "PA",
+    "type": "us",
+    "url": "https://wpsu-ice.streamguys1.com/wpsu2"
+  },
+  {
+    "id": "kcsn",
+    "name": "KCSN",
+    "genre": "Eclectic",
+    "geo": "CA",
+    "type": "us",
+    "url": "https://www.streamvortex.com:8444/s/12200/"
+  },
+  {
+    "id": "wxpn",
+    "name": "WXPN",
+    "genre": "Eclectic",
+    "geo": "PA",
+    "type": "us",
+    "url": "https://wxpn.xpn.org/xpnmp3hi"
+  },
+  {
+    "id": "wkit",
+    "name": "WKIT",
+    "genre": "Rock",
+    "geo": "ME",
+    "type": "us",
+    "url": "https://ice6.securenetsystems.net/WKIT"
+  },
+  {
+    "id": "wdbm",
+    "name": "WDBM",
+    "genre": "Eclectic",
+    "geo": "MI",
+    "type": "us",
+    "url": "https://play.impact89fm.org:8000/impact89fm"
+  },
+  {
+    "id": "wluw",
+    "name": "WLUW",
+    "genre": "Eclectic",
+    "geo": "IL",
+    "type": "us",
+    "url": "https://ice26.securenetsystems.net/WLUW"
+  },
+  {
+    "id": "wnur",
+    "name": "WNUR",
+    "genre": "Eclectic",
+    "geo": "IL",
+    "type": "us",
+    "url": "https://n16.rcs.revma.com/w4pmmfkdx4zuv"
+  },
+  {
+    "id": "wiit",
+    "name": "WIIT",
+    "genre": "Eclectic",
+    "geo": "IL",
+    "type": "us",
+    "url": "https://icecast.iit.edu/WIITstream"
+  },
+  {
+    "id": "wras",
+    "name": "WRAS",
+    "genre": "Eclectic",
+    "geo": "GA",
+    "type": "us",
+    "url": "https://gpb.streamguys1.com/oom/gpb-radio-mp3-website"
+  },
+  {
+    "id": "king",
+    "name": "KING",
+    "genre": "Classical",
+    "geo": "WA",
+    "type": "us",
+    "url": "https://classicalking.streamguys1.com/king-fm-aac-128k"
+  },
+  {
+    "id": "kvcu",
+    "name": "KVCU",
+    "genre": "Eclectic",
+    "geo": "CO",
+    "type": "us",
+    "url": "https://kvcu.streamguys1.com/live"
+  },
+  {
+    "id": "wbor",
+    "name": "WBOR",
+    "genre": "Eclectic",
+    "geo": "ME",
+    "type": "us",
+    "url": "https://listen.wbor.org/"
+  },
+  {
+    "id": "wznd",
+    "name": "WZND",
+    "genre": "Eclectic",
+    "geo": "IL",
+    "type": "us",
+    "url": "https://14543.live.streamtheworld.com/WZNDFM.mp3"
+  },
+  {
+    "id": "wasu",
+    "name": "WASU",
+    "genre": "Eclectic",
+    "geo": "NC",
+    "type": "us",
+    "url": "https://prod-54-85-93-254.amperwave.net/wasu-wasuaac-hlsc1.m3u8"
+  },
+  {
+    "id": "kxlu",
+    "name": "KXLU",
+    "genre": "Eclectic",
+    "geo": "CA",
+    "type": "us",
+    "url": "https://kxlu.streamguys1.com/kxlu-hi"
+  },
+  {
+    "id": "wxrt",
+    "name": "WXRT",
+    "genre": "Eclectic",
+    "geo": "IL",
+    "type": "us",
+    "url": "https://prod-3-83-123-147.amperwave.net/audacy-wxrtfmaac-hlsc.m3u8"
+  },
+  {
+    "id": "wtju",
+    "name": "WTJU",
+    "genre": "Eclectic",
+    "geo": "VA",
+    "type": "us",
+    "url": "https://streams.wtju.net/wtju-live.mp3"
+  },
+  {
+    "id": "kvrx",
+    "name": "KVRX",
+    "genre": "Eclectic",
+    "geo": "TX",
+    "type": "us",
+    "url": "https://streams.kut.org/5020_192.mp3"
+  },
+  {
+    "id": "wumf",
+    "name": "WUMF",
+    "genre": "Eclectic",
+    "geo": "ME",
+    "type": "us",
+    "url": "http://wumfstreaming.umf.maine.edu:8000/wumf"
+  },
+  {
+    "id": "wmeb",
+    "name": "WMEB",
+    "genre": "Eclectic",
+    "geo": "ME",
+    "type": "us",
+    "url": "http://wmeb-stream.maine.edu:8000/wmeb"
+  },
+  {
+    "id": "wqfs",
+    "name": "WQFS",
+    "genre": "Eclectic",
+    "geo": "NC",
+    "type": "us",
+    "url": "http://wqfs.arcostream.com:7109/wqfs"
+  },
+  {
+    "id": "folk",
+    "name": "FOLK",
+    "genre": "Folk",
+    "geo": "OH",
+    "type": "us",
+    "url": "https://freshgrass.streamguys1.com/folkalley-128mp3"
+  },
+  {
+    "id": "wprm",
+    "name": "WPRM",
+    "genre": "Classical",
+    "geo": "WI",
+    "type": "us",
+    "url": "https://wpr-ice.streamguys1.com/wpr-music-mp3-96"
+  },
+  {
+    "id": "hpr",
+    "name": "HPR",
+    "genre": "Folk",
+    "geo": "MN",
+    "type": "us",
+    "url": "https://radioheartland.stream.publicradio.org/radioheartland.aac"
+  },
+  {
+    "id": "wamu",
+    "name": "WAMU",
+    "genre": "Eclectic",
+    "geo": "DC",
+    "type": "us",
+    "url": "https://ice24.securenetsystems.net/WAMU"
+  },
+  {
+    "id": "wqxr",
+    "name": "WQXR",
+    "genre": "Classical",
+    "geo": "NY",
+    "type": "us",
+    "url": "https://stream.wqxr.org/wqxr-web"
+  },
+  {
+    "id": "kusc",
+    "name": "KUSC",
+    "genre": "Classical",
+    "geo": "CA",
+    "type": "us",
+    "url": "https://16603.live.streamtheworld.com/KUSCAAC96.aac"
+  },
+  {
+    "id": "wfmt",
+    "name": "WFMT",
+    "genre": "Classical",
+    "geo": "IL",
+    "type": "us",
+    "url": "https://wfmt.streamguys1.com/main-mp3"
+  },
+  {
+    "id": "wgbh",
+    "name": "WGBH",
+    "genre": "Classical",
+    "geo": "MA",
+    "type": "us",
+    "url": "https://wgbh-live.streamguys1.com/classical-hi/"
+  },
+  {
+    "id": "wcpe",
+    "name": "WCPE",
+    "genre": "Classical",
+    "geo": "NC",
+    "type": "us",
+    "url": "https://18093.live.streamtheworld.com/WCPE_FM.mp3"
+  },
+  {
+    "id": "kqac",
+    "name": "KQAC",
+    "genre": "Classical",
+    "geo": "OR",
+    "type": "us",
+    "url": "https://allclassical.streamguys1.com/ac128kmp3"
+  },
+  {
+    "id": "cmpr",
+    "name": "CMPR",
+    "genre": "Classical",
+    "geo": "MN",
+    "type": "us",
+    "url": "https://ycradio.stream.publicradio.org/ycradio.aac"
+  },
+  {
+    "id": "kmfa",
+    "name": "KMFA",
+    "genre": "Classical",
+    "geo": "TX",
+    "type": "us",
+    "url": "https://kmfa.streamguys1.com/KMFA-mp3"
+  },
+  {
+    "id": "weta",
+    "name": "WETA",
+    "genre": "Classical",
+    "geo": "DC",
+    "type": "us",
+    "url": "https://weta.streamguys1.com/wetaclassical-icy"
+  },
+  {
+    "id": "rsc",
+    "name": "RSC",
+    "genre": "Classical",
+    "geo": "🇨🇭",
+    "type": "int",
+    "url": "https://livestreaming-node-3.srg-ssr.ch/srgssr/rsc_de/aac/96"
+  },
+  {
+    "id": "vcr",
+    "name": "VCR",
+    "genre": "Classical",
+    "geo": "🇮🇹",
+    "type": "int",
+    "url": "https://de2.streamingpulse.com/ssl/vcr1"
+  },
+  {
+    "id": "vcr+",
+    "name": "VCR+",
+    "genre": "Classical",
+    "geo": "🇮🇹",
+    "type": "int",
+    "url": "https://de2.streamingpulse.com/ssl/vcr2"
+  },
+  {
+    "id": "fmus",
+    "name": "FMUS",
+    "genre": "Classical",
+    "geo": "🇫🇷",
+    "type": "int",
+    "url": "https://stream.radiofrance.fr/francemusique/francemusique_hifi.m3u8?id=radiofrance"
+  },
+  {
+    "id": "brk",
+    "name": "BRK",
+    "genre": "Classical",
+    "geo": "🇩🇪",
+    "type": "int",
+    "url": "https://mcdn.hf.br.de/br/hf/brklassik/master-256000.m3u8"
+  },
+  {
+    "id": "abcc",
+    "name": "ABCC",
+    "genre": "Classical",
+    "geo": "🇦🇺",
+    "type": "int",
+    "url": "https://mediaserviceslive.akamaized.net/hls/live/2108547/classicfmnsw/v0-221.m3u8"
+  },
+  {
+    "id": "cbcm",
+    "name": "CBCM",
+    "genre": "Pop",
+    "geo": "🇨🇦",
+    "type": "int",
+    "url": "https://cbcradiolive.akamaized.net/hls/live/2041059/ES_R2PVC/adaptive_192/chunklist_ao.m3u8"
+  },
+  {
+    "id": "npor",
+    "name": "NPOR",
+    "genre": "Classical",
+    "geo": "🇳🇱",
+    "type": "int",
+    "url": "https://icecast.omroep.nl/radio4-sb-aac"
+  },
+  {
+    "id": "opus",
+    "name": "OPUS",
+    "genre": "Classical",
+    "geo": "🇲🇽",
+    "type": "int",
+    "url": "https://s2.mexside.net:7014/stream"
+  },
+  {
+    "id": "bbc1",
+    "name": "BBC1",
+    "genre": "Pop",
+    "geo": "🇬🇧",
+    "type": "int",
+    "url": "https://lsn.lv/bbcradio.m3u8?station=bbc_radio_one&bitrate=320000"
+  },
+  {
+    "id": "bbc1a",
+    "name": "BBC1A",
+    "genre": "Pop",
+    "geo": "🇬🇧",
+    "type": "int",
+    "url": "https://lsn.lv/bbcradio.m3u8?station=bbc_radio_one_anthems&bitrate=320000"
+  },
+  {
+    "id": "bbc1d",
+    "name": "BBC1D",
+    "genre": "Dance",
+    "geo": "🇬🇧",
+    "type": "int",
+    "url": "https://lsn.lv/bbcradio.m3u8?station=bbc_radio_one_dance&bitrate=320000"
+  },
+  {
+    "id": "bbc1x",
+    "name": "BBC1X",
+    "genre": "Hip Hop",
+    "geo": "🇬🇧",
+    "type": "int",
+    "url": "https://lsn.lv/bbcradio.m3u8?station=bbc_1xtra&bitrate=320000"
+  },
+  {
+    "id": "bbc2",
+    "name": "BBC2",
+    "genre": "Pop",
+    "geo": "🇬🇧",
+    "type": "int",
+    "url": "https://lsn.lv/bbcradio.m3u8?station=bbc_radio_two&bitrate=320000"
+  },
+  {
+    "id": "bbc3",
+    "name": "BBC3",
+    "genre": "Classical",
+    "geo": "🇬🇧",
+    "type": "int",
+    "url": "https://lsn.lv/bbcradio.m3u8?station=bbc_radio_three&bitrate=320000"
+  },
+  {
+    "id": "bbc3u",
+    "name": "BBC3U",
+    "genre": "Classical",
+    "geo": "🇬🇧",
+    "type": "int",
+    "url": "https://lsn.lv/bbcradio.m3u8?station=bbc_radio_three_unwind&bitrate=320000"
+  },
+  {
+    "id": "bbc6",
+    "name": "BBC6",
+    "genre": "Alternative",
+    "geo": "🇬🇧",
+    "type": "int",
+    "url": "https://lsn.lv/bbcradio.m3u8?station=bbc_6music&bitrate=320000"
+  },
+  {
+    "id": "idm",
+    "name": "IDM",
+    "genre": "Dance",
+    "geo": "🇬🇧",
+    "type": "int",
+    "url": "https://stream.indemandradio.com/stream/160/160.m3u8"
+  },
+  {
+    "id": "idd",
+    "name": "IDD",
+    "genre": "Pop",
+    "geo": "🇬🇧",
+    "type": "int",
+    "url": "https://stream.indemandradio.com/stream/160/160.m3u8"
+  },
+  {
+    "id": "jke",
+    "name": "JKE",
+    "genre": "Rock",
+    "geo": "🇬🇧",
+    "type": "int",
+    "url": "https://media.radiojackie.com/redirector/frontend.m3u8"
+  },
+  {
+    "id": "vce",
+    "name": "VCE",
+    "genre": "Pop",
+    "geo": "🇬🇧",
+    "type": "int",
+    "url": "https://secure.mystreaming.net/thevoice/live128aac/chunks.m3u8"
+  },
+  {
+    "id": "fipc",
+    "name": "FIPC",
+    "genre": "Rock",
+    "geo": "🇫🇷",
+    "type": "int",
+    "url": "https://stream.radiofrance.fr/fipcultes/fipcultes_hifi.m3u8?id=radiofrance"
+  },
+  {
+    "id": "fipsf",
+    "name": "FIPSF",
+    "genre": "World",
+    "geo": "🇫🇷",
+    "type": "int",
+    "url": "https://stream.radiofrance.fr/fipsacrefrancais/fipsacrefrancais_hifi.m3u8?id=radiofrance"
+  },
+  {
+    "id": "fipro",
+    "name": "FIPRO",
+    "genre": "Rock",
+    "geo": "🇫🇷",
+    "type": "int",
+    "url": "https://stream.radiofrance.fr/fiprock/fiprock_hifi.m3u8?id=radiofrance"
+  },
+  {
+    "id": "fipj",
+    "name": "FIPJ",
+    "genre": "Jazz",
+    "geo": "🇫🇷",
+    "type": "int",
+    "url": "https://stream.radiofrance.fr/fipjazz/fipjazz_hifi.m3u8?id=radiofrance"
+  },
+  {
+    "id": "fipg",
+    "name": "FIPG",
+    "genre": "Jazz",
+    "geo": "🇫🇷",
+    "type": "int",
+    "url": "https://stream.radiofrance.fr/fipgroove/fipgroove_hifi.m3u8?id=radiofrance"
+  },
+  {
+    "id": "fipre",
+    "name": "FIPRE",
+    "genre": "Reggae",
+    "geo": "🇫🇷",
+    "type": "int",
+    "url": "https://stream.radiofrance.fr/fipreggae/fipreggae_hifi.m3u8?id=radiofrance"
+  },
+  {
+    "id": "fipp",
+    "name": "FIPP",
+    "genre": "Pop",
+    "geo": "🇫🇷",
+    "type": "int",
+    "url": "https://stream.radiofrance.fr/fippop/fippop_hifi.m3u8?id=radiofrance"
+  },
+  {
+    "id": "fipe",
+    "name": "FIPE",
+    "genre": "Dance",
+    "geo": "🇫🇷",
+    "type": "int",
+    "url": "https://stream.radiofrance.fr/fipelectro/fipelectro_hifi.m3u8?id=radiofrance"
+  },
+  {
+    "id": "fipm",
+    "name": "FIPM",
+    "genre": "World",
+    "geo": "🇫🇷",
+    "type": "int",
+    "url": "https://stream.radiofrance.fr/fipworld/fipworld_hifi.m3u8?id=radiofrance"
+  },
+  {
+    "id": "fipn",
+    "name": "FIPN",
+    "genre": "Eclectic",
+    "geo": "🇫🇷",
+    "type": "int",
+    "url": "https://stream.radiofrance.fr/fipnouveautes/fipnouveautes_hifi.m3u8?id=radiofrance"
+  },
+  {
+    "id": "fiphh",
+    "name": "FIPHH",
+    "genre": "Hip Hop",
+    "geo": "🇫🇷",
+    "type": "int",
+    "url": "https://stream.radiofrance.fr/fiphiphop/fiphiphop_hifi.m3u8?id=radiofrance"
+  },
+  {
+    "id": "rffm",
+    "name": "RFFM",
+    "genre": "World",
+    "geo": "🇫🇷",
+    "type": "int",
+    "url": "https://stream.radiofrance.fr/francemusique/francemusique_hifi.m3u8?id=radiofrance"
+  },
+  {
+    "id": "rfce",
+    "name": "RFCE",
+    "genre": "Classical",
+    "geo": "🇫🇷",
+    "type": "int",
+    "url": "https://stream.radiofrance.fr/francemusiqueeasyclassique/francemusiqueeasyclassique_hifi.m3u8?id=radiofrance"
+  },
+  {
+    "id": "rfcl",
+    "name": "RFCL",
+    "genre": "Classical",
+    "geo": "🇫🇷",
+    "type": "int",
+    "url": "https://stream.radiofrance.fr/francemusiqueclassiquelove/francemusiqueclassiquelove_hifi.m3u8?id=radiofrance"
+  },
+  {
+    "id": "rfba",
+    "name": "RFBA",
+    "genre": "Classical",
+    "geo": "🇫🇷",
+    "type": "int",
+    "url": "https://stream.radiofrance.fr/francemusiquebaroque/francemusiquebaroque_hifi.m3u8?id=radiofrance"
+  },
+  {
+    "id": "rfpz",
+    "name": "RFPZ",
+    "genre": "Classical",
+    "geo": "🇫🇷",
+    "type": "int",
+    "url": "https://stream.radiofrance.fr/francemusiquepianozen/francemusiquepianozen_hifi.m3u8?id=radiofrance"
+  },
+  {
+    "id": "rffi",
+    "name": "RFFI",
+    "genre": "Classical",
+    "geo": "🇫🇷",
+    "type": "int",
+    "url": "https://stream.radiofrance.fr/francemusiquelabo/francemusiquelabo_hifi.m3u8?id=radiofrance"
+  },
+  {
+    "id": "rfco",
+    "name": "RFCO",
+    "genre": "Classical",
+    "geo": "🇫🇷",
+    "type": "int",
+    "url": "https://stream.radiofrance.fr/francemusiqueconcertsradiofrance/francemusiqueconcertsradiofrance_hifi.m3u8?id=radiofrance"
+  },
+  {
+    "id": "rfcp",
+    "name": "RFCP",
+    "genre": "Classical",
+    "geo": "🇫🇷",
+    "type": "int",
+    "url": "https://stream.radiofrance.fr/francemusiqueclassiqueplus/francemusiqueclassiqueplus_hifi.m3u8?id=radiofrance"
+  },
+  {
+    "id": "rfja",
+    "name": "RFJA",
+    "genre": "Jazz",
+    "geo": "🇫🇷",
+    "type": "int",
+    "url": "https://stream.radiofrance.fr/francemusiquelajazz/francemusiquelajazz_hifi.m3u8?id=radiofrance"
+  },
+  {
+    "id": "rfop",
+    "name": "RFOP",
+    "genre": "Classical",
+    "geo": "🇫🇷",
+    "type": "int",
+    "url": "https://stream.radiofrance.fr/francemusiqueopera/francemusiqueopera_hifi.m3u8?id=radiofrance"
+  },
+  {
+    "id": "rflc",
+    "name": "RFLC",
+    "genre": "Classical",
+    "geo": "🇫🇷",
+    "type": "int",
+    "url": "https://stream.radiofrance.fr/francemusiquelacontemporaine/francemusiquelacontemporaine_hifi.m3u8?id=radiofrance"
+  },
+  {
+    "id": "rfom",
+    "name": "RFOM",
+    "genre": "Folk",
+    "geo": "🇫🇷",
+    "type": "int",
+    "url": "https://stream.radiofrance.fr/francemusiqueocoramonde/francemusiqueocoramonde_hifi.m3u8?id=radiofrance"
+  },
+  {
+    "id": "novac",
+    "name": "NOVAC",
+    "genre": "Classical",
+    "geo": "🇫🇷",
+    "type": "int",
+    "url": "https://nova-vnt.ice.infomaniak.ch/nova-vnt-128.mp3"
+  },
+  {
+    "id": "novan",
+    "name": "NOVAN",
+    "genre": "Hip Hop",
+    "geo": "🇫🇷",
+    "type": "int",
+    "url": "https://nova-nouvo.ice.infomaniak.ch/nova-nouvo-128.mp3"
+  },
+  {
+    "id": "novas",
+    "name": "NOVAS",
+    "genre": "Jazz",
+    "geo": "🇫🇷",
+    "type": "int",
+    "url": "https://nova-soul.ice.infomaniak.ch/nova-soul-128.mp3"
+  },
+  {
+    "id": "novar",
+    "name": "NOVAR",
+    "genre": "Reggae",
+    "geo": "🇫🇷",
+    "type": "int",
+    "url": "https://nova-reggae.ice.infomaniak.ch/nova-reggae-128.mp3"
+  },
+  {
+    "id": "novah",
+    "name": "NOVAH",
+    "genre": "Hip Hop",
+    "geo": "🇫🇷",
+    "type": "int",
+    "url": "https://nova-odn.ice.infomaniak.ch/nova-odn-128.mp3"
+  },
+  {
+    "id": "novaln",
+    "name": "NOVALN",
+    "genre": "Jazz",
+    "geo": "🇫🇷",
+    "type": "int",
+    "url": "https://nova-ln.ice.infomaniak.ch/nova-ln-128.mp3"
+  },
+  {
+    "id": "novad",
+    "name": "NOVAD",
+    "genre": "Dance",
+    "geo": "🇫🇷",
+    "type": "int",
+    "url": "https://nova-dance.ice.infomaniak.ch/nova-dance-128.mp3"
+  },
+  {
+    "id": "rmch",
+    "name": "RMCH",
+    "genre": "Pop",
+    "geo": "🇮🇹",
+    "type": "int",
+    "url": "https://icy.unitedradio.it/rmcweb001"
+  },
+  {
+    "id": "rmcbm",
+    "name": "RMCBM",
+    "genre": "Pop",
+    "geo": "🇮🇹",
+    "type": "int",
+    "url": "https://icy.unitedradio.it/rmcweb017"
+  },
+  {
+    "id": "rmcbb",
+    "name": "RMCBB",
+    "genre": "Jazz",
+    "geo": "🇮🇹",
+    "type": "int",
+    "url": "https://icy.unitedradio.it/rmcweb002"
+  },
+  {
+    "id": "rmcj",
+    "name": "RMCJ",
+    "genre": "Jazz",
+    "geo": "🇮🇹",
+    "type": "int",
+    "url": "https://icy.unitedradio.it/rmcweb019"
+  },
+  {
+    "id": "rmci",
+    "name": "RMCI",
+    "genre": "World",
+    "geo": "🇮🇹",
+    "type": "int",
+    "url": "https://icy.unitedradio.it/rmcweb005"
+  },
+  {
+    "id": "rmcvl",
+    "name": "RMCVL",
+    "genre": "Pop",
+    "geo": "🇮🇹",
+    "type": "int",
+    "url": "https://icy.unitedradio.it/rmcweb020"
+  },
+  {
+    "id": "rmcns",
+    "name": "RMCNS",
+    "genre": "Jazz",
+    "geo": "🇮🇹",
+    "type": "int",
+    "url": "https://icy.unitedradio.it/rmcweb012"
+  },
+  {
+    "id": "rmcrb",
+    "name": "RMCRB",
+    "genre": "R&B",
+    "geo": "🇮🇹",
+    "type": "int",
+    "url": "https://icy.unitedradio.it/rmcweb003"
+  },
+  {
+    "id": "rmcl",
+    "name": "RMCL",
+    "genre": "Pop",
+    "geo": "🇮🇹",
+    "type": "int",
+    "url": "https://icy.unitedradio.it/rmcweb006"
+  },
+  {
+    "id": "rmcga",
+    "name": "RMCGA",
+    "genre": "Pop",
+    "geo": "🇮🇹",
+    "type": "int",
+    "url": "https://icy.unitedradio.it/rmcweb007"
+  },
+  {
+    "id": "rmc80",
+    "name": "RMC80",
+    "genre": "Pop",
+    "geo": "🇮🇹",
+    "type": "int",
+    "url": "https://icy.unitedradio.it/rmcweb008"
+  },
+  {
+    "id": "rmc90",
+    "name": "RMC90",
+    "genre": "Pop",
+    "geo": "🇮🇹",
+    "type": "int",
+    "url": "https://icy.unitedradio.it/rmcweb009"
+  },
+  {
+    "id": "rmcma",
+    "name": "RMCMA",
+    "genre": "Pop",
+    "geo": "🇮🇹",
+    "type": "int",
+    "url": "https://icy.unitedradio.it/rmcweb010"
+  },
+  {
+    "id": "rmcc",
+    "name": "RMCC",
+    "genre": "Dance",
+    "geo": "🇮🇹",
+    "type": "int",
+    "url": "https://icy.unitedradio.it/rmcweb004"
+  },
+  {
+    "id": "rmcnc",
+    "name": "RMCNC",
+    "genre": "Pop",
+    "geo": "🇮🇹",
+    "type": "int",
+    "url": "https://icy.unitedradio.it/rmcweb011"
+  },
+  {
+    "id": "rmcvv",
+    "name": "RMCVV",
+    "genre": "Pop",
+    "geo": "🇮🇹",
+    "type": "int",
+    "url": "https://icy.unitedradio.it/rmcweb022"
+  },
+  {
+    "id": "rmca",
+    "name": "RMCA",
+    "genre": "Pop",
+    "geo": "🇮🇹",
+    "type": "int",
+    "url": "https://icy.unitedradio.it/rmcweb016"
+  },
+  {
+    "id": "rmcdf",
+    "name": "RMCDF",
+    "genre": "Dance",
+    "geo": "🇮🇹",
+    "type": "int",
+    "url": "https://icy.unitedradio.it/rmcweb025"
+  },
+  {
+    "id": "rmcrr",
+    "name": "RMCRR",
+    "genre": "Rock",
+    "geo": "🇮🇹",
+    "type": "int",
+    "url": "https://icy.unitedradio.it/rmcweb015"
+  },
+  {
+    "id": "rmcr",
+    "name": "RMCR",
+    "genre": "Dance",
+    "geo": "🇮🇹",
+    "type": "int",
+    "url": "https://icy.unitedradio.it/rmcweb021"
+  },
+  {
+    "id": "rmcp",
+    "name": "RMCP",
+    "genre": "Dance",
+    "geo": "🇮🇹",
+    "type": "int",
+    "url": "https://icy.unitedradio.it/rmcweb018"
+  },
+  {
+    "id": "rmcf",
+    "name": "RMCF",
+    "genre": "Dance",
+    "geo": "🇮🇹",
+    "type": "int",
+    "url": "https://icy.unitedradio.it/rmcweb023"
+  },
+  {
+    "id": "rmcp2",
+    "name": "RMCP2",
+    "genre": "Dance",
+    "geo": "🇮🇹",
+    "type": "int",
+    "url": "https://icy.unitedradio.it/rmcweb026"
+  },
+  {
+    "id": "rgp1",
+    "name": "RGP1",
+    "genre": "Eclectic",
+    "geo": "🇪🇸",
+    "type": "int",
+    "url": "https://streamer.radio.co/sb28a7fb81/listen"
+  },
+  {
+    "id": "rgp2",
+    "name": "RGP2",
+    "genre": "World",
+    "geo": "🇪🇸",
+    "type": "int",
+    "url": "https://streams.radio.co/s496c4d2e8/listen"
+  },
+  {
+    "id": "rgp3",
+    "name": "RGP3",
+    "genre": "World",
+    "geo": "🇪🇸",
+    "type": "int",
+    "url": "https://streamer.radio.co/s00c7ec6fa/listen"
+  },
+  {
+    "id": "rgp4",
+    "name": "RGP4",
+    "genre": "World",
+    "geo": "🇪🇸",
+    "type": "int",
+    "url": "https://streamer.radio.co/scdca4c5af/listen"
+  },
+  {
+    "id": "rgp5",
+    "name": "RGP5",
+    "genre": "Jazz",
+    "geo": "🇪🇸",
+    "type": "int",
+    "url": "https://s5.radio.co/s78cbe08ae/listen"
+  },
+  {
+    "id": "rnf",
+    "name": "RNF",
+    "genre": "World",
+    "geo": "🇦🇷",
+    "type": "int",
+    "url": "http://sa.mp3.icecast.magma.edge-access.net:7200/sc_rad38"
+  },
+  {
+    "id": "wkm",
+    "name": "WKM",
+    "genre": "Eclectic",
+    "geo": "🇧🇴",
+    "type": "int",
+    "url": "https://mdstrm.com/audio/5df7cf305396b836ef541c12/live.m3u8"
+  },
+  {
+    "id": "dk",
+    "name": "DK",
+    "genre": "Eclectic",
+    "geo": "🇩🇪",
+    "type": "int",
+    "url": "https://st02.sslstream.dlf.de/dlf/02/128/mp3/stream.mp3"
+  },
+  {
+    "id": "dn",
+    "name": "DN",
+    "genre": "Eclectic",
+    "geo": "🇩🇪",
+    "type": "int",
+    "url": "https://st03.sslstream.dlf.de/dlf/03/128/mp3/stream.mp3"
+  },
+  {
+    "id": "byte",
+    "name": "BYTE",
+    "genre": "Eclectic",
+    "geo": "🇩🇪",
+    "type": "int",
+    "url": "https://bytefm.stream18.radiohost.de/bytefm-main_mp3-128"
+  },
+  {
+    "id": "flux",
+    "name": "FLUX",
+    "genre": "Eclectic",
+    "geo": "🇩🇪",
+    "type": "int",
+    "url": "https://51-83-105-37-28ffe3.sfn.edge-ovh-gra5.streams.radiosphere.io/557b7263-9216-46b5-a813-a156ffbc9acb/channels/a777b93d-e60c-47f9-be28-1233e6c9802d/stream.aac"
+  },
+  {
+    "id": "rne",
+    "name": "RNE",
+    "genre": "Eclectic",
+    "geo": "🇪🇸",
+    "type": "int",
+    "url": "https://rtvelivestream.rtve.es/rtvesec/rne/rne_r3_main.m3u8"
+  },
+  {
+    "id": "xtra",
+    "name": "XTRA",
+    "genre": "Eclectic",
+    "geo": "🇪🇸",
+    "type": "int",
+    "url": "https://hls1.eu.peppermindmedia.com/xtrafm/south/XtraFMSouth-144000.m3u8"
+  },
+  {
+    "id": "fmr",
+    "name": "FMR",
+    "genre": "Jazz",
+    "geo": "🇿🇦",
+    "type": "int",
+    "url": "https://edge.iono.fm/xice/fmr_live_medium.aac"
+  }
+    {
+    "id": "rfg",
+    "name": "RFG",
+    "genre": "Dance",
+    "geo": "🇫🇷",
+    "type": "int",
+    "url": "https://n04.rcs.revma.com/wknqhm4yuchvv"
+  }
+    {
+    "id": "rfgc",
+    "name": "RFGC",
+    "genre": "Dance",
+    "geo": "🇫🇷",
+    "type": "int",
+    "url": "https://n13.rcs.revma.com/cgvrymb6p98uv"
+  }
+      {
+    "id": "rfgd",
+    "name": "RFGD",
+    "genre": "Dance",
+    "geo": "🇫🇷",
+    "type": "int",
+    "url": "https://n10.rcs.revma.com/zfad8vm4srhvv"
+  }
+      {
+    "id": "rfgm",
+    "name": "RFGM",
+    "genre": "Dance",
+    "geo": "🇫🇷",
+    "type": "int",
+    "url": "https://n05.rcs.revma.com/kv9m762w7guvv.mp3"
+  }
+        {
+    "id": "rfgfg",
+    "name": "RFGFG",
+    "genre": "Dance",
+    "geo": "🇫🇷",
+    "type": "int",
+    "url": "https://n14.rcs.revma.com/dvpevwak5rcwv"
+  }
+]

@@ -1,712 +1,1063 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover"
+    />
     <title>Radio</title>
-    
-    <link rel="icon" type="image/jpeg" href="image_0.png.jpg">
-    <link rel="apple-touch-icon" href="image_0.png.jpg">
-    
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+
+    <link rel="icon" type="image/jpeg" href="image_0.png.jpg" />
+    <link rel="apple-touch-icon" href="image_0.png.jpg" />
+
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta
+      name="apple-mobile-web-app-status-bar-style"
+      content="black-translucent"
+    />
     <style>
-        :root {
-            --bg-color: #000000;
-            --text-color: #ffffff;
-            --accent-color: #0078d7; 
-            --disabled-color: #444;
-            --fav-color: #ffca28;
+      :root {
+        --bg-color: #000000;
+        --text-color: #ffffff;
+        --accent-color: #0078d7;
+        --disabled-color: #444;
+        --fav-color: #ffca28;
+      }
+
+      @property --wipe-angle {
+        syntax: "<angle>";
+        initial-value: 0deg;
+        inherits: false;
+      }
+
+      html,
+      body {
+        position: fixed;
+        overflow: hidden;
+        width: 100%;
+        height: 100%;
+        margin: 0;
+        padding: 0;
+        background-color: var(--bg-color);
+        color: var(--text-color);
+        font-family: "Segoe UI", "Segoe UI Semibold", Tahoma, sans-serif;
+        -webkit-tap-highlight-color: transparent;
+        touch-action: none;
+      }
+
+      header {
+        position: absolute;
+        top: 0;
+        width: 100%;
+        z-index: 1000;
+        background-color: rgba(0, 0, 0, 0.85);
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+        border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        padding-top: calc(env(safe-area-inset-top) + 15px);
+        padding-bottom: 12px;
+        touch-action: pan-y;
+      }
+
+      .header-inner {
+        max-width: 1600px;
+        margin: 0 auto;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 0 30px;
+        box-sizing: border-box;
+      }
+
+      .header-left-area {
+        position: relative;
+        display: flex;
+        align-items: center;
+      }
+
+      .brand-container {
+        display: flex;
+        align-items: center;
+        gap: 4px;
+        user-select: none;
+      }
+
+      h1 {
+        font-weight: 200;
+        font-size: 2.4rem;
+        margin: 0;
+        letter-spacing: -1px;
+        cursor: pointer;
+      }
+
+      .menu-trigger {
+        cursor: pointer;
+        padding: 5px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-top: 8px;
+      }
+
+      #menu-arrow {
+        width: 28px;
+        height: 28px;
+        fill: #ffffff;
+        opacity: 1;
+        transition: transform 0.3s ease;
+      }
+
+      .brand-container.active #menu-arrow {
+        transform: rotate(180deg);
+      }
+
+      #dropdown-menu {
+        position: absolute;
+        top: calc(100% + 10px);
+        left: 0;
+        width: 280px;
+        background-color: rgba(15, 15, 15, 0.98);
+        backdrop-filter: blur(30px);
+        -webkit-backdrop-filter: blur(30px);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 12px;
+        display: none;
+        flex-direction: column;
+        max-height: 65vh;
+        overflow-y: auto;
+        z-index: 2000;
+        box-shadow: 0 20px 50px rgba(0, 0, 0, 0.8);
+        padding: 15px 0;
+        touch-action: pan-y;
+      }
+
+      #dropdown-menu.visible {
+        display: flex;
+        animation: menuFade 0.2s ease;
+      }
+
+      @keyframes menuFade {
+        from {
+          opacity: 0;
+          transform: translateY(-10px);
         }
-
-        @property --wipe-angle {
-          syntax: '<angle>';
-          initial-value: 0deg;
-          inherits: false;
+        to {
+          opacity: 1;
+          transform: translateY(0);
         }
+      }
 
-        html, body {
-            position: fixed;
-            overflow: hidden;
-            width: 100%; height: 100%;
-            margin: 0; padding: 0;
-            background-color: var(--bg-color);
-            color: var(--text-color);
-            font-family: "Segoe UI", "Segoe UI Semibold", Tahoma, sans-serif;
-            -webkit-tap-highlight-color: transparent;
-            touch-action: none; 
+      .menu-label {
+        padding: 5px 20px 8px 20px;
+        font-size: 0.7rem;
+        text-transform: uppercase;
+        letter-spacing: 1.5px;
+        color: var(--accent-color);
+        font-weight: 700;
+      }
+
+      .menu-item {
+        padding: 10px 20px;
+        font-size: 1rem;
+        cursor: pointer;
+        transition: background 0.2s;
+      }
+
+      .menu-item:hover {
+        background: rgba(255, 255, 255, 0.1);
+      }
+      .menu-item.active {
+        color: var(--accent-color);
+        font-weight: 600;
+      }
+
+      .flag-grid {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 12px;
+        padding: 5px 20px 15px 20px;
+      }
+
+      .flag-btn {
+        font-size: 1.6rem;
+        cursor: pointer;
+        padding: 4px;
+        border-radius: 6px;
+        transition: background 0.2s;
+        line-height: 1;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .flag-btn:hover {
+        background: rgba(255, 255, 255, 0.1);
+      }
+      .flag-btn.active {
+        background: var(--accent-color);
+      }
+      .flag-btn.is-swiss {
+        transform: scaleX(1.2);
+      }
+
+      .menu-divider {
+        height: 1px;
+        background: rgba(255, 255, 255, 0.1);
+        margin: 10px 0;
+      }
+
+      .controls {
+        display: flex;
+        gap: 8px;
+      }
+
+      .control-btn {
+        position: relative;
+        background: none;
+        border: 1.5px solid rgba(255, 255, 255, 0.2);
+        border-radius: 50%;
+        width: 40px;
+        height: 40px;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.2s ease;
+        color: white;
+        font-size: 0.9rem;
+        font-weight: 600;
+        overflow: hidden;
+      }
+
+      .sort-badge {
+        position: absolute;
+        bottom: 8px;
+        right: 8px;
+        font-size: 10px;
+        font-weight: 900;
+        color: white;
+        line-height: 1;
+        pointer-events: none;
+        display: none;
+        text-shadow: 0 0 2px black;
+      }
+
+      .control-btn.active .sort-badge {
+        display: block;
+      }
+      .control-btn.active {
+        background-color: var(--accent-color);
+        border-color: var(--accent-color);
+      }
+
+      @keyframes rotateShuffle {
+        from {
+          transform: rotate(0deg);
         }
-
-        header {
-            position: absolute;
-            top: 0; width: 100%; z-index: 1000;
-            background-color: rgba(0,0,0,0.85);
-            backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
-            border-bottom: 1px solid rgba(255,255,255,0.05);
-            padding-top: calc(env(safe-area-inset-top) + 15px); 
-            padding-bottom: 12px;
-            touch-action: pan-y;
+        to {
+          transform: rotate(360deg);
         }
+      }
 
-        .header-inner {
-            max-width: 1600px; margin: 0 auto;
-            display: flex; justify-content: space-between; align-items: center;
-            padding: 0 30px; box-sizing: border-box;
+      .control-btn.shuffling svg {
+        animation: rotateShuffle 2s cubic-bezier(0.4, 0, 0.2, 1);
+      }
+
+      #timer-btn.active {
+        background: conic-gradient(
+          transparent var(--wipe-angle),
+          var(--accent-color) 0deg
+        );
+        border-color: var(--accent-color);
+        animation: wipeClockwise 60s linear infinite;
+      }
+
+      @keyframes wipeClockwise {
+        from {
+          --wipe-angle: 0deg;
         }
-
-        .header-left-area {
-            position: relative;
-            display: flex;
-            align-items: center;
+        to {
+          --wipe-angle: 360deg;
         }
+      }
 
-        .brand-container {
-            display: flex;
-            align-items: center;
-            gap: 4px;
-            user-select: none;
-        }
+      .control-btn:hover:not(:disabled) {
+        border-color: white;
+        background-color: rgba(255, 255, 255, 0.1);
+      }
+      .control-btn.active:hover {
+        background-color: #0086f0;
+      }
+      .control-btn:disabled {
+        border-color: var(--disabled-color);
+        cursor: not-allowed;
+      }
+      .control-btn svg {
+        fill: white;
+        width: 16px;
+        height: 16px;
+        display: block;
+      }
 
-        h1 { font-weight: 200; font-size: 2.4rem; margin: 0; letter-spacing: -1px; cursor: pointer; }
+      #scroll-container {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        overflow-y: auto;
+        -webkit-overflow-scrolling: touch;
+        padding-top: calc(95px + env(safe-area-inset-top));
+        padding-bottom: env(safe-area-inset-bottom);
+        touch-action: pan-y;
+      }
 
-        .menu-trigger {
-            cursor: pointer;
-            padding: 5px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-top: 8px;
-        }
+      .grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(175px, 1fr));
+        gap: 15px;
+        max-width: 1600px;
+        margin: 0 auto;
+        padding: 10px 30px 20px 30px;
+        box-sizing: border-box;
+      }
 
-        #menu-arrow {
-            width: 28px;
-            height: 28px;
-            fill: #ffffff;
-            opacity: 1;
-            transition: transform 0.3s ease;
-        }
-
-        .brand-container.active #menu-arrow { transform: rotate(180deg); }
-
-        #dropdown-menu {
-            position: absolute;
-            top: calc(100% + 10px);
-            left: 0; 
-            width: 280px;
-            background-color: rgba(15,15,15,0.98);
-            backdrop-filter: blur(30px);
-            -webkit-backdrop-filter: blur(30px);
-            border: 1px solid rgba(255,255,255,0.1);
-            border-radius: 12px;
-            display: none;
-            flex-direction: column;
-            max-height: 65vh;
-            overflow-y: auto;
-            z-index: 2000;
-            box-shadow: 0 20px 50px rgba(0,0,0,0.8);
-            padding: 15px 0;
-            touch-action: pan-y; 
-        }
-
-        #dropdown-menu.visible { display: flex; animation: menuFade 0.2s ease; }
-
-        @keyframes menuFade {
-            from { opacity: 0; transform: translateY(-10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        .menu-label {
-            padding: 5px 20px 8px 20px;
-            font-size: 0.7rem;
-            text-transform: uppercase;
-            letter-spacing: 1.5px;
-            color: var(--accent-color);
-            font-weight: 700;
-        }
-
-        .menu-item {
-            padding: 10px 20px;
-            font-size: 1rem;
-            cursor: pointer;
-            transition: background 0.2s;
-        }
-        
-        .menu-item:hover { background: rgba(255,255,255,0.1); }
-        .menu-item.active { color: var(--accent-color); font-weight: 600; }
-
-        .flag-grid {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 12px;
-            padding: 5px 20px 15px 20px;
-        }
-
-        .flag-btn {
-            font-size: 1.6rem;
-            cursor: pointer;
-            padding: 4px;
-            border-radius: 6px;
-            transition: background 0.2s;
-            line-height: 1;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .flag-btn:hover { background: rgba(255,255,255,0.1); }
-        .flag-btn.active { background: var(--accent-color); }
-        .flag-btn.is-swiss { transform: scaleX(1.2); }
-
-        .menu-divider {
-            height: 1px;
-            background: rgba(255,255,255,0.1);
-            margin: 10px 0;
-        }
-
-        .controls { display: flex; gap: 8px; }
-
-        .control-btn {
-            position: relative;
-            background: none; border: 1.5px solid rgba(255,255,255,0.2);
-            border-radius: 50%; width: 40px; height: 40px;
-            cursor: pointer; display: flex; align-items: center; justify-content: center;
-            transition: all 0.2s ease; color: white; font-size: 0.9rem; font-weight: 600;
-            overflow: hidden;
-        }
-
-        .sort-badge {
-            position: absolute;
-            bottom: 8px; 
-            right: 8px;  
-            font-size: 10px;
-            font-weight: 900;
-            color: white;
-            line-height: 1;
-            pointer-events: none;
-            display: none;
-            text-shadow: 0 0 2px black;
-        }
-
-        .control-btn.active .sort-badge { display: block; }
-        .control-btn.active { background-color: var(--accent-color); border-color: var(--accent-color); }
-
-        @keyframes rotateShuffle {
-            from { transform: rotate(0deg); }
-            to { transform: rotate(360deg); }
-        }
-
-        .control-btn.shuffling svg {
-            animation: rotateShuffle 2s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-
-        #timer-btn.active {
-            background: conic-gradient(transparent var(--wipe-angle), var(--accent-color) 0deg);
-            border-color: var(--accent-color);
-            animation: wipeClockwise 60s linear infinite;
-        }
-
-        @keyframes wipeClockwise { from { --wipe-angle: 0deg; } to { --wipe-angle: 360deg; } }
-
-        .control-btn:hover:not(:disabled) { border-color: white; background-color: rgba(255,255,255,0.1); }
-        .control-btn.active:hover { background-color: #0086f0; }
-        .control-btn:disabled { border-color: var(--disabled-color); cursor: not-allowed; }
-        .control-btn svg { fill: white; width: 16px; height: 16px; display: block; }
-
-        #scroll-container {
-            position: absolute;
-            top: 0; left: 0; right: 0; bottom: 0;
-            overflow-y: auto; -webkit-overflow-scrolling: touch;
-            padding-top: calc(95px + env(safe-area-inset-top)); 
-            padding-bottom: env(safe-area-inset-bottom);
-            touch-action: pan-y;
-        }
-
+      @media (max-width: 600px) {
         .grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(175px, 1fr));
-            gap: 15px; max-width: 1600px; margin: 0 auto;
-            padding: 10px 30px 20px 30px; box-sizing: border-box;
+          grid-template-columns: repeat(2, 1fr);
+          padding: 10px 15px 20px 15px;
+          gap: 10px;
         }
-
-        @media (max-width: 600px) {
-            .grid { grid-template-columns: repeat(2, 1fr); padding: 10px 15px 20px 15px; gap: 10px; }
-            .header-inner { padding: 0 15px; }
-            h1 { font-size: 2rem; }
-            #dropdown-menu { width: calc(100vw - 30px); }
-            #scroll-container { padding-top: calc(85px + env(safe-area-inset-top)); }
+        .header-inner {
+          padding: 0 15px;
         }
-
-        .tile {
-            aspect-ratio: 1 / 1; position: relative;
-            padding: 15px; cursor: pointer;
-            transition: transform 0.2s ease, filter 0.2s ease;
-            overflow: hidden;
+        h1 {
+          font-size: 2rem;
         }
-
-        .tile::after {
-            content: ''; position: absolute;
-            top: 0; left: 0; right: 0; bottom: 0;
-            background: radial-gradient(circle at bottom right, rgba(0,0,0,0.35) 0%, transparent 65%);
-            pointer-events: none; z-index: 1;
+        #dropdown-menu {
+          width: calc(100vw - 30px);
         }
-
-        .tile:hover { filter: brightness(1.2); }
-        .tile.active { outline: 4px solid white; outline-offset: -4px; }
-
-        .fav-star {
-            position: absolute; top: 20px; left: 15px;
-            font-size: 1.2rem; line-height: 1;
-            color: rgba(255, 255, 255, 0.3); transition: all 0.2s ease; z-index: 10;
+        #scroll-container {
+          padding-top: calc(85px + env(safe-area-inset-top));
         }
+      }
 
-        .tile.is-fav .fav-star { color: var(--fav-color); }
+      .tile {
+        aspect-ratio: 1 / 1;
+        position: relative;
+        padding: 15px;
+        cursor: pointer;
+        transition:
+          transform 0.2s ease,
+          filter 0.2s ease;
+        overflow: hidden;
+      }
 
-        .status-container {
-            position: absolute; top: 19px; right: 15px;
-            z-index: 3; display: flex;
-            justify-content: flex-end; align-items: flex-start;
+      .tile::after {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: radial-gradient(
+          circle at bottom right,
+          rgba(0, 0, 0, 0.35) 0%,
+          transparent 65%
+        );
+        pointer-events: none;
+        z-index: 1;
+      }
+
+      .tile:hover {
+        filter: brightness(1.2);
+      }
+      .tile.active {
+        outline: 4px solid white;
+        outline-offset: -4px;
+      }
+
+      .fav-star {
+        position: absolute;
+        top: 20px;
+        left: 15px;
+        font-size: 1.2rem;
+        line-height: 1;
+        color: rgba(255, 255, 255, 0.3);
+        transition: all 0.2s ease;
+        z-index: 10;
+      }
+
+      .tile.is-fav .fav-star {
+        color: var(--fav-color);
+      }
+
+      .status-container {
+        position: absolute;
+        top: 19px;
+        right: 15px;
+        z-index: 3;
+        display: flex;
+        justify-content: flex-end;
+        align-items: flex-start;
+      }
+
+      .spinner {
+        display: none;
+        width: 18px;
+        height: 18px;
+        border: 2px solid rgba(255, 255, 255, 0.2);
+        border-top-color: white;
+        border-radius: 50%;
+        animation: spin 0.8s linear infinite;
+        pointer-events: none;
+        margin-top: 3px;
+        margin-right: 3px;
+      }
+      @keyframes spin {
+        to {
+          transform: rotate(360deg);
         }
+      }
+      .tile.buffering .spinner {
+        display: block;
+      }
 
-        .spinner {
-            display: none; width: 18px; height: 18px;
-            border: 2px solid rgba(255,255,255,0.2);
-            border-top-color: white; border-radius: 50%;
-            animation: spin 0.8s linear infinite; pointer-events: none;
-            margin-top: 3px; margin-right: 3px;
+      .error-icon {
+        display: none;
+        width: 24px;
+        height: 24px;
+        fill: white;
+        pointer-events: none;
+      }
+      .tile.error .error-icon {
+        display: block;
+      }
+
+      .tile-play-icon {
+        width: 24px;
+        height: 24px;
+        fill: white;
+        display: none;
+        pointer-events: none;
+      }
+      .tile.ready .tile-play-icon {
+        display: block;
+      }
+      .tile.buffering .tile-play-icon,
+      .tile.error .tile-play-icon {
+        display: none;
+      }
+
+      .eq-container {
+        display: none;
+        align-items: flex-end;
+        gap: 1.5px;
+        height: 12px;
+        width: 20px;
+        pointer-events: none;
+        margin-top: 4px;
+      }
+      .tile.active .eq-container {
+        display: flex;
+      }
+      .tile.buffering .eq-container,
+      .tile.error .eq-container {
+        display: none;
+      }
+
+      .eq-bar {
+        background-color: white;
+        width: 3px;
+        border-radius: 1px;
+        height: 30%;
+      }
+      .tile.active .eq-bar {
+        animation: rollingWave 0.8s ease-in-out infinite;
+      }
+      .tile.active .eq-bar:nth-child(1) {
+        animation-delay: 0s;
+      }
+      .tile.active .eq-bar:nth-child(2) {
+        animation-delay: 0.1s;
+      }
+      .tile.active .eq-bar:nth-child(3) {
+        animation-delay: 0.2s;
+      }
+      .tile.active .eq-bar:nth-child(4) {
+        animation-delay: 0.3s;
+      }
+
+      @keyframes rollingWave {
+        0%,
+        100% {
+          height: 30%;
         }
-        @keyframes spin { to { transform: rotate(360deg); } }
-        .tile.buffering .spinner { display: block; }
-
-        .error-icon {
-            display: none; width: 24px; height: 24px;
-            fill: white; pointer-events: none;
+        50% {
+          height: 100%;
         }
-        .tile.error .error-icon { display: block; }
+      }
 
-        .tile-play-icon { width: 24px; height: 24px; fill: white; display: none; pointer-events: none; }
-        .tile.ready .tile-play-icon { display: block; }
-        .tile.buffering .tile-play-icon, .tile.error .tile-play-icon { display: none; }
+      .tile-info-stack {
+        position: absolute;
+        bottom: 15px;
+        left: 15px;
+        display: flex;
+        flex-direction: column;
+        gap: 2px;
+        pointer-events: none;
+        z-index: 2;
+        max-width: calc(100% - 80px);
+      }
 
-        .eq-container {
-            display: none; align-items: flex-end; gap: 1.5px;
-            height: 12px; width: 20px;
-            pointer-events: none; margin-top: 4px;
-        }
-        .tile.active .eq-container { display: flex; }
-        .tile.buffering .eq-container, .tile.error .eq-container { display: none; }
+      .tile-main-genre {
+        font-size: 0.75rem;
+        font-weight: 400;
+        opacity: 0.8;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+      }
 
-        .eq-bar { background-color: white; width: 3px; border-radius: 1px; height: 30%; }
-        .tile.active .eq-bar { animation: rollingWave 0.8s ease-in-out infinite; }
-        .tile.active .eq-bar:nth-child(1) { animation-delay: 0.0s; }
-        .tile.active .eq-bar:nth-child(2) { animation-delay: 0.1s; }
-        .tile.active .eq-bar:nth-child(3) { animation-delay: 0.2s; }
-        .tile.active .eq-bar:nth-child(4) { animation-delay: 0.3s; }
+      .tile-name {
+        font-size: 1.4rem;
+        font-weight: 600;
+        letter-spacing: -0.5px;
+        line-height: 1;
+        text-transform: uppercase;
+      }
 
-        @keyframes rollingWave { 0%, 100% { height: 30%; } 50% { height: 100%; } }
+      .geo-tag {
+        position: absolute;
+        bottom: 15px;
+        right: 15px;
+        z-index: 2;
+        text-align: right;
+        display: flex;
+        align-items: center;
+        gap: 4px;
+        line-height: 1;
+      }
 
-        .tile-info-stack {
-            position: absolute;
-            bottom: 15px;
-            left: 15px;
-            display: flex;
-            flex-direction: column;
-            gap: 2px;
-            pointer-events: none;
-            z-index: 2;
-            max-width: calc(100% - 80px);
-        }
+      .geo-text {
+        font-size: 0.8rem;
+        font-weight: 400;
+        opacity: 0.9;
+      }
+      .geo-flag {
+        font-size: 1.3rem;
+        display: inline-block;
+      }
+      .geo-flag.is-swiss {
+        transform: scaleX(1.2);
+        transform-origin: center right;
+      }
 
-        .tile-main-genre {
-            font-size: 0.75rem;
-            font-weight: 400;
-            opacity: 0.8;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
+      .c1 {
+        background-color: #00a300;
+      }
+      .c2 {
+        background-color: #2d89ef;
+      }
+      .c3 {
+        background-color: #9f00a7;
+      }
+      .c4 {
+        background-color: #603cba;
+      }
+      .c5 {
+        background-color: #da532c;
+      }
+      .c6 {
+        background-color: #b91d47;
+      }
+      .c7 {
+        background-color: #00aba9;
+      }
+      .c8 {
+        background-color: #7e3878;
+      }
 
-        .tile-name {
-            font-size: 1.4rem;
-            font-weight: 600;
-            letter-spacing: -0.5px;
-            line-height: 1;
-            text-transform: uppercase;
-        }
-
-        .geo-tag {
-            position: absolute; bottom: 15px; right: 15px;
-            z-index: 2; text-align: right; display: flex;
-            align-items: center; gap: 4px; line-height: 1;
-        }
-
-        .geo-text { font-size: 0.8rem; font-weight: 400; opacity: 0.9; }
-        .geo-flag { font-size: 1.3rem; display: inline-block; }
-        .geo-flag.is-swiss { transform: scaleX(1.2); transform-origin: center right; }
-
-        .c1 { background-color: #00A300; } .c2 { background-color: #2D89EF; } 
-        .c3 { background-color: #9F00A7; } .c4 { background-color: #603CBA; } 
-        .c5 { background-color: #DA532C; } .c6 { background-color: #B91D47; } 
-        .c7 { background-color: #00ABA9; } .c8 { background-color: #7E3878; } 
-
+      dialog {
+        background-color: rgba(20, 20, 20, 0.95);
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 12px;
+        color: #fff;
+        padding: 20px;
+        width: 90%;
+        max-width: 600px;
+        box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+        margin: auto;
+      }
+      dialog::backdrop {
+        background: rgba(0, 0, 0, 0.6);
+        backdrop-filter: blur(5px);
+      }
+      .admin-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 20px;
+      }
+      .admin-header h2 {
+        margin: 0;
+        font-size: 1.5rem;
+        font-weight: 400;
+      }
+      .close-btn {
+        background: none;
+        border: none;
+        color: white;
+        font-size: 2rem;
+        line-height: 1;
+        cursor: pointer;
+        padding: 0 5px;
+      }
+      .admin-list {
+        max-height: 50vh;
+        overflow-y: auto;
+        margin-bottom: 20px;
+        padding-right: 10px;
+      }
+      .admin-item {
+        display: flex;
+        justify-content: space-between;
+        padding: 12px 0;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        align-items: center;
+      }
+      .admin-item-info {
+        flex: 1;
+        min-width: 0;
+        padding-right: 10px;
+      }
+      .admin-item-title {
+        font-weight: 600;
+        font-size: 1.1rem;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+      .admin-item-sub {
+        font-size: 0.85rem;
+        opacity: 0.7;
+        margin-top: 4px;
+      }
+      .admin-actions {
+        display: flex;
+        gap: 8px;
+      }
+      .admin-actions button {
+        background: rgba(255, 255, 255, 0.1);
+        border: none;
+        color: white;
+        padding: 6px 12px;
+        border-radius: 6px;
+        cursor: pointer;
+        font-size: 0.9rem;
+        transition: background 0.2s;
+      }
+      .admin-actions button:hover {
+        background: rgba(255, 255, 255, 0.2);
+      }
+      .admin-actions button.del {
+        background: rgba(255, 68, 68, 0.15);
+        color: #ff6b6b;
+      }
+      .admin-actions button.del:hover {
+        background: rgba(255, 68, 68, 0.3);
+      }
+      .btn-primary {
+        background: var(--accent-color);
+        border: none;
+        color: white;
+        padding: 12px 20px;
+        border-radius: 8px;
+        cursor: pointer;
+        font-weight: 600;
+        width: 100%;
+        font-size: 1rem;
+        transition: filter 0.2s;
+      }
+      .btn-primary:hover {
+        filter: brightness(1.15);
+      }
+      .btn-secondary {
+        background: transparent;
+        border: 1px solid rgba(255, 255, 255, 0.3);
+        color: white;
+        padding: 12px 20px;
+        border-radius: 8px;
+        cursor: pointer;
+        font-weight: 600;
+        width: 100%;
+        font-size: 1rem;
+        transition: background 0.2s;
+        margin-top: 10px;
+      }
+      .btn-secondary:hover {
+        background: rgba(255, 255, 255, 0.1);
+      }
+      .admin-form {
+        display: none;
+        flex-direction: column;
+        gap: 15px;
+      }
+      .admin-form.active {
+        display: flex;
+      }
+      .form-group {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+      }
+      .form-group label {
+        font-size: 0.9rem;
+        opacity: 0.8;
+        font-weight: 600;
+      }
+      .form-group input,
+      .form-group select {
+        background: rgba(0, 0, 0, 0.5);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        color: white;
+        padding: 12px;
+        border-radius: 8px;
+        font-family: inherit;
+        font-size: 1rem;
+        transition: border-color 0.2s;
+      }
+      .form-group input:focus,
+      .form-group select:focus {
+        outline: none;
+        border-color: var(--accent-color);
+      }
+      .form-row {
+        display: flex;
+        gap: 15px;
+      }
+      .form-row > * {
+        flex: 1;
+      }
+      .form-actions {
+        display: flex;
+        gap: 12px;
+        margin-top: 15px;
+      }
+      .form-actions button {
+        margin-top: 0;
+      }
     </style>
-</head>
-<body>
-
+  </head>
+  <body>
     <header>
-        <div class="header-inner">
-            <div class="header-left-area">
-                <div class="brand-container">
-                    <h1 id="app-title">Radio</h1>
-                    <div class="menu-trigger" id="menu-arrow-container">
-                        <svg id="menu-arrow" viewBox="0 0 24 24"><path d="M7 10l5 5 5-5z"/></svg>
-                    </div>
-                </div>
-                <div id="dropdown-menu"></div>
+      <div class="header-inner">
+        <div class="header-left-area">
+          <div class="brand-container">
+            <h1 id="app-title">Radio</h1>
+            <div class="menu-trigger" id="menu-arrow-container">
+              <svg id="menu-arrow" viewBox="0 0 24 24">
+                <path d="M7 10l5 5 5-5z" />
+              </svg>
             </div>
-
-            <div class="controls">
-                <button id="timer-btn" class="control-btn" title="Sleep Timer">
-                    <svg id="timer-icon" viewBox="0 0 24 24"><path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67z"/></svg>
-                    <span id="timer-display" style="display:none; z-index: 3; position: relative;"></span>
-                </button>
-                <button id="sort-btn" class="control-btn" title="Sort Library">
-                    <svg viewBox="0 0 24 24"><path d="M3 18h6v-2H3v2zM3 6v2h18V6H3zm0 7h12v-2H3v2z"/></svg>
-                    <span id="sort-badge-icon" class="sort-badge"></span>
-                </button>
-                <button id="shuffle-btn" class="control-btn" title="Shuffle Contextual">
-                    <svg viewBox="0 0 24 24">
-                        <path d="M14.83 13.41L13.42 14.82L16.59 18H5V20H16.59L13.42 23.17L14.83 24.58L20.41 19L14.83 13.41Z" transform="translate(0, -3)"/>
-                        <path d="M9.17 10.59L10.58 9.18L7.41 6H19V4H7.41L10.58 0.83L9.17 -0.58L3.59 5L9.17 10.59Z" transform="translate(0, 3)"/>
-                    </svg>
-                </button>
-                <button id="play-pause-btn" class="control-btn" title="Play/Stop" disabled>
-                    <svg id="play-pause-icon" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
-                </button>
-            </div>
+          </div>
+          <div id="dropdown-menu"></div>
         </div>
+
+        <div class="controls">
+
+          <button id="timer-btn" class="control-btn" title="Sleep Timer">
+            <svg id="timer-icon" viewBox="0 0 24 24">
+              <path
+                d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67z"
+              />
+            </svg>
+            <span
+              id="timer-display"
+              style="display: none; z-index: 3; position: relative"
+            ></span>
+          </button>
+          <button id="sort-btn" class="control-btn" title="Sort Library">
+            <svg viewBox="0 0 24 24">
+              <path d="M3 18h6v-2H3v2zM3 6v2h18V6H3zm0 7h12v-2H3v2z" />
+            </svg>
+            <span id="sort-badge-icon" class="sort-badge"></span>
+          </button>
+          <button
+            id="shuffle-btn"
+            class="control-btn"
+            title="Shuffle Contextual"
+          >
+            <svg viewBox="0 0 24 24">
+              <path
+                d="M14.83 13.41L13.42 14.82L16.59 18H5V20H16.59L13.42 23.17L14.83 24.58L20.41 19L14.83 13.41Z"
+                transform="translate(0, -3)"
+              />
+              <path
+                d="M9.17 10.59L10.58 9.18L7.41 6H19V4H7.41L10.58 0.83L9.17 -0.58L3.59 5L9.17 10.59Z"
+                transform="translate(0, 3)"
+              />
+            </svg>
+          </button>
+          <button
+            id="play-pause-btn"
+            class="control-btn"
+            title="Play/Stop"
+            disabled
+          >
+            <svg id="play-pause-icon" viewBox="0 0 24 24">
+              <path d="M8 5v14l11-7z" />
+            </svg>
+          </button>
+        </div>
+      </div>
     </header>
 
     <div id="scroll-container">
-        <div class="grid" id="station-grid"></div>
+      <div class="grid" id="station-grid"></div>
     </div>
 
-    <audio id="radio-player" style="display:none;" preload="none"></audio>
+    <audio id="radio-player" style="display: none" preload="none"></audio>
+
+    <div id="loading" style="display:flex; justify-content:center; align-items:center; height:100vh; color:white; opacity:0.5; font-size:1.2rem;">
+      Loading stations...
+    </div>
 
     <script>
-        const stations = [
-            { name: "FIP", genre: "Eclectic", geo: "🇫🇷", type: "int", url: "https://stream.radiofrance.fr/fip/fip_hifi.m3u8?id=radiofrance" },   
-            { name: "EGO", genre: "Eclectic", geo: "🇩🇪", type: "int", url: "https://cast.egofm.de/egofm.mp3" },   
-            { name: "FM4", genre: "Alternative", geo: "🇦🇹", type: "int", url: "https://orf-live.ors-shoutcast.at/fm4-q2a" },
-            { name: "STUD", genre: "Eclectic", geo: "🇸🇮", type: "int", url: "https://kruljo.radiostudent.si:8001/test.ogg" },
-            { name: "NOVA", genre: "World", geo: "🇫🇷", type: "int", url: "https://novazz.ice.infomaniak.ch/novazz-128.mp3" },
-            { name: "U92M", genre: "Eclectic", geo: "WV", type: "us", url: "https://stream.radiojar.com/56p3rt9eytzuv" },
-            { name: "DEPA", genre: "Eclectic", geo: "IL", type: "us", url: "https://ice26.securenetsystems.net/RADIODEPAUL" },
-            { name: "KRVS", genre: "Eclectic", geo: "LA", type: "us", url: "https://29223.live.streamtheworld.com/KRVSFMAAC.aac" },
-            { name: "WKNC", genre: "Eclectic", geo: "NC", type: "us", url: "https://das-edge12-live365-dal02.cdnstream.com/a30009" },
-            { name: "KCSU", genre: "Eclectic", geo: "CO", type: "us", url: "https://listen.kcsufm.com/stream" },
-            { name: "WERS", genre: "Eclectic", geo: "MA", type: "us", url: "https://18503.live.streamtheworld.com/WERSFMAAC.aac" },
-            { name: "KAMP", genre: "Eclectic", geo: "AZ", type: "us", url: "https://ice42.securenetsystems.net/KAMP" },
-            { name: "WUTK", genre: "Eclectic", geo: "TN", type: "us", url: "https://26223.live.streamtheworld.com/WUTKFM.mp3" },
-            { name: "WCBN", genre: "Eclectic", geo: "MI", type: "us", url: "https://floyd.wcbn.org:8443/wcbn-hd.mp3" },
-            { name: "WREK", genre: "Eclectic", geo: "GA", type: "us", url: "https://streaming.wrek.org/main/320kb.mp3" },
-            { name: "WBRU", genre: "Eclectic", geo: "RI", type: "us", url: "https://stream.radio.co/s4d09e922b/listen" },
-            { name: "WRIU", genre: "Eclectic", geo: "RI", type: "us", url: "https://stream.wriu.org/wriu-fm" },
-            { name: "KJHK", genre: "Eclectic", geo: "KS", type: "us", url: "https://listen.mixlr.com/86b854be3889dc43aed2f0eb6f2b814b" },
-            { name: "WICB", genre: "Eclectic", geo: "NY", type: "us", url: "https://icecast.do.zufall.co/wicb_aac_high" },
-            { name: "WXYC", genre: "Eclectic", geo: "NC", type: "us", url: "https://audio-mp3.ibiblio.org/wxyc.mp3" },
-            { name: "KEXP", genre: "Eclectic", geo: "WA", type: "us", url: "https://kexp-mp3-128.streamguys1.com/kexp128.mp3" },
-            { name: "WUOG", genre: "Eclectic", geo: "GA", type: "us", url: "https://stream.wuog.org/stream" },  
-            { name: "KCRW", genre: "Eclectic", geo: "CA", type: "us", url: "https://streams.kcrw.com/kcrw_mp3" },
-            { name: "WFMU", genre: "Eclectic", geo: "NJ", type: "us", url: "https://stream0.wfmu.org/freeform-128k" },
-            { name: "WWOZ", genre: "Jazz", geo: "LA", type: "us", url: "https://wwoz-sc.streamguys1.com/wwoz-hi.mp3" },
-            { name: "KKJZ", genre: "Eclectic", geo: "CA", type: "us", url: "https://streaming.live365.com/a49833" },
-            { name: "KNKX", genre: "Jazz", geo: "WA", type: "us", url: "https://knkx-live-a.edge.audiocdn.com/6285_256k" },
-            { name: "WPSU", genre: "Eclectic", geo: "PA", type: "us", url: "https://wpsu-ice.streamguys1.com/wpsu2" },
-            { name: "KCSN", genre: "Eclectic", geo: "CA", type: "us", url: "https://www.streamvortex.com:8444/s/12200/" },
-            { name: "WXPN", genre: "Eclectic", geo: "PA", type: "us", url: "https://wxpn.xpn.org/xpnmp3hi" },
-            { name: "WKIT", genre: "Rock", geo: "ME", type: "us", url: "https://ice6.securenetsystems.net/WKIT" },
-            { name: "WDBM", genre: "Eclectic", geo: "MI", type: "us", url: "https://play.impact89fm.org:8000/impact89fm" },
-            { name: "WLUW", genre: "Eclectic", geo: "IL", type: "us", url: "https://ice26.securenetsystems.net/WLUW" },
-            { name: "WNUR", genre: "Eclectic", geo: "IL", type: "us", url: "https://n16.rcs.revma.com/w4pmmfkdx4zuv" },
-            { name: "WIIT", genre: "Eclectic", geo: "IL", type: "us", url: "https://icecast.iit.edu/WIITstream" },
-            { name: "WRAS", genre: "Eclectic", geo: "GA", type: "us", url: "https://gpb.streamguys1.com/oom/gpb-radio-mp3-website" },   
-            { name: "KING", genre: "Classical", geo: "WA", type: "us", url: "https://classicalking.streamguys1.com/king-fm-aac-128k" },     
-            { name: "KVCU", genre: "Eclectic", geo: "CO", type: "us", url: "https://kvcu.streamguys1.com/live" },   
-            { name: "WBOR", genre: "Eclectic", geo: "ME", type: "us", url: "https://listen.wbor.org/" },   
-            { name: "WZND", genre: "Eclectic", geo: "IL", type: "us", url: "https://14543.live.streamtheworld.com/WZNDFM.mp3" },
-            { name: "WASU", genre: "Eclectic", geo: "NC", type: "us", url: "https://prod-54-85-93-254.amperwave.net/wasu-wasuaac-hlsc1.m3u8" },
-            { name: "KXLU", genre: "Eclectic", geo: "CA", type: "us", url: "https://kxlu.streamguys1.com/kxlu-hi" },
-            { name: "WXRT", genre: "Eclectic", geo: "IL", type: "us", url: "https://prod-3-83-123-147.amperwave.net/audacy-wxrtfmaac-hlsc.m3u8" }, 
-            { name: "WTJU", genre: "Eclectic", geo: "VA", type: "us", url: "https://streams.wtju.net/wtju-live.mp3" },
-            { name: "KVRX", genre: "Eclectic", geo: "TX", type: "us", url: "https://streams.kut.org/5020_192.mp3" },
-            { name: "WUMF", genre: "Eclectic", geo: "ME", type: "us", url: "http://wumfstreaming.umf.maine.edu:8000/wumf" },
-            { name: "WMEB", genre: "Eclectic", geo: "ME", type: "us", url: "http://wmeb-stream.maine.edu:8000/wmeb" },
-            { name: "WQFS", genre: "Eclectic", geo: "NC", type: "us", url: "http://wqfs.arcostream.com:7109/wqfs" },
-            { name: "FOLK", genre: "Folk", geo: "OH", type: "us", url: "https://freshgrass.streamguys1.com/folkalley-128mp3" },
-            { name: "WPRM", genre: "Classical", geo: "WI", type: "us", url: "https://wpr-ice.streamguys1.com/wpr-music-mp3-96" },
-            { name: "HPR", genre: "Folk", geo: "MN", type: "us", url: "https://radioheartland.stream.publicradio.org/radioheartland.aac" },
-            { name: "WAMU", genre: "Eclectic", geo: "DC", type: "us", url: "https://ice24.securenetsystems.net/WAMU" },
-            { name: "WQXR", genre: "Classical", geo: "NY", type: "us", url: "https://stream.wqxr.org/wqxr-web" },
-            { name: "KUSC", genre: "Classical", geo: "CA", type: "us", url: "https://16603.live.streamtheworld.com/KUSCAAC96.aac" },
-            { name: "WFMT", genre: "Classical", geo: "IL", type: "us", url: "https://wfmt.streamguys1.com/main-mp3" },
-            { name: "WGBH", genre: "Classical", geo: "MA", type: "us", url: "https://wgbh-live.streamguys1.com/classical-hi/" },
-            { name: "WCPE", genre: "Classical", geo: "NC", type: "us", url: "https://18093.live.streamtheworld.com/WCPE_FM.mp3" },
-            { name: "KQAC", genre: "Classical", geo: "OR", type: "us", url: "https://allclassical.streamguys1.com/ac128kmp3" },
-            { name: "CMPR", genre: "Classical", geo: "MN", type: "us", url: "https://ycradio.stream.publicradio.org/ycradio.aac" },
-            { name: "KMFA", genre: "Classical", geo: "TX", type: "us", url: "https://kmfa.streamguys1.com/KMFA-mp3" },
-            { name: "WETA", genre: "Classical", geo: "DC", type: "us", url: "https://weta.streamguys1.com/wetaclassical-icy" },
-            { name: "RSC", genre: "Classical", geo: "🇨🇭", type: "int", url: "https://livestreaming-node-3.srg-ssr.ch/srgssr/rsc_de/aac/96" },
-            { name: "VCR", genre: "Classical", geo: "🇮🇹", type: "int", url: "https://de2.streamingpulse.com/ssl/vcr1" },
-            { name: "VCR+", genre: "Classical", geo: "🇮🇹", type: "int", url: "https://de2.streamingpulse.com/ssl/vcr2" },
-            { name: "FMUS", genre: "Classical", geo: "🇫🇷", type: "int", url: "https://stream.radiofrance.fr/francemusique/francemusique_hifi.m3u8?id=radiofrance" },
-            { name: "BRK", genre: "Classical", geo: "🇩🇪", type: "int", url: "https://mcdn.hf.br.de/br/hf/brklassik/master-256000.m3u8" },
-            { name: "ABCC", genre: "Classical", geo: "🇦🇺", type: "int", url: "https://mediaserviceslive.akamaized.net/hls/live/2108547/classicfmnsw/v0-221.m3u8" },
-            { name: "CBCM", genre: "Pop", geo: "🇨🇦", type: "int", url: "https://cbcradiolive.akamaized.net/hls/live/2041059/ES_R2PVC/adaptive_192/chunklist_ao.m3u8" },
-            { name: "NPOR", genre: "Classical", geo: "🇳🇱", type: "int", url: "https://icecast.omroep.nl/radio4-sb-aac" },
-            { name: "OPUS", genre: "Classical", geo: "🇲🇽", type: "int", url: "https://s2.mexside.net:7014/stream" },
-            { name: "BBC1", genre: "Pop", geo: "🇬🇧", type: "int", url: "https://lsn.lv/bbcradio.m3u8?station=bbc_radio_one&bitrate=320000" },
-            { name: "BBC1A", genre: "Pop", geo: "🇬🇧", type: "int", url: "https://lsn.lv/bbcradio.m3u8?station=bbc_radio_one_anthems&bitrate=320000" },
-            { name: "BBC1D", genre: "Dance", geo: "🇬🇧", type: "int", url: "https://lsn.lv/bbcradio.m3u8?station=bbc_radio_one_dance&bitrate=320000" },
-            { name: "BBC1X", genre: "Hip Hop", geo: "🇬🇧", type: "int", url: "https://lsn.lv/bbcradio.m3u8?station=bbc_1xtra&bitrate=320000" },
-            { name: "BBC2", genre: "Pop", geo: "🇬🇧", type: "int", url: "https://lsn.lv/bbcradio.m3u8?station=bbc_radio_two&bitrate=320000" },
-            { name: "BBC3", genre: "Classical", geo: "🇬🇧", type: "int", url: "https://lsn.lv/bbcradio.m3u8?station=bbc_radio_three&bitrate=320000" },
-            { name: "BBC3U", genre: "Classical", geo: "🇬🇧", type: "int", url: "https://lsn.lv/bbcradio.m3u8?station=bbc_radio_three_unwind&bitrate=320000" },
-            { name: "BBC6", genre: "Alternative", geo: "🇬🇧", type: "int", url: "https://lsn.lv/bbcradio.m3u8?station=bbc_6music&bitrate=320000" },
-            { name: "IDM", genre: "Dance", geo: "🇬🇧", type: "int", url: "https://stream.indemandradio.com/stream/160/160.m3u8" },
-            { name: "IDD", genre: "Pop", geo: "🇬🇧", type: "int", url: "https://stream.indemandradio.com/stream/160/160.m3u8" },
-            { name: "JKE", genre: "Rock", geo: "🇬🇧", type: "int", url: "https://media.radiojackie.com/redirector/frontend.m3u8" },
-            { name: "VCE", genre: "Pop", geo: "🇬🇧", type: "int", url: "https://secure.mystreaming.net/thevoice/live128aac/chunks.m3u8" },
-            { name: "FIPC", genre: "Rock", geo: "🇫🇷", type: "int", url: "https://stream.radiofrance.fr/fipcultes/fipcultes_hifi.m3u8?id=radiofrance" },
-            { name: "FIPSF", genre: "World", geo: "🇫🇷", type: "int", url: "https://stream.radiofrance.fr/fipsacrefrancais/fipsacrefrancais_hifi.m3u8?id=radiofrance" },
-            { name: "FIPRO", genre: "Rock", geo: "🇫🇷", type: "int", url: "https://stream.radiofrance.fr/fiprock/fiprock_hifi.m3u8?id=radiofrance" },
-            { name: "FIPJ", genre: "Jazz", geo: "🇫🇷", type: "int", url: "https://stream.radiofrance.fr/fipjazz/fipjazz_hifi.m3u8?id=radiofrance" },
-            { name: "FIPG", genre: "Jazz", geo: "🇫🇷", type: "int", url: "https://stream.radiofrance.fr/fipgroove/fipgroove_hifi.m3u8?id=radiofrance" },
-            { name: "FIPRE", genre: "Reggae", geo: "🇫🇷", type: "int", url: "https://stream.radiofrance.fr/fipreggae/fipreggae_hifi.m3u8?id=radiofrance" },
-            { name: "FIPP", genre: "Pop", geo: "🇫🇷", type: "int", url: "https://stream.radiofrance.fr/fippop/fippop_hifi.m3u8?id=radiofrance" },
-            { name: "FIPE", genre: "Dance", geo: "🇫🇷", type: "int", url: "https://stream.radiofrance.fr/fipelectro/fipelectro_hifi.m3u8?id=radiofrance" },
-            { name: "FIPM", genre: "World", geo: "🇫🇷", type: "int", url: "https://stream.radiofrance.fr/fipworld/fipworld_hifi.m3u8?id=radiofrance" },
-            { name: "FIPN", genre: "Eclectic", geo: "🇫🇷", type: "int", url: "https://stream.radiofrance.fr/fipnouveautes/fipnouveautes_hifi.m3u8?id=radiofrance" },
-            { name: "FIPHH", genre: "Hip Hop", geo: "🇫🇷", type: "int", url: "https://stream.radiofrance.fr/fiphiphop/fiphiphop_hifi.m3u8?id=radiofrance" },
-            { name: "RFFM", genre: "World", geo: "🇫🇷", type: "int", url: "https://stream.radiofrance.fr/francemusique/francemusique_hifi.m3u8?id=radiofrance" },
-            { name: "RFCE", genre: "Classical", geo: "🇫🇷", type: "int", url: "https://stream.radiofrance.fr/francemusiqueeasyclassique/francemusiqueeasyclassique_hifi.m3u8?id=radiofrance" },
-            { name: "RFCL", genre: "Classical", geo: "🇫🇷", type: "int", url: "https://stream.radiofrance.fr/francemusiqueclassiquelove/francemusiqueclassiquelove_hifi.m3u8?id=radiofrance" },
-            { name: "RFBA", genre: "Classical", geo: "🇫🇷", type: "int", url: "https://stream.radiofrance.fr/francemusiquebaroque/francemusiquebaroque_hifi.m3u8?id=radiofrance" },
-            { name: "RFPZ", genre: "Classical", geo: "🇫🇷", type: "int", url: "https://stream.radiofrance.fr/francemusiquepianozen/francemusiquepianozen_hifi.m3u8?id=radiofrance" },
-            { name: "RFFI", genre: "Classical", geo: "🇫🇷", type: "int", url: "https://stream.radiofrance.fr/francemusiquelabo/francemusiquelabo_hifi.m3u8?id=radiofrance" },
-            { name: "RFCO", genre: "Classical", geo: "🇫🇷", type: "int", url: "https://stream.radiofrance.fr/francemusiqueconcertsradiofrance/francemusiqueconcertsradiofrance_hifi.m3u8?id=radiofrance" },
-            { name: "RFCP", genre: "Classical", geo: "🇫🇷", type: "int", url: "https://stream.radiofrance.fr/francemusiqueclassiqueplus/francemusiqueclassiqueplus_hifi.m3u8?id=radiofrance" },
-            { name: "RFJA", genre: "Jazz", geo: "🇫🇷", type: "int", url: "https://stream.radiofrance.fr/francemusiquelajazz/francemusiquelajazz_hifi.m3u8?id=radiofrance" },
-            { name: "RFOP", genre: "Classical", geo: "🇫🇷", type: "int", url: "https://stream.radiofrance.fr/francemusiqueopera/francemusiqueopera_hifi.m3u8?id=radiofrance" },
-            { name: "RFLC", genre: "Classical", geo: "🇫🇷", type: "int", url: "https://stream.radiofrance.fr/francemusiquelacontemporaine/francemusiquelacontemporaine_hifi.m3u8?id=radiofrance" },
-            { name: "RFOM", genre: "Folk", geo: "🇫🇷", type: "int", url: "https://stream.radiofrance.fr/francemusiqueocoramonde/francemusiqueocoramonde_hifi.m3u8?id=radiofrance" },
-            { name: "NOVAC", genre: "Classical", geo: "🇫🇷", type: "int", url: "https://nova-vnt.ice.infomaniak.ch/nova-vnt-128.mp3" },
-            { name: "NOVAN", genre: "Hip Hop", geo: "🇫🇷", type: "int", url: "https://nova-nouvo.ice.infomaniak.ch/nova-nouvo-128.mp3" },
-            { name: "NOVAS", genre: "Jazz", geo: "🇫🇷", type: "int", url: "https://nova-soul.ice.infomaniak.ch/nova-soul-128.mp3" },
-            { name: "NOVAR", genre: "Reggae", geo: "🇫🇷", type: "int", url: "https://nova-reggae.ice.infomaniak.ch/nova-reggae-128.mp3" },
-            { name: "NOVAH", genre: "Hip Hop", geo: "🇫🇷", type: "int", url: "https://nova-odn.ice.infomaniak.ch/nova-odn-128.mp3" },
-            { name: "NOVALN", genre: "Jazz", geo: "🇫🇷", type: "int", url: "https://nova-ln.ice.infomaniak.ch/nova-ln-128.mp3" },
-            { name: "NOVAD", genre: "Dance", geo: "🇫🇷", type: "int", url: "https://nova-dance.ice.infomaniak.ch/nova-dance-128.mp3" },
-            { name: "RMCH", genre: "Pop", geo: "🇮🇹", type: "int", url: "https://icy.unitedradio.it/rmcweb001" },
-            { name: "RMCBM", genre: "Pop", geo: "🇮🇹", type: "int", url: "https://icy.unitedradio.it/rmcweb017" },
-            { name: "RMCBB", genre: "Jazz", geo: "🇮🇹", type: "int", url: "https://icy.unitedradio.it/rmcweb002" },
-            { name: "RMCJ", genre: "Jazz", geo: "🇮🇹", type: "int", url: "https://icy.unitedradio.it/rmcweb019" },
-            { name: "RMCI", genre: "World", geo: "🇮🇹", type: "int", url: "https://icy.unitedradio.it/rmcweb005" },
-            { name: "RMCVL", genre: "Pop", geo: "🇮🇹", type: "int", url: "https://icy.unitedradio.it/rmcweb020" },
-            { name: "RMCNS", genre: "Jazz", geo: "🇮🇹", type: "int", url: "https://icy.unitedradio.it/rmcweb012" },
-            { name: "RMCRB", genre: "R&B", geo: "🇮🇹", type: "int", url: "https://icy.unitedradio.it/rmcweb003" },
-            { name: "RMCL", genre: "Pop", geo: "🇮🇹", type: "int", url: "https://icy.unitedradio.it/rmcweb006" },
-            { name: "RMCGA", genre: "Pop", geo: "🇮🇹", type: "int", url: "https://icy.unitedradio.it/rmcweb007" },
-            { name: "RMC80", genre: "Pop", geo: "🇮🇹", type: "int", url: "https://icy.unitedradio.it/rmcweb008" },
-            { name: "RMC90", genre: "Pop", geo: "🇮🇹", type: "int", url: "https://icy.unitedradio.it/rmcweb009" },
-            { name: "RMCMA", genre: "Pop", geo: "🇮🇹", type: "int", url: "https://icy.unitedradio.it/rmcweb010" },
-            { name: "RMCC", genre: "Dance", geo: "🇮🇹", type: "int", url: "https://icy.unitedradio.it/rmcweb004" },
-            { name: "RMCNC", genre: "Pop", geo: "🇮🇹", type: "int", url: "https://icy.unitedradio.it/rmcweb011" },
-            { name: "RMCVV", genre: "Pop", geo: "🇮🇹", type: "int", url: "https://icy.unitedradio.it/rmcweb022" },
-            { name: "RMCA", genre: "Pop", geo: "🇮🇹", type: "int", url: "https://icy.unitedradio.it/rmcweb016" },
-            { name: "RMCDF", genre: "Dance", geo: "🇮🇹", type: "int", url: "https://icy.unitedradio.it/rmcweb025" },
-            { name: "RMCRR", genre: "Rock", geo: "🇮🇹", type: "int", url: "https://icy.unitedradio.it/rmcweb015" },
-            { name: "RMCR", genre: "Dance", geo: "🇮🇹", type: "int", url: "https://icy.unitedradio.it/rmcweb021" },
-            { name: "RMCP", genre: "Dance", geo: "🇮🇹", type: "int", url: "https://icy.unitedradio.it/rmcweb018" },
-            { name: "RMCF", genre: "Dance", geo: "🇮🇹", type: "int", url: "https://icy.unitedradio.it/rmcweb023" },
-            { name: "RMCP2", genre: "Dance", geo: "🇮🇹", type: "int", url: "https://icy.unitedradio.it/rmcweb026" },
-            { name: "RGP1", genre: "Eclectic", geo: "🇪🇸", type: "int", url: "https://streamer.radio.co/sb28a7fb81/listen" },
-            { name: "RGP2", genre: "World", geo: "🇪🇸", type: "int", url: "https://streams.radio.co/s496c4d2e8/listen" },
-            { name: "RGP3", genre: "World", geo: "🇪🇸", type: "int", url: "https://streamer.radio.co/s00c7ec6fa/listen" },
-            { name: "RGP4", genre: "World", geo: "🇪🇸", type: "int", url: "https://streamer.radio.co/scdca4c5af/listen" },
-            { name: "RGP5", genre: "Jazz", geo: "🇪🇸", type: "int", url: "https://s5.radio.co/s78cbe08ae/listen" },
-            { name: "RNF", genre: "World", geo: "🇦🇷", type: "int", url: "http://sa.mp3.icecast.magma.edge-access.net:7200/sc_rad38" },
-            { name: "WKM", genre: "Eclectic", geo: "🇧🇴", type: "int", url: "https://mdstrm.com/audio/5df7cf305396b836ef541c12/live.m3u8" },
-            { name: "DK", genre: "Eclectic", geo: "🇩🇪", type: "int", url: "https://st02.sslstream.dlf.de/dlf/02/128/mp3/stream.mp3" },
-            { name: "DN", genre: "Eclectic", geo: "🇩🇪", type: "int", url: "https://st03.sslstream.dlf.de/dlf/03/128/mp3/stream.mp3" },
-            { name: "BYTE", genre: "Eclectic", geo: "🇩🇪", type: "int", url: "https://bytefm.stream18.radiohost.de/bytefm-main_mp3-128" },
-            { name: "FLUX", genre: "Eclectic", geo: "🇩🇪", type: "int", url: "https://51-83-105-37-28ffe3.sfn.edge-ovh-gra5.streams.radiosphere.io/557b7263-9216-46b5-a813-a156ffbc9acb/channels/a777b93d-e60c-47f9-be28-1233e6c9802d/stream.aac" },
-            { name: "RNE", genre: "Eclectic", geo: "🇪🇸", type: "int", url: "https://rtvelivestream.rtve.es/rtvesec/rne/rne_r3_main.m3u8" },
-            { name: "XTRA", genre: "Eclectic", geo: "🇪🇸", type: "int", url: "https://hls1.eu.peppermindmedia.com/xtrafm/south/XtraFMSouth-144000.m3u8" },
-            { name: "FMR", genre: "Jazz", geo: "🇿🇦", type: "int", url: "https://edge.iono.fm/xice/fmr_live_medium.aac" },
+      let stations = [];
+      let favoriteIds = [];
+      let currentStationId = localStorage.getItem("lastStationId") || null;
+
+      // Clear integer IDs completely
+      if (currentStationId !== null && !isNaN(currentStationId)) {
+        currentStationId = null;
+        localStorage.removeItem("lastStationId");
+      }
+
+      function cleanLegacyFavorites() {
+        try {
+          const storedFavs = JSON.parse(localStorage.getItem("favStations") || "[]");
+          if (storedFavs.length > 0 && typeof storedFavs[0] === "number") {
+             // Reset entirely if the user somehow preserved an older browser session where favs were integers. 
+             localStorage.removeItem("favStations");
+             favoriteIds = [];
+          } else {
+             favoriteIds = storedFavs;
+          }
+        } catch (e) {
+          favoriteIds = [];
+        }
+      }
+
+      const countryFlagMap = {
+        US: "🇺🇸",
+        France: "🇫🇷",
+        Italy: "🇮🇹",
+        UK: "🇬🇧",
+        Argentina: "🇦🇷",
+        Australia: "🇦🇺",
+        Austria: "🇦🇹",
+        Bolivia: "🇧🇴",
+        Canada: "🇨🇦",
+        Germany: "🇩🇪",
+        Mexico: "🇲🇽",
+        Netherlands: "🇳🇱",
+        Slovenia: "🇸🇮",
+        "South Africa": "🇿🇦",
+        Spain: "🇪🇸",
+        Switzerland: "🇨🇭",
+      };
+
+      const reverseFlagMap = {};
+      Object.entries(countryFlagMap).forEach(
+        ([k, v]) => (reverseFlagMap[v] = k),
+      );
+
+      const grid = document.getElementById("station-grid");
+      const player = document.getElementById("radio-player");
+      const sortBtn = document.getElementById("sort-btn");
+      const sortBadge = document.getElementById("sort-badge-icon");
+      const timerBtn = document.getElementById("timer-btn");
+      const timerIcon = document.getElementById("timer-icon");
+      const timerDisplay = document.getElementById("timer-display");
+      const shuffleBtn = document.getElementById("shuffle-btn");
+      const playPauseBtn = document.getElementById("play-pause-btn");
+      const playPauseIcon = document.getElementById("play-pause-icon");
+      const titleArea = document.getElementById("app-title");
+      const menuTrigger = document.getElementById("menu-arrow-container");
+      const dropdownMenu = document.getElementById("dropdown-menu");
+      const scrollContainer = document.getElementById("scroll-container");
+
+
+      const playPath = "M8 5v14l11-7z";
+      const stopPath = "M6 6h12v12H6z";
+
+      let bufferingStationId = null;
+      let errorStationId = null;
+      let isActuallyPlaying = false;
+      let sortState = 0;
+      let logicalMasterList = [];
+      let activeFilter = { type: "all", value: null };
+      let currentTimerDuration = 0;
+      let sleepTimerTimeout = null;
+      let sleepTickInterval = null;
+
+      titleArea.onclick = () => {
+        let clickCount = parseInt(titleArea.dataset.clicks || 0) + 1;
+        titleArea.dataset.clicks = clickCount;
+        if (clickCount >= 2) window.location.reload(true);
+        setTimeout(() => (titleArea.dataset.clicks = 0), 500);
+      };
+
+      menuTrigger.onclick = (e) => {
+        e.stopPropagation();
+        menuTrigger.parentElement.classList.toggle("active");
+        dropdownMenu.classList.toggle("visible");
+      };
+
+      document.onclick = (e) => {
+        if (!e.target.closest("#dropdown-menu")) {
+          menuTrigger.parentElement.classList.remove("active");
+          dropdownMenu.classList.remove("visible");
+        }
+      };
+
+      function closeMenu() {
+        menuTrigger.parentElement.classList.remove("active");
+        dropdownMenu.classList.remove("visible");
+        scrollContainer.scrollTo({ top: 0, behavior: "smooth" });
+      }
+
+      function buildMenu() {
+        dropdownMenu.innerHTML = "";
+        const createItem = (label, type, val) => {
+          const item = document.createElement("div");
+          item.className = `menu-item ${activeFilter.type === type && activeFilter.value === val ? "active" : ""}`;
+          item.innerText = label;
+          item.onclick = () => {
+            activeFilter = { type, value: val };
+            renderGrid();
+            closeMenu();
+          };
+          return item;
+        };
+        dropdownMenu.appendChild(createItem("Show All Stations", "all", null));
+        const cLabel = document.createElement("div");
+        cLabel.className = "menu-label";
+        cLabel.innerText = "Countries";
+        dropdownMenu.appendChild(cLabel);
+
+        const flagGrid = document.createElement("div");
+        flagGrid.className = "flag-grid";
+
+        const allFoundCountries = [
+          ...new Set(
+            stations.map((s) =>
+              s.type === "us" ? "US" : reverseFlagMap[s.geo] || s.geo,
+            ),
+          ),
         ];
+        const priorities = ["US", "France", "Italy", "UK"];
+        const sortedCountries = allFoundCountries.sort((a, b) => {
+          const idxA = priorities.indexOf(a);
+          const idxB = priorities.indexOf(b);
+          if (idxA !== -1 && idxB !== -1) return idxA - idxB;
+          if (idxA !== -1) return -1;
+          if (idxB !== -1) return 1;
+          return a.localeCompare(b);
+        });
 
-        stations.forEach((s, i) => s.id = i);
+        sortedCountries.forEach((c) => {
+          const f = countryFlagMap[c] || c;
+          const btn = document.createElement("div");
+          btn.className = `flag-btn ${activeFilter.type === "country" && activeFilter.value === c ? "active" : ""}`;
+          btn.innerText = f;
+          if (c === "Switzerland") btn.classList.add("is-swiss");
+          btn.onclick = () => {
+            activeFilter = { type: "country", value: c };
+            renderGrid();
+            closeMenu();
+          };
+          flagGrid.appendChild(btn);
+        });
+        dropdownMenu.appendChild(flagGrid);
 
-        const countryFlagMap = {
-            "US": "🇺🇸", "France": "🇫🇷", "Italy": "🇮🇹", "UK": "🇬🇧", 
-            "Argentina": "🇦🇷", "Australia": "🇦🇺", "Austria": "🇦🇹", "Bolivia": "🇧🇴",
-            "Canada": "🇨🇦", "Germany": "🇩🇪", "Mexico": "🇲🇽", "Netherlands": "🇳🇱", 
-            "Slovenia": "🇸🇮", "South Africa": "🇿🇦", "Spain": "🇪🇸", "Switzerland": "🇨🇭"
-        };
-        
-        const reverseFlagMap = {};
-        Object.entries(countryFlagMap).forEach(([k,v]) => reverseFlagMap[v] = k);
+        dropdownMenu.appendChild(document.createElement("div")).className =
+          "menu-divider";
+        const gLabel = document.createElement("div");
+        gLabel.className = "menu-label";
+        gLabel.innerText = "Genres";
+        dropdownMenu.appendChild(gLabel);
 
-        const grid = document.getElementById('station-grid');
-        const player = document.getElementById('radio-player');
-        const sortBtn = document.getElementById('sort-btn');
-        const sortBadge = document.getElementById('sort-badge-icon');
-        const timerBtn = document.getElementById('timer-btn');
-        const timerIcon = document.getElementById('timer-icon');
-        const timerDisplay = document.getElementById('timer-display');
-        const shuffleBtn = document.getElementById('shuffle-btn');
-        const playPauseBtn = document.getElementById('play-pause-btn');
-        const playPauseIcon = document.getElementById('play-pause-icon');
-        const titleArea = document.getElementById('app-title');
-        const menuTrigger = document.getElementById('menu-arrow-container');
-        const dropdownMenu = document.getElementById('dropdown-menu');
-        const scrollContainer = document.getElementById('scroll-container');
+        const allGenres = [...new Set(stations.map((s) => s.genre))].sort();
+        allGenres.forEach((g) =>
+          dropdownMenu.appendChild(createItem(g, "genre", g)),
+        );
+      }
 
-        const playPath = "M8 5v14l11-7z";
-        const stopPath = "M6 6h12v12H6z";
-
-        let currentStationId = parseInt(localStorage.getItem('lastStationId')) || null;
-        let bufferingStationId = null; 
-        let errorStationId = null; 
-        let isActuallyPlaying = false;
-        let sortState = 0; 
-        let favoriteIds = JSON.parse(localStorage.getItem('favStations') || '[]');
-        let logicalMasterList = [];
-        let activeFilter = { type: 'all', value: null };
-        let currentTimerDuration = 0;
-        let sleepTimerTimeout = null;
-        let sleepTickInterval = null;
-
-        titleArea.onclick = () => {
-            let clickCount = parseInt(titleArea.dataset.clicks || 0) + 1;
-            titleArea.dataset.clicks = clickCount;
-            if (clickCount >= 2) window.location.reload(true);
-            setTimeout(() => titleArea.dataset.clicks = 0, 500); 
-        };
-
-        menuTrigger.onclick = (e) => {
-            e.stopPropagation();
-            menuTrigger.parentElement.classList.toggle('active');
-            dropdownMenu.classList.toggle('visible');
-        };
-
-        document.onclick = (e) => {
-            if (!e.target.closest('#dropdown-menu')) {
-                menuTrigger.parentElement.classList.remove('active');
-                dropdownMenu.classList.remove('visible');
-            }
-        };
-
-        function closeMenu() {
-            menuTrigger.parentElement.classList.remove('active');
-            dropdownMenu.classList.remove('visible');
-            scrollContainer.scrollTo({top: 0, behavior: 'smooth'});
+      function renderGrid() {
+        buildMenu();
+        grid.innerHTML = "";
+        let filtered = stations;
+        if (activeFilter.type === "country") {
+          filtered = stations.filter((s) =>
+            activeFilter.value === "US"
+              ? s.type === "us"
+              : (reverseFlagMap[s.geo] || s.geo) === activeFilter.value,
+          );
+        } else if (activeFilter.type === "genre") {
+          filtered = stations.filter((s) => s.genre === activeFilter.value);
         }
 
-        function buildMenu() {
-            dropdownMenu.innerHTML = '';
-            const createItem = (label, type, val) => {
-                const item = document.createElement('div');
-                item.className = `menu-item ${activeFilter.type === type && activeFilter.value === val ? 'active' : ''}`;
-                item.innerText = label;
-                item.onclick = () => { activeFilter = { type, value: val }; renderGrid(); closeMenu(); };
-                return item;
-            };
-            dropdownMenu.appendChild(createItem('Show All Stations', 'all', null));
-            const cLabel = document.createElement('div');
-            cLabel.className = 'menu-label'; cLabel.innerText = 'Countries';
-            dropdownMenu.appendChild(cLabel);
+        let favs = filtered.filter((s) => favoriteIds.includes(s.id));
+        let others = filtered.filter((s) => !favoriteIds.includes(s.id));
 
-            const flagGrid = document.createElement('div');
-            flagGrid.className = 'flag-grid';
-            
-            const allFoundCountries = [...new Set(stations.map(s => s.type === 'us' ? 'US' : reverseFlagMap[s.geo] || s.geo))];
-            const priorities = ["US", "France", "Italy", "UK"];
-            const sortedCountries = allFoundCountries.sort((a, b) => {
-                const idxA = priorities.indexOf(a);
-                const idxB = priorities.indexOf(b);
-                if (idxA !== -1 && idxB !== -1) return idxA - idxB;
-                if (idxA !== -1) return -1;
-                if (idxB !== -1) return 1;
-                return a.localeCompare(b);
-            });
-
-            sortedCountries.forEach(c => {
-                const f = countryFlagMap[c] || c;
-                const btn = document.createElement('div');
-                btn.className = `flag-btn ${activeFilter.type === 'country' && activeFilter.value === c ? 'active' : ''}`;
-                btn.innerText = f;
-                if (c === "Switzerland") btn.classList.add('is-swiss');
-                btn.onclick = () => { activeFilter = { type: 'country', value: c }; renderGrid(); closeMenu(); };
-                flagGrid.appendChild(btn);
-            });
-            dropdownMenu.appendChild(flagGrid);
-
-            dropdownMenu.appendChild(document.createElement('div')).className = 'menu-divider';
-            const gLabel = document.createElement('div');
-            gLabel.className = 'menu-label'; gLabel.innerText = 'Genres';
-            dropdownMenu.appendChild(gLabel);
-
-            const allGenres = [...new Set(stations.map(s => s.genre))].sort();
-            allGenres.forEach(g => dropdownMenu.appendChild(createItem(g, 'genre', g)));
+        if (sortState === 1) {
+          favs.sort((a, b) => a.name.localeCompare(b.name));
+          others.sort((a, b) => a.name.localeCompare(b.name));
+        } else if (sortState === 2) {
+          favs.sort(
+            (a, b) =>
+              a.genre.localeCompare(b.genre) || a.name.localeCompare(b.name),
+          );
+          others.sort(
+            (a, b) =>
+              a.genre.localeCompare(b.genre) || a.name.localeCompare(b.name),
+          );
         }
 
-        function renderGrid() {
-            buildMenu();
-            grid.innerHTML = '';
-            let filtered = stations;
-            if (activeFilter.type === 'country') {
-                filtered = stations.filter(s => (activeFilter.value === 'US' ? s.type === 'us' : (reverseFlagMap[s.geo] || s.geo) === activeFilter.value));
-            } else if (activeFilter.type === 'genre') {
-                filtered = stations.filter(s => s.genre === activeFilter.value);
-            }
-            
-            let favs = filtered.filter(s => favoriteIds.includes(s.id));
-            let others = filtered.filter(s => !favoriteIds.includes(s.id));
-            
-            if (sortState === 1) { 
-                favs.sort((a, b) => a.name.localeCompare(b.name));
-                others.sort((a, b) => a.name.localeCompare(b.name));
-            } else if (sortState === 2) { 
-                favs.sort((a, b) => a.genre.localeCompare(b.genre) || a.name.localeCompare(b.name));
-                others.sort((a, b) => a.genre.localeCompare(b.genre) || a.name.localeCompare(b.name));
-            }
-            
-            logicalMasterList = [...favs, ...others];
-            let anchorStation = null;
-            let visualList = [...logicalMasterList];
-            if (currentStationId !== null) {
-                const index = visualList.findIndex(s => s.id === currentStationId);
-                if (index > -1) [anchorStation] = visualList.splice(index, 1);
-            }
-            const activeDisplayList = anchorStation ? [anchorStation, ...visualList] : visualList;
-            
-            activeDisplayList.forEach((station) => {
-                const tile = document.createElement('div');
-                tile.className = `tile c${(station.id % 8) + 1}`;
-                if (favoriteIds.includes(station.id)) tile.classList.add('is-fav');
-                if (bufferingStationId === station.id) tile.classList.add('buffering');
-                else if (errorStationId === station.id) tile.classList.add('error');
-                else if (currentStationId === station.id) {
-                    tile.classList.add(isActuallyPlaying ? 'active' : 'ready');
-                    if (!isActuallyPlaying) playPauseBtn.disabled = false;
-                }
-                tile.dataset.id = station.id;
-                const flagMatch = station.geo.match(/[\u{1F1E6}-\u{1F1FF}]{2}/u);
-                const flagEmoji = flagMatch ? flagMatch[0] : "";
-                const stateText = station.geo.replace(flagEmoji, "").trim();
-                const isSwiss = flagEmoji === "🇨🇭";
+        logicalMasterList = [...favs, ...others];
+        let anchorStation = null;
+        let visualList = [...logicalMasterList];
+        if (currentStationId !== null) {
+          const index = visualList.findIndex((s) => s.id === currentStationId);
+          if (index > -1) [anchorStation] = visualList.splice(index, 1);
+        }
+        const activeDisplayList = anchorStation
+          ? [anchorStation, ...visualList]
+          : visualList;
 
-                tile.innerHTML = `
+        activeDisplayList.forEach((station, index) => {
+          const tile = document.createElement("div");
+          // Generate deterministic color based on index to keep it slightly stable natively
+          tile.className = `tile c${(index % 8) + 1}`;
+          if (favoriteIds.includes(station.id)) tile.classList.add("is-fav");
+          if (bufferingStationId === station.id)
+            tile.classList.add("buffering");
+          else if (errorStationId === station.id) tile.classList.add("error");
+          else if (currentStationId === station.id) {
+            tile.classList.add(isActuallyPlaying ? "active" : "ready");
+            if (!isActuallyPlaying) playPauseBtn.disabled = false;
+          }
+          tile.dataset.id = station.id;
+          const flagMatch = station.geo.match(/[\u{1F1E6}-\u{1F1FF}]{2}/u);
+          const flagEmoji = flagMatch ? flagMatch[0] : "";
+          const stateText = station.geo.replace(flagEmoji, "").trim();
+          const isSwiss = flagEmoji === "🇨🇭";
+
+          tile.innerHTML = `
                     <div class="fav-star">★</div>
                     <div class="status-container">
                         <div class="spinner"></div>
@@ -722,143 +1073,252 @@
                     </div>
                     <div class="geo-tag">
                         <span class="geo-text">${stateText}</span>
-                        <span class="geo-flag ${isSwiss ? 'is-swiss' : ''}">${flagEmoji}</span>
+                        <span class="geo-flag ${isSwiss ? "is-swiss" : ""}">${flagEmoji}</span>
                     </div>
                 `;
-                tile.querySelector('.fav-star').onclick = (e) => { e.stopPropagation(); toggleFavorite(station.id); };
-                tile.onclick = () => handleTileClick(station.id);
-                grid.appendChild(tile);
-            });
-        }
+          tile.querySelector(".fav-star").onclick = (e) => {
+            e.stopPropagation();
+            toggleFavorite(station.id);
+          };
+          tile.onclick = () => handleTileClick(station.id);
+          grid.appendChild(tile);
+        });
+      }
 
-        timerBtn.onclick = () => {
-            if (currentTimerDuration === 0) startSleepTimer(30);
-            else if (currentTimerDuration === 30) startSleepTimer(15);
-            else clearSleepTimer();
-        };
+      timerBtn.onclick = () => {
+        if (currentTimerDuration === 0) startSleepTimer(30);
+        else if (currentTimerDuration === 30) startSleepTimer(15);
+        else clearSleepTimer();
+      };
 
-        function startSleepTimer(minutes) {
+      function startSleepTimer(minutes) {
+        clearSleepTimer();
+        void timerBtn.offsetWidth;
+        timerBtn.classList.add("active");
+        currentTimerDuration = minutes;
+        timerIcon.style.display = "none";
+        timerDisplay.style.display = "block";
+        timerDisplay.innerText = currentTimerDuration;
+
+        let remaining = minutes;
+        sleepTickInterval = setInterval(() => {
+          remaining--;
+          if (remaining <= 0) {
+            stopPlayback();
             clearSleepTimer();
-            void timerBtn.offsetWidth; 
-            timerBtn.classList.add('active'); 
-            currentTimerDuration = minutes;
-            timerIcon.style.display = 'none'; 
-            timerDisplay.style.display = 'block'; 
-            timerDisplay.innerText = currentTimerDuration;
-            
-            let remaining = minutes;
-            sleepTickInterval = setInterval(() => {
-                remaining--;
-                if (remaining <= 0) { stopPlayback(); clearSleepTimer(); } else timerDisplay.innerText = remaining;
-            }, 60000);
-            sleepTimerTimeout = setTimeout(() => { stopPlayback(); clearSleepTimer(); }, minutes * 60000);
-        }
+          } else timerDisplay.innerText = remaining;
+        }, 60000);
+        sleepTimerTimeout = setTimeout(() => {
+          stopPlayback();
+          clearSleepTimer();
+        }, minutes * 60000);
+      }
 
-        function clearSleepTimer() {
-            if (sleepTimerTimeout) clearTimeout(sleepTimerTimeout);
-            if (sleepTickInterval) clearInterval(sleepTickInterval);
-            sleepTimerTimeout = null; sleepTickInterval = null; currentTimerDuration = 0;
-            timerBtn.classList.remove('active'); 
-            timerIcon.style.display = 'block'; timerDisplay.style.display = 'none';
-        }
+      function clearSleepTimer() {
+        if (sleepTimerTimeout) clearTimeout(sleepTimerTimeout);
+        if (sleepTickInterval) clearInterval(sleepTickInterval);
+        sleepTimerTimeout = null;
+        sleepTickInterval = null;
+        currentTimerDuration = 0;
+        timerBtn.classList.remove("active");
+        timerIcon.style.display = "block";
+        timerDisplay.style.display = "none";
+      }
 
-        function toggleFavorite(id) {
-            if (favoriteIds.includes(id)) favoriteIds = favoriteIds.filter(fid => fid !== id);
-            else favoriteIds.push(id);
-            localStorage.setItem('favStations', JSON.stringify(favoriteIds)); renderGrid();
-        }
+      function toggleFavorite(id) {
+        if (favoriteIds.includes(id))
+          favoriteIds = favoriteIds.filter((fid) => fid !== id);
+        else favoriteIds.push(id);
+        localStorage.setItem("favStations", JSON.stringify(favoriteIds));
+        renderGrid();
+      }
 
-        function handleTileClick(id) {
-            if (currentStationId === id && isActuallyPlaying) stopPlayback();
-            else playStation(id);
-        }
+      function handleTileClick(id) {
+        if (currentStationId === id && isActuallyPlaying) stopPlayback();
+        else playStation(id);
+      }
 
-        function setupMediaHandlers() {
-            if ('mediaSession' in navigator) {
-                navigator.mediaSession.setActionHandler('previoustrack', () => navigateStation(-1));
-                navigator.mediaSession.setActionHandler('nexttrack', () => navigateStation(1));
-                navigator.mediaSession.setActionHandler('play', () => { if (currentStationId !== null) playStation(currentStationId); });
-                navigator.mediaSession.setActionHandler('pause', () => stopPlayback());
+      function setupMediaHandlers() {
+        if ("mediaSession" in navigator) {
+          navigator.mediaSession.setActionHandler("previoustrack", () =>
+            navigateStation(-1),
+          );
+          navigator.mediaSession.setActionHandler("nexttrack", () =>
+            navigateStation(1),
+          );
+          navigator.mediaSession.setActionHandler("play", () => {
+            if (currentStationId !== null) playStation(currentStationId);
+          });
+          navigator.mediaSession.setActionHandler("pause", () =>
+            stopPlayback(),
+          );
+        }
+      }
+
+      function navigateStation(direction) {
+        const currentIndex = logicalMasterList.findIndex(
+          (s) => s.id === currentStationId,
+        );
+        const nextIndex =
+          (currentIndex + direction + logicalMasterList.length) %
+          logicalMasterList.length;
+        playStation(logicalMasterList[nextIndex].id);
+      }
+
+      function updateMediaMetadata(station) {
+        if ("mediaSession" in navigator) {
+          navigator.mediaSession.metadata = new MediaMetadata({
+            title: station.name,
+            artist: station.genre,
+            album: station.geo,
+            artwork: [
+              { src: "image_0.png.jpg", sizes: "512x512", type: "image/png" },
+            ],
+          });
+          navigator.mediaSession.playbackState = "playing";
+          setupMediaHandlers();
+        }
+        document.title = `${station.name} - Radio`;
+      }
+
+      function playStation(id) {
+        const station = stations.find((s) => s.id === id);
+        if (!station) return;
+        errorStationId = null;
+        bufferingStationId = id;
+        isActuallyPlaying = false;
+        renderGrid();
+        player.src = station.url;
+        player
+          .play()
+          .then(() => {
+            if (bufferingStationId !== id) return;
+            bufferingStationId = null;
+            currentStationId = id;
+            isActuallyPlaying = true;
+            localStorage.setItem("lastStationId", id);
+            playPauseBtn.disabled = false;
+            updatePlayPauseButton(true);
+            renderGrid();
+            scrollContainer.scrollTo({ top: 0, behavior: "smooth" });
+            updateMediaMetadata(station);
+          })
+          .catch((e) => {
+            // AbortError happens cleanly if another play request interrupts this one
+            if (e.name !== "AbortError") {
+              bufferingStationId = null;
+              errorStationId = id;
+              renderGrid();
             }
+          });
+      }
+
+      player.onerror = () => {
+        if (bufferingStationId !== null) {
+          errorStationId = bufferingStationId;
+          bufferingStationId = null;
+          renderGrid();
         }
+      };
 
-        function navigateStation(direction) {
-            const currentIndex = logicalMasterList.findIndex(s => s.id === currentStationId);
-            const nextIndex = (currentIndex + direction + logicalMasterList.length) % logicalMasterList.length;
-            playStation(logicalMasterList[nextIndex].id);
+      function stopPlayback() {
+        player.pause();
+        isActuallyPlaying = false;
+        if ("mediaSession" in navigator)
+          navigator.mediaSession.playbackState = "paused";
+        updatePlayPauseButton(false);
+        renderGrid();
+        document.title = "Radio";
+      }
+
+      function updatePlayPauseButton(playing) {
+        playPauseIcon.innerHTML = `<path d="${playing ? stopPath : playPath}"/>`;
+      }
+
+      let touchstartX = 0;
+      let touchendX = 0;
+      document.addEventListener(
+        "touchstart",
+        (e) => {
+          touchstartX = e.changedTouches[0].screenX;
+        },
+        { passive: true },
+      );
+      document.addEventListener(
+        "touchend",
+        (e) => {
+          touchendX = e.changedTouches[0].screenX;
+          const diff = touchstartX - touchendX;
+          if (Math.abs(diff) > 100) {
+            if (diff > 0) navigateStation(1);
+            else navigateStation(-1);
+          }
+        },
+        { passive: true },
+      );
+
+      sortBtn.onclick = () => {
+        sortState = (sortState + 1) % 3;
+        if (sortState === 0) {
+          sortBtn.classList.remove("active");
+          sortBadge.innerText = "";
+        } else if (sortState === 1) {
+          sortBtn.classList.add("active");
+          sortBadge.innerText = "A";
+        } else if (sortState === 2) {
+          sortBtn.classList.add("active");
+          sortBadge.innerText = "♪";
         }
+        renderGrid();
+      };
 
-        function updateMediaMetadata(station) {
-            if ('mediaSession' in navigator) {
-                navigator.mediaSession.metadata = new MediaMetadata({
-                    title: station.name, artist: station.genre, album: station.geo,
-                    artwork: [{ src: 'image_0.png.jpg', sizes: '512x512', type: 'image/png' }]
-                });
-                navigator.mediaSession.playbackState = "playing"; setupMediaHandlers(); 
-            }
-            document.title = `${station.name} - Radio`;
+      shuffleBtn.onclick = () => {
+        shuffleBtn.classList.add("shuffling");
+        setTimeout(() => shuffleBtn.classList.remove("shuffling"), 2000);
+        if (logicalMasterList.length > 0) {
+          const randomIndex = Math.floor(
+            Math.random() * logicalMasterList.length,
+          );
+          playStation(logicalMasterList[randomIndex].id);
         }
+      };
 
-        function playStation(id) {
-            const station = stations.find(s => s.id === id);
-            errorStationId = null; bufferingStationId = id; isActuallyPlaying = false; renderGrid();
-            player.src = station.url;
-            player.play().then(() => {
-                bufferingStationId = null; currentStationId = id; isActuallyPlaying = true;
-                localStorage.setItem('lastStationId', id); playPauseBtn.disabled = false;
-                updatePlayPauseButton(true); renderGrid(); scrollContainer.scrollTo({top: 0, behavior: 'smooth'});
-                updateMediaMetadata(station);
-            }).catch(e => { bufferingStationId = null; errorStationId = id; renderGrid(); });
+      playPauseBtn.onclick = () => {
+        if (isActuallyPlaying) stopPlayback();
+        else if (currentStationId !== null) playStation(currentStationId);
+      };
+
+
+
+      async function initApp() {
+        cleanLegacyFavorites();
+        try {
+          const response = await fetch("stations.json");
+          if (!response.ok) throw new Error("Could not load stations");
+          stations = await response.json();
+          document.getElementById('loading').style.display = 'none';
+          renderGrid();
+          setupMediaHandlers();
+        } catch (e) {
+          console.error("Failed to load stations dataset:", e);
+          document.getElementById('loading').innerHTML = "Could not load stations data. Make sure stations.json exists.";
+          document.getElementById('loading').style.color = "#ff4444";
         }
+      }
 
-        player.onerror = () => { if (bufferingStationId !== null) { errorStationId = bufferingStationId; bufferingStationId = null; renderGrid(); } };
-
-        function stopPlayback() {
-            player.pause(); isActuallyPlaying = false;
-            if ('mediaSession' in navigator) navigator.mediaSession.playbackState = "paused";
-            updatePlayPauseButton(false); renderGrid(); document.title = "Radio";
-        }
-
-        function updatePlayPauseButton(playing) { playPauseIcon.innerHTML = `<path d="${playing ? stopPath : playPath}"/>`; }
-
-        let touchstartX = 0; let touchendX = 0;
-        document.addEventListener('touchstart', e => { touchstartX = e.changedTouches[0].screenX; }, {passive: true});
-        document.addEventListener('touchend', e => {
-            touchendX = e.changedTouches[0].screenX; const diff = touchstartX - touchendX;
-            if (Math.abs(diff) > 100) { if (diff > 0) navigateStation(1); else navigateStation(-1); }
-        }, {passive: true});
-
-        sortBtn.onclick = () => { 
-            sortState = (sortState + 1) % 3;
-            if (sortState === 0) {
-                sortBtn.classList.remove('active');
-                sortBadge.innerText = '';
-            } else if (sortState === 1) {
-                sortBtn.classList.add('active');
-                sortBadge.innerText = 'A';
-            } else if (sortState === 2) {
-                sortBtn.classList.add('active');
-                sortBadge.innerText = '♪';
-            }
-            renderGrid(); 
-        };
-
-        shuffleBtn.onclick = () => { 
-            shuffleBtn.classList.add('shuffling');
-            setTimeout(() => shuffleBtn.classList.remove('shuffling'), 2000);
-            if (logicalMasterList.length > 0) {
-                const randomIndex = Math.floor(Math.random() * logicalMasterList.length); 
-                playStation(logicalMasterList[randomIndex].id); 
-            }
-        };
-
-        playPauseBtn.onclick = () => { if (isActuallyPlaying) stopPlayback(); else if (currentStationId !== null) playStation(currentStationId); };
-
-        renderGrid(); setupMediaHandlers();
-        document.addEventListener('touchmove', function (e) { 
-            if (e.target.closest('#scroll-container') || e.target.closest('#dropdown-menu')) return; 
-            e.preventDefault(); 
-        }, { passive: false });
+      initApp();
+      document.addEventListener(
+        "touchmove",
+        function (e) {
+          if (
+            e.target.closest("#scroll-container") ||
+            e.target.closest("#dropdown-menu")
+          )
+            return;
+          e.preventDefault();
+        },
+        { passive: false },
+      );
     </script>
-</body>
+  </body>
 </html>
