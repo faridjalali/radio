@@ -1293,7 +1293,12 @@
       async function initApp() {
         cleanLegacyFavorites();
         try {
-          const response = await fetch("stations.json", { cache: "no-cache" });
+          // Handle GitHub Pages path resolution without trailing slash
+          let jsonPath = "stations.json";
+          if (!window.location.pathname.endsWith("/") && !window.location.pathname.endsWith(".html")) {
+            jsonPath = window.location.pathname + "/stations.json";
+          }
+          const response = await fetch(jsonPath, { cache: "no-cache" });
           if (!response.ok) throw new Error("Could not load stations");
           stations = await response.json();
           document.getElementById('loading').style.display = 'none';
