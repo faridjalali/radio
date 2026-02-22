@@ -1190,7 +1190,7 @@
     "geo": "🇿🇦",
     "type": "int",
     "url": "https://edge.iono.fm/xice/fmr_live_medium.aac"
-  }
+  },
     {
     "id": "rfg",
     "name": "RFG",
@@ -1198,7 +1198,7 @@
     "geo": "🇫🇷",
     "type": "int",
     "url": "https://n04.rcs.revma.com/wknqhm4yuchvv"
-  }
+  },
     {
     "id": "rfgc",
     "name": "RFGC",
@@ -1206,7 +1206,7 @@
     "geo": "🇫🇷",
     "type": "int",
     "url": "https://n13.rcs.revma.com/cgvrymb6p98uv"
-  }
+  },
       {
     "id": "rfgd",
     "name": "RFGD",
@@ -1214,7 +1214,7 @@
     "geo": "🇫🇷",
     "type": "int",
     "url": "https://n10.rcs.revma.com/zfad8vm4srhvv"
-  }
+  },
       {
     "id": "rfgm",
     "name": "RFGM",
@@ -1222,7 +1222,7 @@
     "geo": "🇫🇷",
     "type": "int",
     "url": "https://n05.rcs.revma.com/kv9m762w7guvv.mp3"
-  }
+  },
         {
     "id": "rfgfg",
     "name": "RFGFG",

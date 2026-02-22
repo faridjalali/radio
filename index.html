@@ -1306,8 +1306,15 @@
           setupMediaHandlers();
         } catch (e) {
           console.error("Failed to load stations dataset:", e);
-          document.getElementById('loading').innerHTML = "Could not load stations data. Make sure stations.json exists.";
-          document.getElementById('loading').style.color = "#ff4444";
+          const loadingEl = document.getElementById("loading");
+          if (window.location.protocol === "file:") {
+            loadingEl.innerHTML =
+              "Could not load stations data from a local file. Open this folder with a local web server (for example: <code>python3 -m http.server</code>) and then load <code>http://localhost:8000</code>.";
+          } else {
+            loadingEl.innerHTML =
+              "Could not load stations data. Check that stations.json exists and contains valid JSON.";
+          }
+          loadingEl.style.color = "#ff4444";
         }
       }
 
