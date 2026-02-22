@@ -1293,7 +1293,7 @@
       async function initApp() {
         cleanLegacyFavorites();
         try {
-          const response = await fetch("stations.json");
+          const response = await fetch("stations.json", { cache: "no-cache" });
           if (!response.ok) throw new Error("Could not load stations");
           stations = await response.json();
           document.getElementById('loading').style.display = 'none';
